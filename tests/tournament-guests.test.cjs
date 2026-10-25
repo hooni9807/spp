@@ -6,4 +6,12 @@ const context={Math:Object.create(Math),Set};vm.createContext(context);vm.runInC
 let n=0;const names=context.names(44,['김치성','아담 성'],()=>((n++*17)%101)/101);
 assert.equal(names.length,44);assert.equal(new Set(names).size,44);assert(!names.includes('김치성'));assert(!names.includes('아담 성'));
 assert.equal(context.names(0).length,0);
+assert(html.includes('id="tournament-open"'));
+assert(html.includes('id="tour-bracket"'));
+assert(html.includes("TOUR_TIERS=['ultra','uhard','uext','uext','uext','uext']"));
+assert(html.includes('if(a.named!==b.named)return a.named?a:b'));
+assert(html.includes("tournamentGuestNames(64-named.length-1,taken)"));
+const tourSource=html.match(/const TOUR_LABELS=[\s\S]*?let charType='jersey',aiChar=pickAi\(\);/)[0];
+const game={Math:Object.create(Math),Set,AI_CHARS:['a','b'],LOOKS:{jersey:{nick:'나'},a:{nick:'이름A'},b:{nick:'이름B'}},pickAi:()=> 'a'};vm.createContext(game);vm.runInContext(`${source};${tourSource};this.snapshot=()=>({tournament,tourPlayer});`,game);
+game.newTournament();let snapshot=game.snapshot();assert.equal(snapshot.tournament.slots[0].length,64);assert.equal(snapshot.tournament.slots[0].filter(x=>x.me).length,1);assert.equal(snapshot.tournament.slots[0].filter(x=>x.guest).length,61);snapshot.tournament.state='playing';assert(game.finishTournament(true));snapshot=game.snapshot();assert.equal(snapshot.tournament.round,1);assert.equal(snapshot.tourPlayer().r,1);
 console.log('Tournament guest names are unique, varied and avoid named entrants');
