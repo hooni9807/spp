@@ -48,6 +48,8 @@ function mediaHarness({ apiReady = true, sound = true } = {}) {
     cancelAnimationFrame(key) { frames.delete(key); },
     setTimeout(fn, delay) { const key = ++id; timers.set(key, { fn, due: now + delay }); return key; },
     clearTimeout(key) { timers.delete(key); },
+    setInterval(fn, delay) { const key = ++id; timers.set(key, { fn, due: now + delay, interval: delay }); return key; },
+    clearInterval(key) { timers.delete(key); },
     addEventListener: on,
   });
   context.window = context;
