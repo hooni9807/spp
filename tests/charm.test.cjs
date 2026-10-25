@@ -17,5 +17,7 @@ assert(html.includes('ctx.globalAlpha=.68*fade'));
 assert(html.includes('Math.min(W,H)*.72*pulse'));
 assert(html.includes("b.charmId.startsWith('fail-')&&Math.random()<.3"));
 assert(html.includes("ball.charmId?.startsWith('fail-')&&Math.random()<.1"));
+assert(html.includes('charmT=time'));
+assert(html.includes('pHeart(hx+k*4.5*s,hd+1*s,3.4*s)'));
 assert(!html.includes('for(const [x,y,size] of [[.43,.46,.16]'));
 console.log('Character charm roll, network serialization and script syntax OK');
