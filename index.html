@@ -1188,7 +1188,8 @@ if(d?.q?._fit){myFit=fitClean(d.q._fit,true);prog.q._fit=myFit;try{localStorage.
 }catch{}}   // the device copy is pushed up when it is ahead
 const loadProgressBase=loadProgress;loadProgress=async()=>{await loadProgressBase();if(aribeomLocked){prog.unlocked=prog.unlocked.filter(k=>k!=='aribeom');saveProg();}};
 
-const AI_CHARS=['aribeom','jersey','leesin','percival','drunk','ajae','minhee','yunhwan','seohyun','jongryeong','kumho','chungdae','songstar','ttalgak','jiseong','sleepy','gambler','glass','smashman','adam'].filter(characterAvailable),pickAi=()=>AI_CHARS[Math.floor(Math.random()*AI_CHARS.length)];
+// Disabled characters stay unavailable to players, but every regular character can appear as an AI opponent.
+const AI_CHARS=['aribeom','pastor','jersey','leesin','percival','drunk','ajae','minhee','yunhwan','seohyun','jongryeong','kumho','chungdae','songstar','ttalgak','jiseong','sleepy','gambler','glass','smashman','adam'].filter(k=>LOOKS[k]&&k!=='ai'),pickAi=()=>AI_CHARS[Math.floor(Math.random()*AI_CHARS.length)];
 let aiLefty=false;   // Preserve each character's built-in stance without randomly assigning a hand.
 const aiLook=()=>({...LOOKS[aiChar],lefty:aiLefty});
 let charType='jersey',aiChar=pickAi();

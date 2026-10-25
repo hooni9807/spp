@@ -411,10 +411,10 @@ test('dance renderer handles every character and stage with finite coordinates a
   }
 });
 
-test('temporarily disabled sleepy character cannot be restored, selected, randomized, or rendered for a peer', () => {
+test('temporarily disabled sleepy character stays player-locked but can appear as an offline AI', () => {
   const client = createClient();
   assert.equal(client.value("characterAvailable('sleepy')"), false);
-  assert.equal(client.value("AI_CHARS.includes('sleepy')"), false);
+  assert.equal(client.value("AI_CHARS.includes('sleepy')"), true);
   client.run("setCharacter('sleepy')");
   assert.equal(client.value('charType'), 'jersey');
   client.open('guest');
