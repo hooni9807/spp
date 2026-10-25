@@ -24,8 +24,8 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(state.level,1);assert.ok(state.coins<10000);assert.ok(racketEffect,'+10 racket should render an effect');assert.ok(state.miss>0);assert.equal(await page.locator('#enhance-speed').isVisible(),false);assert.equal(await page.locator('#enhance-spin').isVisible(),false);
     const curve=await page.evaluate(()=>[15,20,24,25,30].map(level=>{prog.racketEnhance=level;return enhanceShownAiMiss();}));
     assert.ok(Math.abs(curve[0]-.015)<1e-12);assert.ok(Math.abs(curve[1]-.05)<1e-12);assert.ok(Math.abs(curve[2]-.09)<1e-12);assert.ok(Math.abs(curve[3]-(.09+.11/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
-    const failure=await page.evaluate(()=>{prog.racketEnhance=30;const title=TITLES.find(t=>t[0]==='enh30')[3](),shown=enhanceShownAiMiss();prog.racketEnhance=29;prog.coins=10000;renderEnhance();const random=Math.random;Math.random=()=>.99;$('enhance-try').click();Math.random=random;return {level:enhanceLevel(),title,shown,levelText:$('enhance-level').textContent};});
-    assert.equal(failure.title,true);assert.equal(failure.shown,.2);assert.equal(failure.level,28);assert.equal(failure.levelText,'+28 / +30');assert.deepEqual(errors,[]);
+    const failure=await page.evaluate(()=>{const attempt=random=>{prog.racketEnhance=29;prog.coins=10000;renderEnhance();const original=Math.random;Math.random=()=>random;$('enhance-try').click();Math.random=original;return enhanceLevel();};prog.racketEnhance=30;const title=TITLES.find(t=>t[0]==='enh30')[3](),shown=enhanceShownAiMiss();return {dropped:attempt(.24),held:attempt(.25),title,shown,levelText:$('enhance-level').textContent};});
+    assert.equal(failure.title,true);assert.equal(failure.shown,.2);assert.equal(failure.dropped,28);assert.equal(failure.held,29);assert.equal(failure.levelText,'+29 / +30');assert.deepEqual(errors,[]);
     console.log('Racket enhancement spends spin coins and applies combat bonuses');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
