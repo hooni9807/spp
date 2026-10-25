@@ -13,6 +13,7 @@ service cloud.firestore {
         && d.value is int && d.value >= 1 && d.value <= maxValue
         && d.level is string && d.level.size() <= 10
         && d.character is string && d.character.size() <= 10
+        && d.character in ['매혹범', '휴고범', '리신범', '퍼시벌', '만취범', '아재범', '민희쌤', '일병3호봉', '빽종령', '금호관장', '송스타', '날먹세', '김치성', '지킬앤 하이범', '아담 성', '올인 도박사', '유리대포']
         && d.racket is string && d.racket.size() <= 10
         && d.detail is string && d.detail.size() <= 20
         && d.at == request.time;
