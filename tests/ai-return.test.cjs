@@ -156,6 +156,9 @@ test('smash character can return cuts and drives without an automatic net fault'
 });
 
 test('racket skills remain returnable and tier-four miss chance survives AI bonuses', () => {
+  const center=context.P.aiChance({type:'drive',x:0,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
+  const wide=context.P.aiChance({type:'drive',x:.7,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
+  assert.equal(wide,center,'wide placement must not lower AI return chance');
   const normal=context.P.aiChance({type:'lightning',x:0,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
   const equipped=context.P.aiChance({type:'lightning',ult:'x',x:0,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
   assert.ok(normal>equipped,'racket skill must not receive the equipped-special penalty');
