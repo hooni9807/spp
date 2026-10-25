@@ -515,7 +515,7 @@ const enhanceSpeed=()=>1+(enhanceActive()?enhanceLevel():0)*.01,enhanceSpin=()=>
 const enhanceShownSpeed=()=>1+enhanceLevel()*.01,enhanceShownSpin=()=>1+enhanceLevel()*.01,enhanceShownAiMiss=()=>enhanceLevel()*.008;
 // Early enhancement is deliberately affordable through 울트라 wins.  The
 // economy turns into a long-term goal after +10, then a true end-game sink at +21.
-const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=5?2:n<=10?4:n<=15?60:n<=20?150:650;};
+const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=5?3:n<=10?10:n<=15?45:n<=20?110:220;};
 const enhanceRate=()=>{const n=enhanceLevel()+1;return n<=10?1:n<=15?.75:n<=20?.55:.35;};
 function gainCoins(n,why){n=Math.max(0,Math.round(n));if(!n)return;lastCoinGain=n;prog.coins+=n;saveProg();toast(`+${n} ${COIN_NAME} · ${why}`,2.3);}
 function matchCoinReward(){return mode==='match'?(COIN_REWARD[tierNow()]||COIN_REWARD.easy):mode==='boss'?180:0;}
