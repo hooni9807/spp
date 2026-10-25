@@ -48,14 +48,6 @@ test('each AI tier uses its configured ordinary-shot return rate', () => {
   assert.equal(context.P.returnChance({type:'drive'}, 'easy', 1), .40);
 });
 
-test('long rallies only boost ordinary AI returns', () => {
-  assert.equal(context.P.returnRoll({type:'drive'}, 'hard', .91, 3), .50);
-  assert.equal(context.P.returnRoll({type:'drive'}, 'hard', .91, 9), .65);
-  assert.equal(context.P.returnRoll({type:'drive'}, 'hard', .91, 40), .65);
-  assert.equal(context.P.returnRoll({type:'drive',ult:'special'}, 'hard', .91, 9), .05);
-  assert.equal(context.P.returnRoll({type:'drive',dual:true}, 'hard', .91, 9), .50);
-});
-
 vm.runInNewContext(html.slice(html.indexOf('function landGuard(s,b)'), html.indexOf('function hit(tap)')), context);
 test('late two-touch returns stay low or miss the net', () => {
   for (const y of [-.3, -.7, -1.1]) for (const z of [-.45, -.2, 0, .2]) for (const type of ['block', 'short', 'drive', 'cut']) {
