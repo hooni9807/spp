@@ -503,18 +503,18 @@ prog.coins=Math.max(0,Math.floor(Number(prog.coins)||0));
 const MAX_ENHANCE=30;
 prog.racketEnhance=Math.min(MAX_ENHANCE,Math.max(0,Math.floor(Number(prog.racketEnhance)||0)));
 const COIN_NAME='스핀코인',COIN_REWARD={easy:30,hard:55,extreme:85,ultra:120,uhard:165,uext:220};
-const enhanceLevel=()=>Math.min(MAX_ENHANCE,Math.max(0,Math.floor(Number(prog.racketEnhance)||0)));
-const enhanceFxTier=()=>{const lv=enhanceLevel();return lv>=24?3:lv>=20?2:lv>=10?1:0;};
+const enhanceLevel=()=>Math.min(MAX_ENHANCE,Math.max(0,Math.floor(Number(prog.racketEnhance)||0))),championSkin=()=>prog.q?._racketSkin==='champion',enhanceCombatLevel=()=>enhanceLevel()+(championSkin()?3:0);
+const enhanceFxTier=()=>{const lv=enhanceCombatLevel();return lv>=24?3:lv>=20?2:lv>=10?1:0;};
 const enhanceActive=()=>mode==='match'&&!rankOn&&!net;
 // Enhancement belongs only to the human player.  In AI matches it boosts the
 // player's shot and makes the opponent a little more likely to miss; it never
 // grants the AI its own racket-enhancement bonus (and stays off in rank/PvP).
-const enhanceAiMissAt=lv=>{lv=Math.min(MAX_ENHANCE,Math.max(0,Math.floor(lv||0)));return lv<=15?lv*.001:lv<=20?.015+(lv-15)*.007:lv<25?.05+(lv-20)*.01:.09+(lv-24)*.11/6;};
-const enhanceAiMiss=()=>enhanceAiMissAt(enhanceActive()?enhanceLevel():0);
+const enhanceAiMissAt=lv=>{lv=Math.min(MAX_ENHANCE+3,Math.max(0,Math.floor(lv||0)));return lv<=15?lv*.001:lv<=20?.015+(lv-15)*.007:lv<25?.05+(lv-20)*.01:.09+(lv-24)*.11/6;};
+const enhanceAiMiss=()=>enhanceAiMissAt(enhanceActive()?enhanceCombatLevel():0);
 // The enhancement dialog is also opened from the menu, where no match is
 // active yet.  Show the owned level's full future bonus there, not the
 // currently-active in-match value (which is correctly zero outside AI games).
-const enhanceShownAiMiss=()=>enhanceAiMissAt(enhanceLevel());
+const enhanceShownAiMiss=()=>enhanceAiMissAt(enhanceCombatLevel());
 // Early enhancement is deliberately affordable through 울트라 wins.  The
 // economy turns into a long-term goal after +10, then a true end-game sink at +21.
 const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=5?3:n<=10?10:n<=15?45:n<=20?110:220;};
@@ -1124,7 +1124,7 @@ function renderFit(){
 }
 
 function renderTitles(){const ul=$('t-list'),eq=prog.q?._t;ul.textContent='';for(const [id,name,cond,ok] of TITLES){const has=ok(),li=document.createElement('li'),t=document.createElement('span'),b=document.createElement('button'),sm=document.createElement('small');li.className=has?(eq===id?'on':''):'off';t.textContent=`〔${name}〕`;sm.textContent=cond+(TITLE_FX[id]?` · ✨ 장착 효과: ${titleFxText(id)}`:'');t.append(sm);b.type='button';b.disabled=!has;b.textContent=!has?'잠김':eq===id?'장착 중':'장착';b.onclick=()=>{prog.q._t=eq===id?'':id;saveProg();renderTitles();};li.append(t,b);ul.append(li);}}
-function renderTrophies(){const won=!!tS().tournament;$('trophy-list').innerHTML=`<article class="trophy-card${won?'':' lock'}"><div class="trophy-icon">🏆</div><b>대전시대회 우승 트로피</b><small>${won?'획득 완료 · 「대회 우승자」 칭호와 우승의 라켓 스킨 보유':'대전시대회에서 우승하면 해금'}</small></article>`;}
+function renderTrophies(){const won=!!tS().tournament;$('trophy-list').innerHTML=`<article class="trophy-card${won?'':' lock'}"><div class="trophy-icon">🏆</div><b>대전시대회 우승 트로피</b><small>${won?'획득 완료 · 「대회 우승자」 칭호 · 3D 우승 라켓 스킨 · 강화 효과 +3':'대전시대회에서 우승하면 해금'}</small></article>`;}
 function renderQuests(){const ul=$('q-list');ul.textContent='';let any=false;for(const [k,label] of QUESTS){const q=qOf(k),T=qTarget(k),done=q.n>=T;any||=done;
 const li=document.createElement('li'),t=document.createElement('span'),bar=document.createElement('i'),b=document.createElement('button');t.textContent=`${label} ${T}번 · 보상 ${qReward(k)} XP`;const sm=document.createElement('small');sm.textContent=`${Math.min(q.n,T)} / ${T}`;t.append(sm);
 bar.style.setProperty('--p',Math.min(1,q.n/T)*100+'%');b.type='button';b.textContent=done?'보상받기':'진행 중';b.disabled=!done;b.onclick=()=>{const xp=qReward(k)*(1+R_('utQuestXp'));q.n-=T;q.t++;gainXp(xp,label+' 퀘스트 보상');renderQuests();};li.append(t,bar,b);ul.append(li);}
@@ -1534,14 +1534,14 @@ p.moveTo(-nw,R.h);p.bezierCurveTo(-w*1.08,h*.72,-w*1.06,-h*.42,-w*.62,-h*.92);p.
 function racket(x,y,angle,type,face,scale=1,skin=null){
 const R=RACKETS[type],H=R.h,hw=R.hw,y0=H*.72,y1=y0+R.hl,red=face===RED;
 ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);
-const enhance=typeof enhanceLevel==='function'?enhanceLevel():0;
+const champion=championSkin(),enhance=typeof enhanceCombatLevel==='function'?enhanceCombatLevel():0;
 if(enhance>=10){const tier=enhanceFxTier(),cols={1:['114,205,255','205,242,255'],2:['255,170,38','255,239,148'],3:['255,65,190','128,242,255']}[tier],pulse=.72+.28*Math.sin(time*(tier===3?12:9)),radius=R.w*(1.08+enhance/48);ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.2+.2*pulse;ctx.shadowColor=`rgb(${cols[0]})`;ctx.shadowBlur=15+enhance*.65;ctx.strokeStyle=`rgb(${cols[1]})`;ctx.lineWidth=2.1+tier*.7;ctx.beginPath();ctx.ellipse(0,-R.h*.08,radius,R.h*(1.05+enhance/85),0,0,Math.PI*2);ctx.stroke();if(tier>=2){ctx.globalAlpha=.16+.14*pulse;ctx.beginPath();ctx.ellipse(0,-R.h*.08,radius*1.2,R.h*(1.28+enhance/85),time*.8,0,Math.PI*2);ctx.stroke();}if(tier===3){ctx.globalAlpha=.3+.25*pulse;ctx.lineWidth=1.4;for(let i=0;i<4;i++){const a=time*1.8+i*Math.PI/2;ctx.beginPath();ctx.moveTo(Math.cos(a)*radius*.4,-R.h*.08+Math.sin(a)*R.h*.3);ctx.lineTo(Math.cos(a)*radius*1.5,-R.h*.08+Math.sin(a)*R.h*1.15);ctx.stroke();}}const sparks=2+tier*3;for(let i=0;i<sparks;i++){const a=time*(2.5+(i%3))+(i/sparks)*Math.PI*2,dist=radius*(.85+.18*Math.sin(time*5+i)),sx=Math.cos(a)*dist,sy=-R.h*.08+Math.sin(a)*R.h*(.82+enhance/100);ctx.fillStyle=i%2?`rgb(${cols[0]})`:'#fff7c2';pSpark(sx,sy,1.5+tier*.55);ctx.fill();}ctx.restore();}
 // blade wood + rubber (cut above the throat)
 const blade=bladePath(R);ctx.fillStyle=R.wood||'#e6cc98';ctx.fill(blade);
 ctx.save();ctx.clip(bladePath(R,1.2));const cut=H*(R.square?.66:.66);
 const rub=new Path2D();rub.moveTo(-R.w-3,-H-3);rub.lineTo(R.w+3,-H-3);rub.lineTo(R.w+3,cut-H*.05);rub.quadraticCurveTo(0,cut+H*.2,-R.w-3,cut-H*.05);rub.closePath();
-const gr=ctx.createLinearGradient(-R.w,-H,R.w*.6,H*.6);gr.addColorStop(0,red?'#e0484a':'#3a3a3a');gr.addColorStop(.45,red?'#c62a2c':'#1e1e1e');gr.addColorStop(1,red?'#a81f22':'#141414');
-ctx.fillStyle=gr;ctx.fill(rub);if(prog.q?._racketSkin==='champion'){ctx.save();ctx.clip(rub);ctx.fillStyle='#ffd166';ctx.font='900 13px Arial';ctx.textAlign='center';ctx.fillText('★',0,-H*.34);ctx.strokeStyle='#fff3b0';ctx.lineWidth=.7;ctx.beginPath();ctx.arc(0,-H*.34,8,0,Math.PI*2);ctx.stroke();ctx.restore();}
+const gr=ctx.createLinearGradient(-R.w,-H,R.w*.6,H*.6);if(champion){gr.addColorStop(0,'#fff0a4');gr.addColorStop(.2,'#ba7920');gr.addColorStop(.54,'#20140e');gr.addColorStop(.78,'#6b3e12');gr.addColorStop(1,'#ffe28a');}else{gr.addColorStop(0,red?'#e0484a':'#3a3a3a');gr.addColorStop(.45,red?'#c62a2c':'#1e1e1e');gr.addColorStop(1,red?'#a81f22':'#141414');}
+ctx.fillStyle=gr;ctx.fill(rub);if(champion){ctx.save();ctx.clip(rub);ctx.globalAlpha=.35;ctx.strokeStyle='#fff1aa';ctx.lineWidth=.7;for(let i=-5;i<7;i++){ctx.beginPath();ctx.moveTo(-R.w,i*7-H*.1);ctx.lineTo(R.w,i*7-H*.8);ctx.stroke();}ctx.globalAlpha=1;ctx.shadowColor='#ffd166';ctx.shadowBlur=8;ctx.fillStyle='#f8c64e';ctx.beginPath();ctx.moveTo(-7,-H*.37);ctx.lineTo(7,-H*.37);ctx.lineTo(4,-H*.18);ctx.quadraticCurveTo(0,-H*.09,-4,-H*.18);ctx.closePath();ctx.fill();ctx.fillRect(-1.8,-H*.1,3.6,5);ctx.fillRect(-6,-H*.02,12,2);ctx.fillStyle='#fff2a8';ctx.beginPath();ctx.arc(-2.7,-H*.3,1.5,0,Math.PI*2);ctx.fill();ctx.restore();}
 if(R.pips&&red){   // defender's backhand: long pimples (OX, no sponge) - rows of tall thin pips, matte, each with a shadow and a lit top
 if(!R.pipPaths){R.pipPaths=[[.35,.45,.85,'#6e1214'],[0,0,.75,'#d8393b'],[-.25,-.25,.28,'#ff9a8c']].map(([ox,oy,rr,col])=>{const p=new Path2D();   // built once, 3 fills per frame
 for(let py=-H,row=0;py<cut;py+=2.4,row++)for(let px=-R.w+(row%2)*1.2;px<R.w;px+=2.4){p.moveTo(px+ox+rr,py+oy);p.arc(px+ox,py+oy,rr,0,Math.PI*2);}return [p,col];});}
@@ -1549,7 +1549,7 @@ for(const [p,col] of R.pipPaths){ctx.fillStyle=col;ctx.fill(p);}}
 else{ctx.fillStyle='#ffffff10';ctx.beginPath();ctx.ellipse(-R.w*.32,-H*.42,R.w*.42,H*.26,-.5,0,Math.PI*2);ctx.fill();}   // sheen on smooth (inverted) rubber
 ctx.fillStyle='#ffffff55';ctx.font='bold 4.2px Arial';ctx.textAlign='center';ctx.fillText('SPP',0,cut-H*.1);
 ctx.restore();
-ctx.strokeStyle=R.tape||'#202020';ctx.lineWidth=1.6;ctx.stroke(blade);   // edge tape
+ctx.strokeStyle=champion?'#ffd166':R.tape||'#202020';ctx.lineWidth=champion?2.6:1.6;ctx.shadowColor=champion?'#f6b72f':'transparent';ctx.shadowBlur=champion?5:0;ctx.stroke(blade);ctx.shadowBlur=0;   // edge tape
 // handle
 const t=hw/2,b=R.flare?hw*.72:hw*.55,top=hw*.66;
 const hp=new Path2D();hp.moveTo(-top,y0);hp.lineTo(top,y0);hp.quadraticCurveTo(t,y0+3,t,y0+8);
@@ -2895,7 +2895,7 @@ if(now){if(!was)store.set('myGear',JSON.stringify({racket:racketType,blade:blade
 let g=null;try{g=JSON.parse(store.get('myGear'));}catch{}if(!g||!RACKETS[g.racket])return;
 if(BLADES[g.blade])bladeType=g.blade;if(RUBBERS[g.rubber])rubberType=g.rubber;store.set('blade',bladeType);store.set('rubber',rubberType);$('blade').value=bladeType;$('rubber').value=rubberType;setRacket(g.racket);toast(`내 장비로 돌아왔어요: ${RACKETS[g.racket].name}`+(g.racket==='shake'?` · ${BLADES[bladeType].name} + ${RUBBERS[rubberType].name}`:''),1.8);}
 function setRacket(type){if(!RACKETS[type])return;racketType=type;$('racket').value=type;$('racket-note').textContent=racketNote(type,bladeType,rubberType);$('special-name').textContent='✦ 장착 필살기';store.set('racket',type);$('gear').hidden=type!=='shake';}
-function renderEnhance(){const lv=enhanceLevel(),cap=lv>=MAX_ENHANCE,rate=enhanceRate(),cost=enhanceCost(),fx=lv>=24?'전설 오라 · 다층 임팩트':lv>=20?'황금 오라 · 이중 임팩트':lv>=10?'푸른 오라 · 타격 임팩트':'시각 효과는 +10부터';$('enhance-coin').textContent=`${COIN_NAME} ${prog.coins.toLocaleString()}`;$('enhance-level').textContent=`+${lv} / +${MAX_ENHANCE}`;$('enhance-rate').textContent=cap?'최대 강화 완료':`성공 확률 ${Math.round(rate*100)}%`;$('enhance-miss').textContent=`+${Math.round(enhanceShownAiMiss()*100)}%`;$('enhance-cost').textContent=cap?'최대 단계입니다.':`다음 강화 비용 · ${cost.toLocaleString()} ${COIN_NAME}`;$('enhance-note').textContent=`${fx} · AI전에서만 AI 실수 확률에 적용`+(lv>=20?' · +21부터 실패 시 25% 확률로 1단계 하락합니다.':lv>=10?' · +11부터 비용이 크게 오르고 성공 확률이 낮아집니다.':' · +1~+10은 100% 성공 · 초반 난이도 승리 보상으로 빠르게 강화할 수 있어요.');$('enhance-try').disabled=cap||prog.coins<cost;$('enhance-try').textContent=cap?'강화 완료':prog.coins<cost?`${COIN_NAME} 부족`:`+${lv+1} 강화 시도`;}
+function renderEnhance(){const lv=enhanceLevel(),bonus=championSkin()?3:0,effective=lv+bonus,cap=lv>=MAX_ENHANCE,rate=enhanceRate(),cost=enhanceCost(),fx=effective>=24?'전설 오라 · 다층 임팩트':effective>=20?'황금 오라 · 이중 임팩트':effective>=10?'푸른 오라 · 타격 임팩트':'시각 효과는 +10부터';$('enhance-coin').textContent=`${COIN_NAME} ${prog.coins.toLocaleString()}`;$('enhance-level').textContent=`+${lv}${bonus?' + 우승 스킨 +3':''} / +${MAX_ENHANCE}`;$('enhance-rate').textContent=cap?'최대 강화 완료':`성공 확률 ${Math.round(rate*100)}%`;$('enhance-miss').textContent=`+${Math.round(enhanceShownAiMiss()*100)}%`;$('enhance-cost').textContent=cap?'최대 단계입니다.':`다음 강화 비용 · ${cost.toLocaleString()} ${COIN_NAME}`;$('enhance-note').textContent=`${fx} · AI전에서만 AI 실수 확률에 적용`+(bonus?' · 🏆 우승의 라켓 스킨: 강화 효과 +3 적용':'')+(lv>=20?' · +21부터 실패 시 25% 확률로 1단계 하락합니다.':lv>=10?' · +11부터 비용이 크게 오르고 성공 확률이 낮아집니다.':' · +1~+10은 100% 성공 · 초반 난이도 승리 보상으로 빠르게 강화할 수 있어요.');$('enhance-try').disabled=cap||prog.coins<cost;$('enhance-try').textContent=cap?'강화 완료':prog.coins<cost?`${COIN_NAME} 부족`:`+${lv+1} 강화 시도`;}
 const openEnhance=()=>{renderEnhance();$('enhance').showModal();};$('enhance-open').onclick=openEnhance;$('enhance-home').onclick=openEnhance;$('enhance-close').onclick=()=>$('enhance').close();$('enhance-try').onclick=()=>{const lv=enhanceLevel(),cost=enhanceCost();if(lv>=MAX_ENHANCE||prog.coins<cost)return;prog.coins-=cost;if(Math.random()<enhanceRate()){prog.racketEnhance=lv+1;saveProg();toast(`⚒️ 강화 성공! 라켓 +${lv+1} · AI 실수 확률 증가`,2.4);}else{const drops=lv>=20&&Math.random()<.25;if(drops)prog.racketEnhance=lv-1;saveProg();toast(drops?`강화 실패… 라켓이 +${lv-1}로 하락했습니다.`:'강화 실패… 단계는 유지됩니다.',2.1);}renderEnhance();};
 
 function gearNote(blade,rubber){const B=BLADES[blade],U=RUBBERS[rubber],pc=v=>Math.round(v*100)+'%';return ` · 목판 ${B.name}(${B.note}) · 러버 ${U.name}(${U.note}) → 속도 ${pc(B.speed*U.speed)} · 회전 ${pc(B.spin*U.spin)} · 실수 확률 ${pc(Math.max(0,B.err+U.err))}`;}
