@@ -8,7 +8,8 @@ const context={Math:Object.create(Math),Date}; vm.createContext(context);vm.runI
 context.Math.random=()=>.49;assert(!context.rollCharm({charm:true}).startsWith('fail-'));
 context.Math.random=()=>.5;assert(context.rollCharm({charm:true}).startsWith('fail-'));
 context.Math.random=()=>0;assert.strictEqual(context.rollCharm({}),null);
-assert(context.charmAiMiss({charm:true},{charmId:'hit'}));
+context.Math.random=()=>.29;assert(context.charmAiMiss({charm:true},{charmId:'hit'}));
+context.Math.random=()=>.3;assert(!context.charmAiMiss({charm:true},{charmId:'hit'}));
 assert(!context.charmAiMiss({charm:true},{charmId:'fail-hit'}));
 assert(!context.charmAiMiss({}, {charmId:'hit'}));
 assert(html.includes('charmId:b.charmId||null'));
