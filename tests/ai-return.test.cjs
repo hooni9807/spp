@@ -156,6 +156,9 @@ test('smash character can return cuts and drives without an automatic net fault'
 });
 
 test('racket skills remain returnable and tier-four miss chance survives AI bonuses', () => {
+  const plain=context.P.aiChance({type:'drive',x:0,vy:-3,spin:0,side:0},'b4',false,null,.8);
+  const difficult=context.P.aiChance({type:'drive',x:0,vy:-4.5,spin:2,side:1.2,power:true},'b4',false,null,.8);
+  assert.ok(Math.abs(plain-.8)<1e-9);assert.ok(Math.abs(difficult-.63)<1e-9,'ordinary-ball penalties use the softened values');
   const center=context.P.aiChance({type:'drive',x:0,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
   const wide=context.P.aiChance({type:'drive',x:.7,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
   assert.equal(wide,center,'wide placement must not lower AI return chance');
