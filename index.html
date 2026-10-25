@@ -1196,6 +1196,8 @@ const loadProgressBase=loadProgress;loadProgress=async()=>{await loadProgressBas
 
 // Disabled characters stay unavailable to players, but every regular character can appear as an AI opponent.
 const AI_CHARS=['aribeom','pastor','jersey','leesin','percival','drunk','ajae','minhee','yunhwan','seohyun','jongryeong','kumho','chungdae','songstar','ttalgak','jiseong','sleepy','gambler','glass','adam'].filter(k=>LOOKS[k]&&k!=='ai'),pickAi=()=>AI_CHARS[Math.floor(Math.random()*AI_CHARS.length)];
+const TOURNAMENT_FAMILY=['강','고','권','김','나','류','문','박','배','서','성','송','신','안','오','유','윤','이','임','장','전','정','조','최','한','홍'],TOURNAMENT_GIVEN=['가온','건우','다온','도윤','라온','루아','민결','민재','서준','서진','소율','수빈','시우','아린','연우','예준','유나','윤슬','지안','지우','채린','하늘','하윤','현우','혜린','호진'];
+function tournamentGuestNames(count,taken=[],random=Math.random){const used=new Set(taken),pool=[];for(const family of TOURNAMENT_FAMILY)for(const given of TOURNAMENT_GIVEN){const name=family+given;if(!used.has(name))pool.push(name);}for(let i=pool.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}return pool.slice(0,Math.max(0,Math.min(count,pool.length)));}
 let aiLefty=false;   // Preserve each character's built-in stance without randomly assigning a hand.
 const aiLook=()=>({...LOOKS[aiChar],lefty:aiLefty});
 let charType='jersey',aiChar=pickAi();
