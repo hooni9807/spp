@@ -22,6 +22,7 @@ assert(html.includes('if(a.named!==b.named)return a.named?a:b'));
 assert(html.includes("tournamentGuestNames(64-named.length-1,taken)"));
 assert(html.includes("['tournament','대회 우승자','대전시대회 우승'"));
 assert(html.includes("const TOUR_REWARDS=[{id:'daejeon'"));
+assert(html.includes("{id:'daejeon',name:'대전시대회',trophy:'🥖'"));
 assert(html.includes("{id:'seoul',name:'서울시대회'"));
 assert(html.includes("trophySetBonus=()=>trophyCount()>=4?3:trophyCount()>=3?2:trophyCount()>=2?1:0"));
 assert(html.includes("prog.q._racketSkin=reward.skin"));
