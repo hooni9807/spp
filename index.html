@@ -1043,6 +1043,13 @@ FIT_TOPS.push(
  ['studio_midnight','별자리 테일러드 코트',{shirt:'#252e50',sleeve:'#252e50',collar:'#d6bb75',longSleeve:true,pat:{k:'studio_midnight',a:'#d6bb75',b:'#818bb9'}}],
  ['studio_varsity','캠퍼스 바시티 재킷',{shirt:'#743c4b',sleeve:'#eee1c5',collar:'#eee1c5',longSleeve:true,pat:{k:'studio_varsity',a:'#eee1c5',b:'#c8a86a'}}]
 );
+// Lightweight colour-and-pattern variants: no image assets or extra animation required.
+FIT_TOPS.push(
+ ['night_runner','나이트 러너 집업',{shirt:'#102c38',sleeve:'#102c38',collar:'#9af6ec',longSleeve:true,pat:{k:'bolt',a:'#9af6ec'}}],
+ ['sunset_court','선셋 코트 폴로',{shirt:'#ff735f',sleeve:'#ff735f',collar:'#fff3df',pat:{k:'band',a:'#ffc55b'}}],
+ ['checkmate','체크메이트 링거 티',{shirt:'#f4f0e8',sleeve:'#18222e',collar:'#18222e',pat:{k:'hoops',a:'#18222e'}}],
+ ['orchid_shell','오키드 윈드브레이커',{shirt:'#6e4aa6',sleeve:'#6e4aa6',collar:'#d9fbf5',hoodie:true,longSleeve:true,pat:{k:'grad',a:'#9a78ca',b:'#334f7d'}}]
+);
 FIT_BOTS.push(
  ['studio_club','포레스트 플리츠',{pants:'#244f42',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#244f42',skirtTrim:'#f2eddb',socks:true}],
  ['studio_cloud','라벤더 조거 팬츠',{pants:'#a899c8',shorts:false,pstripe:'#eeeaf5',legx:'studio_cloud'}],
@@ -1050,6 +1057,12 @@ FIT_BOTS.push(
  ['studio_rose','로즈 리본 플리츠',{pants:'#c7899c',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#c7899c',skirtTrim:'#f6eee6',socks:true}],
  ['studio_midnight','미드나잇 슬랙스',{pants:'#303959',shorts:false,pstripe:'#d6bb75',legx:'studio_midnight'}],
  ['studio_varsity','크림 캠퍼스 쇼츠',{pants:'#eee1c5',shorts:true,shortsLen:.8,pstripe:'#743c4b',socks:true}]
+);
+FIT_BOTS.push(
+ ['night_runner','리플렉트 조거',{pants:'#132b35',shorts:false,pstripe:'#9af6ec'}],
+ ['sunset_court','선셋 라인 쇼츠',{pants:'#ffb458',shorts:true,shortsLen:.55,pstripe:'#fff3df'}],
+ ['checkmate','체크메이트 슬랙스',{pants:'#18222e',shorts:false,pstripe:'#f4f0e8'}],
+ ['orchid_shell','오키드 트랙 팬츠',{pants:'#403463',shorts:false,pstripe:'#d9fbf5'}]
 );
 FIT_ACC.push(
  ['studio_club','클럽 선바이저','head','',{hat:'studio_club',hatC:'#f2eddb'}],
@@ -1077,6 +1090,10 @@ const FIT_COLLECTIONS=[
  {id:'varsity',name:'버건디 바시티',label:'CAMPUS LEAGUE',desc:'버건디 재킷과 크림 쇼츠. 레터 패치로 완성한 캠퍼스 팀 스타일.',colors:['#743c4b','#eee1c5','#c8a86a']}
 ].map(c=>({...c,fit:{top:'studio_'+c.id,bot:'studio_'+c.id,head:'studio_'+c.id}}));
 FIT_COLLECTIONS.push(
+ {id:'night_runner',name:'나이트 러너',label:'NIGHT RUNNER',desc:'딥 틸 집업과 리플렉트 민트 라인. 야간 코트에서 또렷하게 보이는 스피드 룩.',colors:['#102c38','#9af6ec','#eafefd'],fit:{top:'night_runner',bot:'night_runner',head:'headset',arm:'wbk',aura:'zap'}},
+ {id:'sunset_court',name:'선셋 코트',label:'SUNSET COURT',desc:'코랄 폴로와 골든 쇼츠. 따뜻한 저녁빛을 담은 경쾌한 플레이 룩.',colors:['#ff735f','#ffc55b','#fff3df'],fit:{top:'sunset_court',bot:'sunset_court',head:'cap',arm:'wb',aura:'sparkle'}},
+ {id:'checkmate',name:'체크메이트',label:'CHECKMATE',desc:'아이보리와 잉크 블랙의 선명한 대비. 코트 위에서는 한 수 앞을 보는 클래식 룩.',colors:['#f4f0e8','#18222e','#c5d0d5'],fit:{top:'checkmate',bot:'checkmate',head:'beanie',arm:'watch',body:'medal'}},
+ {id:'orchid_shell',name:'오키드 스톰',label:'ORCHID STORM',desc:'오키드 퍼플과 아이스 민트의 차가운 대비. 흐린 날에도 분위기를 놓치지 않는 윈드 룩.',colors:['#6e4aa6','#d9fbf5','#334f7d'],fit:{top:'orchid_shell',bot:'orchid_shell',head:'capb',arm:'sleeve',aura:'snow'}},
  {id:'vet_solo',group:'veteran',name:'혼자서도 충분해',label:'SOLO LEGEND',desc:'Lv 30의 노련함으로 입는 토기 모자와 낡은 수련복. 장비는 가볍게, 랠리는 끝까지.',colors:['#c17e50','#eee2c7','#806950'],req:VET_REQ.solo,fit:{top:'vet_solo',bot:'vet_solo',head:'vet_solo',arm:'vet_wraps'}},
  {id:'vet_sauna',group:'veteran',name:'사우나에서 온 고수',label:'OLD SCHOOL',desc:'울트라 하드 이상을 정복한 선수의 파란 가운, 삿갓, 해진 망토.',colors:['#76b5d4','#cfa665','#816378'],req:VET_REQ.sauna,fit:{top:'vet_sauna',bot:'vet_sauna',head:'vet_sauna',arm:'vet_workgloves',body:'vet_ragcape'}},
  {id:'vet_giant',group:'veteran',name:'전설은 녹슬지 않아',label:'BRASS LEGEND',desc:'모든 보스를 쓰러뜨린 증표. 흠집 난 황동 갑옷과 초록 방패의 묵직한 존재감.',colors:['#b79556','#4a6655','#514636'],req:VET_REQ.giant,fit:{top:'vet_giant',bot:'vet_giant',head:'vet_giant',body:'vet_grassshield'}},
