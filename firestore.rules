@@ -23,7 +23,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if valid(10000);
     }
-    // 최고 랠리 by mode (new records): rally_ai_e · _h · _ex · _u · _uh · _uex (AI 대전 난이도별), rally_rank (랭크전), rally_inf (무한 드라이브), rally_boss (보스전),
+    // 최고 랠리 by mode (new records): rally_ai_e · _h · _ex · _u · _uh · _uex · _unm (AI 대전 난이도별), rally_rank (랭크전), rally_inf (무한 드라이브), rally_boss (보스전),
     // rally_doubles (복식), rally_trio (3인 대전). The old mixed /rally collection above stays readable.
     match /rally_ai_e/{id} {
       allow read: if true;
@@ -50,6 +50,10 @@ service cloud.firestore {
       allow create: if valid(10000);
     }
     match /rally_ai_unight/{id} {
+      allow read: if true;
+      allow create: if valid(10000);
+    }
+    match /rally_ai_unm/{id} {
       allow read: if true;
       allow create: if valid(10000);
     }
