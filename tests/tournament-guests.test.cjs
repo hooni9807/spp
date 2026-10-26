@@ -45,6 +45,8 @@ assert(html.includes('id="racket-skins"'));
 assert(html.includes('data-qt="tournament"'));
 assert(html.includes("['tourWin','대회 경기 승리']"));
 assert(html.includes("'charWin_'+charType"));
+assert(html.includes('📜 패치노트'));
+assert(html.includes('신규 모드 · 시대회 출전'));
 assert(html.includes('function tourSave()'));
 assert(html.includes('function tourRestore()'));
 assert(html.includes('prog.q._tournament'));
