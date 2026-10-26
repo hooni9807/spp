@@ -12,7 +12,7 @@
 | `rally` | v4.04 이전의 최고 랠리 기록 (모든 모드가 섞여 있음, 그대로 읽어요) |
 | `wins` | AI전 승리 점수 · `boss` 보스 클리어 (점수 = (내 점수 − 보스가 핸디 위로 딴 점수) × 100 + 랠리, 핸디: 세종 4 · 갓융자 9) · `players` PvP 레이팅 · `arank` 랭크전 |
 | `levels` | 레벨 랭킹 · `progress` 진행도(본인만) · `settings` 설정(본인만) |
-| `presence` | 접속 상태 · `rooms` 대기 방 · `inbox` 쪽지(받는 사람만) |
+| `presence` | 접속 상태 · `rooms` 대기 방 · `inbox` 쪽지(받는 사람만) · `mail_reads` 쪽지 읽음 확인(보낸 사람만) |
 
 ## 랭킹
 
