@@ -186,7 +186,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['name', 'cleared', 'wins', 'best', 'at'])
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.cleared is int && request.resource.data.cleared >= 0 && request.resource.data.cleared <= 4
+        && request.resource.data.cleared is int && request.resource.data.cleared >= 0 && request.resource.data.cleared <= 10
         && request.resource.data.wins is int && request.resource.data.wins >= 0 && request.resource.data.wins <= 100000
         && request.resource.data.best is int && request.resource.data.best >= 0 && request.resource.data.best <= 6
         && request.resource.data.at == request.time;
