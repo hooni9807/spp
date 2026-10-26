@@ -39,6 +39,7 @@ assert(html.includes("enhanceCombatLevel=()=>enhanceLevel()+(equippedSkin()?.bon
 assert(html.includes("championSkin=()=>!!equippedSkin()"));
 assert(html.includes('전용 디자인 · 강화 효과'));
 assert(html.includes('id="settings-fab"'));
+assert(!html.includes('id='+'"settings-open"'));
 assert(html.includes('id="racket-skins"'));
 assert(html.includes('data-qt="tournament"'));
 assert(html.includes("['tourWin','대회 경기 승리']"));

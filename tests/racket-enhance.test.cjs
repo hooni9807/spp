@@ -27,8 +27,10 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.match(await page.locator('#tour-status').textContent(),/리턴률 \+10% · 8강 속도 ×1\.5 · 4강 범위 −30% · 결승 필살기 가속/);
     await page.locator('#tour-close').click();
     await page.locator('#settings-fab').click();
-    assert.equal(await page.locator('#quick-settings').evaluate(d=>d.open),true);
-    await page.locator('#qs-skin').click();
+    assert.equal(await page.locator('#game-settings').evaluate(d=>d.open),true);
+    assert.equal(await page.locator('#settings-open').count(),0);
+    await page.locator('#settings-done').click();
+    await page.evaluate(()=>{renderSkins();$('racket-skins').showModal();});
     assert.equal(await page.locator('#racket-skins').evaluate(d=>d.open),true);
     assert.equal(await page.locator('#skin-list button').first().isDisabled(),true);
     const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {equipped:championSkin(),level:enhanceCombatLevel()};});
