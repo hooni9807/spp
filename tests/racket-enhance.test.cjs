@@ -20,6 +20,7 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(await page.locator('#skin-list button').isDisabled(),true);
     const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {equipped:championSkin(),level:enhanceCombatLevel()};});
     assert.deepEqual(skin,{equipped:true,level:3});
+    assert.equal(await page.evaluate(()=>{const impact={x:100,y:100,t:time,champion:championSkin()};return impact.champion;}),true);
     await page.evaluate(()=>{prog.q._racketSkin='';});
     await page.locator('#racket-skins').evaluate(d=>d.close());
     await page.locator('#enhance-home').click();
