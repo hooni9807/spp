@@ -37,6 +37,8 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.deepEqual(skin,{equipped:true,level:3});
     const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,set:trophySetBonus(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
     assert.deepEqual(regional,{level:9,cards:4,set:3,display:true,name:'전설 · 부산시대회 우승 트로피'});
+    const usage=await page.evaluate(()=>{store.set('character-usage','');recordCharacterUsage({id:'usage-1',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-2',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-3',charKey:'leesin',racketType:'defense',rubberType:'speed'});return charUsageRows().map(r=>[r.id,r.matches,r.racket,r.rubber]);});
+    assert.deepEqual(usage,[['jersey',2,'쉐이크핸드','09C'],['leesin',1,'수비수 라켓','롱']]);
     assert.equal(await page.evaluate(()=>{const impact={x:100,y:100,t:time,champion:championSkin()};return impact.champion;}),true);
     await page.evaluate(()=>{prog.q._trophies=[];prog.q._racketSkin='';});
     await page.locator('#racket-skins').evaluate(d=>d.close());
