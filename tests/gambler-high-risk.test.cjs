@@ -1,0 +1,11 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('index.html','utf8');
+assert.match(html,/function gambleChance\(st\).*gBase:\.35.*gStack:0/);
+assert.match(html,/Math\.min\(\.5,st\.gBase\+\.05\*st\.gStack\)/);
+assert.match(html,/P\.power\(shot,ball\.y,ball\.z,2\.3\)/);
+assert.match(html,/me\.gBase=\.3;me\.gStack=0/);
+assert.match(html,/PERFECT마다 대박 \+5% \(최대 3회 · 50%\)/);
+assert.match(html,/막판 뒤집기/);
+assert.match(html,/roll===6/);
+assert.match(html,/gambler:\['매우 어려움'/);
+console.log('gambler high-risk rules verified');
