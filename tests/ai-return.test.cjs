@@ -46,6 +46,8 @@ test('each AI tier uses its configured ordinary-shot return rate', () => {
   }
   assert.equal(context.P.returnChance({type:'drive'}, null, .4), .4);
   assert.equal(context.P.returnChance({type:'drive'}, 'easy', 1), .40);
+  assert.ok(Math.abs(context.P.returnChance({type:'drive'}, 'ultra', .94, .1)-.80)<1e-9);
+  assert.equal(context.P.returnChance({type:'drive'}, 'uext', 1, .1), .99);
 });
 
 vm.runInNewContext(html.slice(html.indexOf('function landGuard(s,b)'), html.indexOf('function hit(tap)')), context);

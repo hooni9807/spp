@@ -20,6 +20,12 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.match(await page.locator('#tour-title').textContent(),/세종시대회/);
     assert.match(await page.locator('#tour-status').textContent(),/익스트림 · 상대 핸디 4점/);
     await page.locator('#tour-close').click();
+    await page.locator('#tournament-open').click();
+    page.once('dialog', dialog=>dialog.accept());
+    await page.locator('[data-tour="seoul"]').click();
+    assert.match(await page.locator('#tour-title').textContent(),/서울시대회/);
+    assert.match(await page.locator('#tour-status').textContent(),/리턴률 \+10% · 8강 속도 ×1\.5 · 4강 범위 −30% · 결승 필살기 가속/);
+    await page.locator('#tour-close').click();
     await page.locator('#settings-fab').click();
     assert.equal(await page.locator('#quick-settings').evaluate(d=>d.open),true);
     await page.locator('#qs-skin').click();
