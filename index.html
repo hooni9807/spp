@@ -3742,6 +3742,9 @@ html body .su-opts button small{color:#9fb0d6}
 html body .su-opts button[aria-pressed="true"]{border-color:var(--gold);background:#2a2210;color:var(--gold2)}
 html body .su-row button{border-radius:0;clip-path:var(--chamfer);background:var(--cyan);color:var(--cyan-ink);font-weight:900}
 html body .su-row button.ghost{clip-path:none;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);color:var(--ink)}
+/* 랭크전은 보라색 경쟁 모드로 구분한다. */
+html body #rank-mode{background:linear-gradient(100deg,#7c3aed,#b453d6)!important;color:#fff!important;border:1px solid #d8b4fe!important;box-shadow:0 7px 18px rgba(168,85,247,.28)!important}
+html body #rank-mode.active{background:linear-gradient(100deg,#a855f7,#e879f9)!important;color:#24052f!important;box-shadow:0 0 0 2px rgba(232,121,249,.25),0 8px 22px rgba(168,85,247,.5)!important}
 /* 세로형 토너먼트 트리: 결승이 위, 64강이 아래인 대진표 */
 html body #tournament{width:min(1120px,98vw)}
 html body .tour-bracket{display:flex!important;flex-direction:column;gap:0;overflow:auto;max-height:62dvh;padding:14px 14px 28px!important;background:#071124;border:1px solid var(--line2);border-radius:12px}
