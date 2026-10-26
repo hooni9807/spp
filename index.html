@@ -605,7 +605,8 @@ let unlockQ=[],unlockBusy=false,unlockChecking=false;
 function unlockList(){const L=[];for(const t of allTitles())if(t[3]())L.push(['title:'+t[0],'업적 달성!',t[1],t[2]+' · 칭호창에서 장착할 수 있어요']);
 const lv=progLevel();for(let n=2;n<=4;n++)if(lv>=ultTierLv(n))L.push(['ult:'+n,'새 필살기 해금!',`${n}티어 줄`,ULTS.filter(u=>u.tier===n).map(u=>u.name).join(' · ')]);
 for(const [n,l] of [[2,10],[3,20]])if(lv>=l)L.push(['slot:'+n,'필살기 슬롯 추가!',`${n}번째 슬롯`,'필살기를 하나 더 장착할 수 있어요']);
-for(const [kind,arr,ri,nm] of [['top',FIT_TOPS,3,1],['bot',FIT_BOTS,3,1],['acc',FIT_ACC,5,1]])for(const it of arr)if(it[ri]&&fitOk(it[ri]))L.push([`fit:${kind}:${it[0]}`,'새 코디 해금!',it[nm],fitReqText(it[ri])+' 달성 · 커스터마이징에서 입어 보세요']);
+const lockedSets=FIT_COLLECTIONS.filter(c=>c.req),setItems=new Set(lockedSets.flatMap(c=>Object.entries(c.fit).map(([k,id])=>`${k==='top'||k==='bot'?k:'acc'}:${id}`)));for(const c of lockedSets)if(fitOk(c.req))L.push([`fit:set:${c.id}`,'새 코디 해금!',c.name,fitReqText(c.req)+' 달성 · 커스터마이징에서 한 벌로 입어 보세요']);
+for(const [kind,arr,ri,nm] of [['top',FIT_TOPS,3,1],['bot',FIT_BOTS,3,1],['acc',FIT_ACC,5,1]])for(const it of arr)if(it[ri]&&fitOk(it[ri])&&!setItems.has(`${kind}:${it[0]}`))L.push([`fit:${kind}:${it[0]}`,'새 코디 해금!',it[nm],fitReqText(it[ri])+' 달성 · 커스터마이징에서 입어 보세요']);
 return L;}
 function checkUnlocks(){if(unlockChecking)return;unlockChecking=true;try{const S=tS(),first=S.unl==null,seen=new Set((S.unl||'').split(',').filter(Boolean)),L=unlockList(),fresh=L.filter(x=>!seen.has(x[0]));if(!fresh.length)return;const coins=first?0:fresh.reduce((n,x)=>n+(x[0].startsWith('title:')?achievementCoinReward(x[0].slice(6)):0),0);if(coins){prog.coins+=coins;for(const x of fresh)if(x[0].startsWith('title:')&&achievementCoinReward(x[0].slice(6)))x[3]+=` · ${COIN_NAME} +${achievementCoinReward(x[0].slice(6))}`;}S.unl=L.map(x=>x[0]).join(',');saveProg();if(!first){if(coins)toast(`🏅 어려운 업적 보상 · +${coins} ${COIN_NAME}`,2.6);unlockQ.push(...fresh);showUnlockNote();}}finally{unlockChecking=false;}}
 function showUnlockNote(){if(unlockBusy||!unlockQ.length)return;const el=$('unote');if(!el)return;unlockBusy=true;let x;
@@ -1045,22 +1046,22 @@ FIT_TOPS.push(
 );
 // Trend-led, brand-free garments drawn with the existing canvas renderer.
 FIT_TOPS.push(
- ['night_runner','레트로 트랙 재킷',{shirt:'#24395e',sleeve:'#e8e5db',collar:'#f4d06f',longSleeve:true,pat:{k:'trend_track',a:'#f4d06f',b:'#cf5b52'}}],
- ['sunset_court','럭비 클럽 저지',{shirt:'#f5f1e6',sleeve:'#f5f1e6',collar:'#182940',longSleeve:true,pat:{k:'trend_rugby',a:'#182940',b:'#a9454c'}}],
- ['checkmate','시티 트레일 베스트',{shirt:'#d9ddd7',sleeve:'#d9ddd7',collar:'#28323b',longSleeve:true,pat:{k:'trend_trail',a:'#28323b',b:'#d97745'}}],
- ['orchid_shell','오픈 니트 폴로',{shirt:'#c9d1be',sleeve:'#c9d1be',collar:'#24473f',pat:{k:'trend_polo',a:'#24473f',b:'#f3e6c6'}}]
+ ['night_runner','레트로 트랙 재킷',{shirt:'#24395e',sleeve:'#e8e5db',collar:'#f4d06f',longSleeve:true,pat:{k:'trend_track',a:'#f4d06f',b:'#cf5b52'}},{lv:5}],
+ ['sunset_court','럭비 클럽 저지',{shirt:'#f5f1e6',sleeve:'#f5f1e6',collar:'#182940',longSleeve:true,pat:{k:'trend_rugby',a:'#182940',b:'#a9454c'}},{lv:8}],
+ ['checkmate','시티 트레일 베스트',{shirt:'#d9ddd7',sleeve:'#d9ddd7',collar:'#28323b',longSleeve:true,pat:{k:'trend_trail',a:'#28323b',b:'#d97745'}},{lv:12}],
+ ['orchid_shell','오픈 니트 폴로',{shirt:'#c9d1be',sleeve:'#c9d1be',collar:'#24473f',pat:{k:'trend_polo',a:'#24473f',b:'#f3e6c6'}},{lv:15}]
 );
 FIT_TOPS.push(
- ['lux_tweed','에크루 브레이드 재킷',{shirt:'#eee7d8',sleeve:'#eee7d8',collar:'#20242d',longSleeve:true,pat:{k:'lux_tweed',a:'#20242d',b:'#c6a15b'}}],
- ['lux_trench','허니 벨티드 코트',{shirt:'#b99969',sleeve:'#b99969',collar:'#3c342b',longSleeve:true,pat:{k:'lux_trench',a:'#3c342b',b:'#e7d4aa'}}],
- ['lux_leather','에스프레소 레더 블루종',{shirt:'#4c3026',sleeve:'#4c3026',collar:'#d7b98c',longSleeve:true,pat:{k:'lux_leather',a:'#d7b98c',b:'#201512'}}],
- ['lux_weave','베르단트 위브 셔츠',{shirt:'#35584b',sleeve:'#35584b',collar:'#e7dcc7',longSleeve:true,pat:{k:'lux_weave',a:'#e7dcc7',b:'#1e332b'}}],
- ['lux_yacht','아이보리 요트 니트',{shirt:'#f3efe5',sleeve:'#f3efe5',collar:'#1b365d',longSleeve:true,pat:{k:'lux_yacht',a:'#1b365d',b:'#bc3e4b'}}],
- ['lux_opera','미드나잇 오페라 재킷',{shirt:'#1e232e',sleeve:'#1e232e',collar:'#f2e5c5',longSleeve:true,pat:{k:'lux_opera',a:'#f2e5c5',b:'#9d2f43'}}],
- ['lux_silk','사프란 실크 셔츠',{shirt:'#c67745',sleeve:'#c67745',collar:'#f6e3bb',pat:{k:'lux_silk',a:'#f6e3bb',b:'#6b384d'}}],
- ['lux_alpine','알파인 에크루 패딩',{shirt:'#e8e5dd',sleeve:'#e8e5dd',collar:'#8996a3',longSleeve:true,pat:{k:'lux_alpine',a:'#8996a3',b:'#c9a75f'}}],
- ['lux_tailor','슬레이트 더블 테일러드',{shirt:'#56616b',sleeve:'#56616b',collar:'#e8dfcf',longSleeve:true,pat:{k:'lux_tailor',a:'#e8dfcf',b:'#29343d'}}],
- ['lux_garden','로즈 가든 카디건',{shirt:'#d7a2a5',sleeve:'#d7a2a5',collar:'#fff5ec',longSleeve:true,pat:{k:'lux_garden',a:'#fff5ec',b:'#79465b'}}]
+ ['lux_tweed','에크루 브레이드 재킷',{shirt:'#eee7d8',sleeve:'#eee7d8',collar:'#20242d',longSleeve:true,pat:{k:'lux_tweed',a:'#20242d',b:'#c6a15b'}},{lv:18}],
+ ['lux_trench','허니 벨티드 코트',{shirt:'#b99969',sleeve:'#b99969',collar:'#3c342b',longSleeve:true,pat:{k:'lux_trench',a:'#3c342b',b:'#e7d4aa'}},{lv:20}],
+ ['lux_leather','에스프레소 레더 블루종',{shirt:'#4c3026',sleeve:'#4c3026',collar:'#d7b98c',longSleeve:true,pat:{k:'lux_leather',a:'#d7b98c',b:'#201512'}},{tier:'hard'}],
+ ['lux_weave','베르단트 위브 셔츠',{shirt:'#35584b',sleeve:'#35584b',collar:'#e7dcc7',longSleeve:true,pat:{k:'lux_weave',a:'#e7dcc7',b:'#1e332b'}},{lv:25}],
+ ['lux_yacht','아이보리 요트 니트',{shirt:'#f3efe5',sleeve:'#f3efe5',collar:'#1b365d',longSleeve:true,pat:{k:'lux_yacht',a:'#1b365d',b:'#bc3e4b'}},{tier:'ultra'}],
+ ['lux_opera','미드나잇 오페라 재킷',{shirt:'#1e232e',sleeve:'#1e232e',collar:'#f2e5c5',longSleeve:true,pat:{k:'lux_opera',a:'#f2e5c5',b:'#9d2f43'}},{lv:30}],
+ ['lux_silk','사프란 실크 셔츠',{shirt:'#c67745',sleeve:'#c67745',collar:'#f6e3bb',pat:{k:'lux_silk',a:'#f6e3bb',b:'#6b384d'}},{tier:'uhard'}],
+ ['lux_alpine','알파인 에크루 패딩',{shirt:'#e8e5dd',sleeve:'#e8e5dd',collar:'#8996a3',longSleeve:true,pat:{k:'lux_alpine',a:'#8996a3',b:'#c9a75f'}},{bosses:true}],
+ ['lux_tailor','슬레이트 더블 테일러드',{shirt:'#56616b',sleeve:'#56616b',collar:'#e8dfcf',longSleeve:true,pat:{k:'lux_tailor',a:'#e8dfcf',b:'#29343d'}},{online:10}],
+ ['lux_garden','로즈 가든 카디건',{shirt:'#d7a2a5',sleeve:'#d7a2a5',collar:'#fff5ec',longSleeve:true,pat:{k:'lux_garden',a:'#fff5ec',b:'#79465b'}},{tier:'uext'}]
 );
 FIT_BOTS.push(
  ['studio_club','포레스트 플리츠',{pants:'#244f42',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#244f42',skirtTrim:'#f2eddb',socks:true}],
@@ -1133,9 +1134,11 @@ FIT_COLLECTIONS.push(
  {id:'vet_giant',group:'veteran',name:'전설은 녹슬지 않아',label:'BRASS LEGEND',desc:'모든 보스를 쓰러뜨린 증표. 흠집 난 황동 갑옷과 초록 방패의 묵직한 존재감.',colors:['#b79556','#4a6655','#514636'],req:VET_REQ.giant,fit:{top:'vet_giant',bot:'vet_giant',head:'vet_giant',body:'vet_grassshield'}},
  {id:'vet_party',group:'veteran',name:'만렙의 종이 왕관',label:'PARTY VETERAN',desc:'온라인 10승으로 증명한 고수의 보라 왕관과 금테 망토.',colors:['#b291d8','#254e50','#d9ba71'],req:VET_REQ.party,fit:{top:'vet_party',bot:'vet_party',head:'vet_party',body:'vet_mastercape'}}
 );
+const TODAY_FIT_REQ={night_runner:{lv:5},sunset_court:{lv:8},checkmate:{lv:12},orchid_shell:{lv:15},lux_tweed:{lv:18},lux_trench:{lv:20},lux_leather:{tier:'hard'},lux_weave:{lv:25},lux_yacht:{tier:'ultra'},lux_opera:{lv:30},lux_silk:{tier:'uhard'},lux_alpine:{bosses:true},lux_tailor:{online:10},lux_garden:{tier:'uext'}};
+for(const [id,req] of Object.entries(TODAY_FIT_REQ)){const bot=FIT_BOTS.find(x=>x[0]===id),set=FIT_COLLECTIONS.find(x=>x.id===id);if(bot)bot[3]=req;if(set)set.req=req;}
 const FIT_LABELS={collection:'스튜디오 컬렉션',veteran:'고인물 아카이브',top:'상의',bot:'하의',head:'머리',arm:'손목',body:'목 · 몸',wing:'날개',aura:'이펙트',pet:'펫'};
 let fitBack=false;
-function fitApplyCollection(id){const c=FIT_COLLECTIONS.find(c=>c.id===id);if(!c)return;fitDraft=fitClean(c.fit);renderFit();fitPreview();}
+function fitApplyCollection(id){const c=FIT_COLLECTIONS.find(c=>c.id===id);if(!c||c.req&&!fitOk(c.req)){if(c?.req)$('fit-status').textContent='🔒 '+fitReqText(c.req)+' 달성 시 착용 가능 · 지금은 미리보기만 돼요';return;}fitDraft=fitClean(c.fit,true);renderFit();fitPreview();}
 // Draw the actual game model on its own canvas; fitting must never clear the live court.
 function fitDrawModel(v,f,back=false,detail='full'){
  const d=Math.min(devicePixelRatio||1,2),w=180,h=230,g=v.getContext('2d'),oldCtx=ctx,oldH=H;
@@ -1181,7 +1184,7 @@ function renderFit(){
   if(req){b.classList.add('vet');b.classList.toggle('lock',lock);const sm=document.createElement('small');sm.textContent=(lock?'🔒 ':'✓ ')+fitReqText(req);b.append(sm);}
   const preview=collection?item.fit:{...fitDraft,[fitTab]:id};
   fitDrawModel(v,preview,false,collection?'full':fitTab);
-  b.onclick=()=>{const scroll=box.scrollTop;if(collection)fitApplyCollection(id);else{if(id)fitDraft[fitTab]=id;else delete fitDraft[fitTab];renderFit();fitPreview();}box.scrollTop=scroll;box.querySelectorAll('button').forEach(n=>{if(n.dataset.fitId===id)n.focus({preventScroll:true});});if(lock)$('fit-status').textContent='🔒 '+fitReqText(req)+' 달성 시 착용 가능 · 지금은 미리보기만 돼요';};
+  b.onclick=()=>{const scroll=box.scrollTop;if(lock){$('fit-status').textContent='🔒 '+fitReqText(req)+' 달성 시 착용 가능 · 지금은 미리보기만 돼요';return;}if(collection)fitApplyCollection(id);else{if(id)fitDraft[fitTab]=id;else delete fitDraft[fitTab];renderFit();fitPreview();}box.scrollTop=scroll;box.querySelectorAll('button').forEach(n=>{if(n.dataset.fitId===id)n.focus({preventScroll:true});});};
   box.append(b);
  }
  if(!box.querySelector('[aria-checked="true"]'))box.querySelector('button')?.setAttribute('tabindex','0');
