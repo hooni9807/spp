@@ -3560,11 +3560,11 @@ html body .start-card #enhance-home,html body #enhance-bar #enhance-home{positio
 html body #enhance-bar #enhance-home::before{content:"";position:absolute;left:14px;top:50%;width:20px;height:20px;margin-top:-10px;background:var(--gold);-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
 html body .start-card #tournament-open{background:linear-gradient(100deg,#ffd76a,#f0a92a)!important;color:#2a1700!important;border:0!important;box-shadow:0 8px 22px rgba(255,201,74,.25)!important;clip-path:var(--chamfer);border-radius:0!important}
 /* 메인 행동: 플레이 시작 */
-html body .start-card #start{background:var(--cyan);color:var(--cyan-ink);border:0;border-radius:0;clip-path:var(--chamfer);min-height:56px;font-size:19px;font-weight:900;letter-spacing:-.01em;box-shadow:0 10px 28px rgba(20,224,255,.28);text-align:left;padding:0 20px}
-html body .start-card #start span{float:right;font-family:var(--num);font-style:italic;font-weight:800}
-html body .start-card #start:hover{background:var(--cyan2)}
-html body .start-card #resume:not([hidden]){background:var(--cyan);color:var(--cyan-ink);border:0;clip-path:var(--chamfer);border-radius:0}
-html body .start-card #mode-open{background:transparent;border:1px solid var(--line2);color:var(--ink)}
+html body #start{background:var(--cyan);color:var(--cyan-ink);border:0;border-radius:0;clip-path:var(--chamfer);min-height:56px;font-size:19px;font-weight:900;letter-spacing:-.01em;box-shadow:0 10px 28px rgba(20,224,255,.28);text-align:left;padding:0 20px}
+html body #start span{float:right;font-family:var(--num);font-style:italic;font-weight:800}
+html body #start:hover{background:var(--cyan2)}
+html body #resume:not([hidden]){background:var(--cyan);color:var(--cyan-ink);border:0;clip-path:var(--chamfer);border-radius:0}
+html body #mode-open{background:transparent;border:1px solid var(--line2);color:var(--ink)}
 /* 선수 카드 (티어 프레임: 쉬움=브론즈 · 보통=실버 · 어려움=골드 · 매우 어려움=스페셜) */
 html #char-pick{gap:8px}
 html body .start-card #char-pick button{--t:#9aa7c7;--t2:#5b6789;position:relative;background:linear-gradient(170deg,color-mix(in srgb,var(--t) 22%,#101935) 0%,#0b1229 60%)!important;border:1px solid color-mix(in srgb,var(--t) 55%,transparent)!important;border-radius:12px;padding:10px 4px 8px!important;min-height:96px;font-size:13px;font-weight:800;color:#fff;overflow:hidden}
@@ -3625,7 +3625,7 @@ html body .overlay:not(.hidden)~.court-dock{display:none}
 html body #touch-special#touch-special{font-family:var(--num);font-weight:800;font-size:15px;letter-spacing:.03em;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);color:#9fb0d6;box-shadow:none}
 html body #touch-special#touch-special[data-ready]{background:var(--cyan);border-color:var(--cyan);color:var(--cyan-ink);box-shadow:0 6px 18px rgba(20,224,255,.3)}
 /* 모드 설정: 기호 대신 그린 셰브론 */
-html body .start-card #mode-open span{font-size:0;display:inline-block;width:16px;height:16px;background:var(--muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
+html body #mode-open span{font-size:0;display:inline-block;width:16px;height:16px;background:var(--muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
 /* 잠긴 선수 카드도 티어 색은 살짝 남김 */
 html body .start-card #char-pick button.locked{opacity:.6;filter:saturate(.45) brightness(.8)}
 
@@ -3659,13 +3659,53 @@ html body .intro-note{border-left:1px solid var(--line2)}
 html body .intro-note span{font-family:var(--num);letter-spacing:.14em;color:var(--muted)}
 
 /* 메인 행동은 항상 엄지 영역에: 로비 스크롤 안에서 바닥에 고정 */
-html body .start-card #start,html body .start-card #resume:not([hidden]){position:sticky;bottom:0;z-index:4;margin-bottom:0}
+html body #start,html body #resume:not([hidden]){position:sticky;bottom:0;z-index:4;margin-bottom:0}
 /* 키커 · 섹션 번호 라벨 제거 (제목이 스스로 말하게) */
 html body .eyebrow,html body .intro-note span,html body .start-card .pill{display:none}
 
-html body .start-card #start.locked{opacity:1;background:#1a2547;color:#8a9ac0;box-shadow:none}
+html body #start.locked{opacity:1;background:#1a2547;color:#8a9ac0;box-shadow:none}
 
 html body .control-card .segmented:not(.rank-tabs){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px}
 html body .control-card .segmented:not(.rank-tabs) button{width:auto;min-height:44px;padding:6px 8px;line-height:1.25;white-space:normal}
-</style><script>(()=>{const f=document.getElementById("settings-fab"),h=document.querySelector(".header-right");if(f&&h)h.prepend(f);})();</script></body></html>
+
+/* 로비 행동 도크: 스크롤 영역 밖 아래에 고정 */
+html body .overlay{flex-direction:column;gap:8px}
+html body .overlay .start-card{max-height:calc(100% - 82px)}
+html body .lobby-dock{width:100%;max-width:560px;display:flex;gap:8px;flex:none;box-sizing:border-box}
+html body .lobby-dock button{flex:1;margin:0!important;min-height:56px;font-family:var(--sans);font-weight:800;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink);cursor:pointer}
+html body .lobby-dock #start{position:static}
+html body .lobby-dock #mode-open{flex:0 0 auto;min-width:0;padding:0 12px;display:flex;align-items:center;gap:4px}html body .lobby-dock #start{min-width:0;flex:1 1 auto}
+html body .overlay.hidden~.lobby-dock{display:none}
+/* 카드 티어 프레임 더 또렷하게 */
+html body .start-card #char-pick button{border-width:2px!important}
+html body .start-card #char-pick button::after{height:5px}
+html body #char-pick .char-difficulty{color:color-mix(in srgb,var(--t) 70%,#fff)!important;font-size:12px!important}
+/* 스킬트리 색 역할: 트리 색 대신 시안 · 추천은 보조 버튼 */
+html body .rn-tree{--c:var(--cyan)!important;border-color:var(--line2);border-top-color:var(--cyan)}
+html body .rn-tree h4{color:#fff}
+html body #rn-rec{background:var(--bg2)!important;color:var(--ink)!important;border:1px solid var(--cyan)!important}
+/* 창 버튼 시스템 통일 */
+html body .sk-tabs button{border-radius:0;clip-path:var(--chamfer)}
+html body #result .rs-grid button{border-radius:0;clip-path:var(--chamfer)}
+html body #result .rs-grid [data-rs="char"]{grid-column:1/-1}
+/* 0-오프셋 광채 제거 */
+html body .lv-bar i{box-shadow:none}
+/* PC 로비는 더 넓게 */
+@media (min-width:1024px){html body .start-card,html body .lobby-dock{width:min(760px,100%)}}
+
+/* 경기 준비 창 */
+html body #setup{background:linear-gradient(180deg,#0e1733,#090f24);border:1px solid var(--line2);border-radius:16px}
+html body #setup::backdrop{background:rgba(2,5,14,.78)}
+html body .su-steps b{border-radius:0;clip-path:var(--chamfer);background:var(--bg2);color:#9fb0d6;font-family:var(--sans);font-weight:800}
+html body .su-steps b.on{background:var(--cyan);color:var(--cyan-ink)}
+html body .su-opts button{background:#0d1530;border:2px solid var(--line2);border-radius:12px}
+html body .su-opts button small{color:#9fb0d6}
+html body .su-opts button[aria-pressed="true"]{border-color:var(--gold);background:#2a2210;color:var(--gold2)}
+html body .su-row button{border-radius:0;clip-path:var(--chamfer);background:var(--cyan);color:var(--cyan-ink);font-weight:900}
+html body .su-row button.ghost{clip-path:none;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);color:var(--ink)}
+</style><script>(()=>{const ov=document.getElementById("overlay"),dock=document.createElement("div");dock.className="lobby-dock";for(const id of["resume","mode-open","start"]){const b=document.getElementById(id);if(b)dock.append(b);}if(ov)ov.append(dock);
+/* 남은 기호 · 이모지를 지워요 (아이콘은 그린 SVG만) */
+const RX=/[\p{Extended_Pictographic}←-⇿⌀-⏿Ⅰ-ⅿ☀-➿]️?\s?/gu;
+const clean=root=>{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("#start"))continue;const t=n.nodeValue.replace(RX,"");if(t!==n.nodeValue)n.nodeValue=t;}};
+for(const sel of[".arena-top",".arena-bottom",".touch-toolbar",".court-dock",".rank-tabs","#rank-title",".control-card .segmented","#runes",".tech-heading"]){for(const el of document.querySelectorAll(sel)){clean(el);new MutationObserver(()=>clean(el)).observe(el,{subtree:true,childList:true,characterData:true});}}})();</script><script>(()=>{const f=document.getElementById("settings-fab"),h=document.querySelector(".header-right");if(f&&h)h.prepend(f);})();</script></body></html>
 
