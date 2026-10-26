@@ -7,6 +7,9 @@ let n=0;const names=context.names(44,['김치성','아담 성'],()=>((n++*17)%10
 assert.equal(names.length,44);assert.equal(new Set(names).size,44);assert(!names.includes('김치성'));assert(!names.includes('아담 성'));
 assert.equal(context.names(0).length,0);
 assert(html.includes('id="tournament-open"'));
+assert(html.includes('🏆 시대회 출전'));
+assert(html.includes('id="tournament-select"'));
+assert(html.includes('data-tour="sejong"'));
 assert(html.includes('id="tour-bracket"'));
 assert(html.includes("TOUR_TIERS=['ultra','uhard','uext','uext','uext','uext']"));
 assert(html.includes('if(a.named!==b.named)return a.named?a:b'));
@@ -31,5 +34,5 @@ assert(html.includes('function tourRestore()'));
 assert(html.includes('prog.q._tournament'));
 const tourSource=html.match(/const TOUR_LABELS=[\s\S]*?let charType='jersey',aiChar=pickAi\(\);/)[0];
 const game={Math:Object.create(Math),Set,AI_CHARS:['a','b'],LOOKS:{jersey:{nick:'나'},a:{nick:'이름A'},b:{nick:'이름B'}},pickAi:()=> 'a',prog:{q:{}},saveProg:()=>{}};vm.createContext(game);vm.runInContext(`${source};${tourSource};this.snapshot=()=>({tournament,tourPlayer});this.restoreTournament=tourRestore;`,game);
-game.newTournament();let snapshot=game.snapshot();assert.equal(snapshot.tournament.slots.length,6);assert.equal(snapshot.tournament.slots[0].length,64);assert.equal(snapshot.tournament.slots[0].filter(x=>x.me).length,1);assert.equal(snapshot.tournament.slots[0].filter(x=>x.guest).length,61);assert.equal(game.prog.q._tournament.state,'ready');game.prog.q._tournament.state='playing';game.restoreTournament();assert.equal(game.snapshot().tournament.state,'ready');snapshot=game.snapshot();snapshot.tournament.state='playing';assert(game.finishTournament(true));snapshot=game.snapshot();assert.equal(snapshot.tournament.round,1);assert.equal(snapshot.tourPlayer().r,1);assert.equal(game.prog.q._tournament.round,1);
+game.newTournament('sejong');let snapshot=game.snapshot();assert.equal(snapshot.tournament.event,'sejong');assert.equal(snapshot.tournament.slots.length,6);assert.equal(snapshot.tournament.slots[0].length,64);assert.equal(snapshot.tournament.slots[0].filter(x=>x.me).length,1);assert.equal(snapshot.tournament.slots[0].filter(x=>x.guest).length,61);assert.equal(game.prog.q._tournament.state,'ready');game.prog.q._tournament.state='playing';game.restoreTournament();assert.equal(game.snapshot().tournament.state,'ready');snapshot=game.snapshot();snapshot.tournament.state='playing';assert(game.finishTournament(true));snapshot=game.snapshot();assert.equal(snapshot.tournament.round,1);assert.equal(snapshot.tourPlayer().r,1);assert.equal(game.prog.q._tournament.round,1);
 console.log('Tournament guest names are unique, varied and avoid named entrants');
