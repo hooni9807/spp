@@ -80,6 +80,22 @@ test('late two-touch returns stay low or miss the net', () => {
   }
 });
 
+test('deep GREAT two-touch returns use a safe table landing', () => {
+  for (const x of [-.5, .5]) for (const y of [-.5, -1.1]) {
+    const incoming = { x, y, z: .2 };
+    const shot = context.lowDualReturn(context.P.shot(900, -900, incoming.z, x, y, false, {}, 'drive'), incoming, .85);
+    assert.equal(shot.miss, undefined, `great return from x=${x}, y=${y}`);
+    const q = { ...incoming, ...shot, curveK: 0 }, landed = [];
+    let net = false;
+    for (let i = 0; i < 1500; i++) {
+      const before = q.y; context.P.step(q, 1 / 240);
+      if (before < 1.37 && q.y >= 1.37) net = q.z >= .16;
+      if (q.z <= 0 && q.vz < 0) { landed.push(q.x, q.y); break; }
+    }
+    assert.ok(net && landed[1] > 1.45 && landed[1] < 2.7 && Math.abs(landed[0]) < .74, `unsafe GREAT return from x=${x}, y=${y}`);
+  }
+});
+
 test('two-touch incoming balls land without a high arc', () => {
   let landed = 0;
   for (const z of [0, .2, .4]) for (const speed of [2.5, 3.5, 5, 7]) for (const type of ['drive', 'cut']) {
