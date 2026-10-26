@@ -3695,9 +3695,10 @@ html body #result .rs-xp b{background:linear-gradient(90deg,#f0a92a,var(--gold),
 html body .ms-win{border-color:rgba(255,201,74,.6);background:linear-gradient(#0f1836,#0a1128)}
 html body .ms-bar{background:linear-gradient(#ffd76a,#d08f1c);color:#2a1700}
 /* 설정 버튼: 헤더 안 오른쪽, 그린 톱니 아이콘 */
-html body #settings-fab{position:static;width:44px;height:44px;min-height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--bg2);color:transparent;font-size:0;box-shadow:none;display:inline-grid;place-items:center;margin-right:8px}
+/* 설정은 아이콘만 남기고, 원형 버튼 외곽선·배경을 없앤다. */
+html body #settings-fab{position:static;width:30px;height:44px;min-height:44px;border:0!important;border-radius:0;background:transparent;color:transparent;font-size:0;box-shadow:none;display:inline-grid;place-items:center;margin-right:8px}
 html body #settings-fab::before{content:"";width:20px;height:20px;background:var(--ink);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z'/%3E%3C/svg%3E") center/contain no-repeat}
-html body #settings-fab:hover{border-color:var(--cyan)}
+html body #settings-fab:hover{background:transparent}html body #settings-fab:hover::before{background:var(--cyan)}
 html body .header-right{display:flex;align-items:center}
 /* 로비가 열려 있을 땐 경기장 도크(필살기 모션 · 감정표현) 숨김 */
 html body .overlay:not(.hidden)~.court-dock{display:none}
@@ -3794,7 +3795,14 @@ html body .tour-bracket{display:flex!important;flex-direction:column;gap:0;overf
 html body .tour-round{min-width:4608px;width:max-content;position:relative;padding:0 0 28px!important}
 html body .tour-round>b{display:block;position:sticky;left:0;width:max-content;margin:0 0 6px;padding:3px 8px;background:#0b1530;color:var(--gold2);border:1px solid var(--line2);font-size:11px!important;z-index:3}
 html body .tour-slots{display:grid!important;grid-template-columns:repeat(64,72px);gap:0!important;align-items:start}
-html body .tour-entry{grid-column:span var(--span);position:relative;min-height:30px;margin:0 3px;padding:7px 5px!important;border:1px solid #7590bc!important;border-radius:0!important;background:#0d1831!important;color:#e5edff;font-size:10px!important;text-align:center;white-space:nowrap;overflow:visible}
+/* 아래 64강에서 위 결승으로 갈수록 카드 자체가 좁고 낮아져
+   전체 트리가 위로 모이는 피라미드 실루엣을 만든다. */
+html body .tour-entry{grid-column:span var(--span);position:relative;width:68px;min-height:32px;margin:0 auto;padding:7px 5px!important;border:1px solid #7590bc!important;border-radius:0!important;background:#0d1831!important;color:#e5edff;font-size:10px!important;text-align:center;white-space:nowrap;overflow:visible}
+html body .tour-r1 .tour-entry{width:62px;min-height:30px;padding:6px 4px!important;font-size:9.7px!important}
+html body .tour-r2 .tour-entry{width:56px;min-height:29px;padding:6px 4px!important;font-size:9.4px!important}
+html body .tour-r3 .tour-entry{width:50px;min-height:28px;padding:5px 3px!important;font-size:9px!important}
+html body .tour-r4 .tour-entry{width:44px;min-height:26px;padding:5px 3px!important;font-size:8.7px!important}
+html body .tour-r5 .tour-entry{width:38px;min-height:24px;padding:4px 2px!important;font-size:8.3px!important}
 html body .tour-entry.me{border:2px solid var(--gold)!important;background:#33270f!important;color:#fff4bf;font-weight:900;box-shadow:0 0 0 2px #ffd16622}
 html body .tour-entry.guest{color:#aab9d4}
 html body .tour-round:not(:last-child) .tour-entry::after{content:"";position:absolute;left:50%;top:100%;height:15px;border-left:1px solid #7590bc}
