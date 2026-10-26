@@ -10,7 +10,7 @@ async function rankLevel(xp, remoteRows) {
   function element() { return { textContent: '', children: [], append(...items) { this.children.push(...items); } }; }
   const nodes = { 'rank-src': element(), 'rank-list': element() };
   const context = {
-    prog: { xp, unlocked: ['jersey'] }, myName: () => '나', mainChar: () => 'jersey',
+    prog: { xp, unlocked: ['jersey'] }, myName: () => '나', mainChar: () => 'jersey', characterCount: () => 1,
     LOOKS: { jersey: { nick: '휴고범' } }, nameTtl: (node, row) => { node.textContent = row.name; },
     document: { createElement: element }, $: id => nodes[id],
     remote: async () => remoteRows ? {} : null,
