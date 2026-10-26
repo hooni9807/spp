@@ -3288,15 +3288,15 @@ const ROOM_FRESH=60000;let roomBeat=null;
 async function roomOpen(code,peer){roomClose();const beat=async()=>{if(lobbyPeer!==peer||net){roomClose();return;}try{const db=await pvpRemote();if(db)await rankFs.setDoc(rankFs.doc(db,'rooms',rankUid),{code,name:cleanName(store.get('nick')||'선수')||'선수',rating:pvpLocal().rating,at:rankFs.serverTimestamp()});}catch{}};roomBeat=setInterval(beat,20000);beat();}
 function roomClose(){if(!roomBeat)return;clearInterval(roomBeat);roomBeat=null;pvpRemote().then(db=>db&&rankFs.deleteDoc(rankFs.doc(db,'rooms',rankUid))).catch(()=>{});}
 
-// ===== 친구창: who is online (presence/{uid}, heartbeat 45 s, fresh for 100 s). Challenges and chat go straight between
+// ===== 친구창: who is online (presence/{uid}, heartbeat 30 s, fresh for 2 min). Challenges and chat go straight between
 // the two browsers over PeerJS (each signed-in player listens as spinlab-u-<uid>); chat isn't stored anywhere.
 // ponytail: online players only, no friend list / chat history; add a friends collection if people want to keep contacts.
-const PRES_FRESH=100000;let privateRoom=false,userPeer=null,presBeat=null,chatWith=null,inviteTo=null;const fconns={},chats={},unread=new Set();
+const PRES_FRESH=120000;let privateRoom=false,userPeer=null,presBeat=null,presStateBeat=null,presSent='',chatWith=null,inviteTo=null;const fconns={},chats={},unread=new Set();
 
 const presStatus=()=>net?'1대1 플레이중':!playing?'접속':mode==='boss'?'보스전 플레이중':mode==='practice'||clickPrac()?'연습중':'AI전 플레이중';
-async function presenceStart(){if(presBeat)return;let sent='';const beat=async()=>{try{const db=await pvpRemote();if(!db)return;userPeerStart();sent=presStatus();await rankFs.setDoc(rankFs.doc(db,'presence',rankUid),{name:myName(),...myTtl(),status:sent,at:rankFs.serverTimestamp()});}catch{}};
-presBeat=setInterval(beat,45000);setInterval(()=>{if(presStatus()!==sent)beat();},3000);beat();}   // a new status goes out within 3 s
-addEventListener('pagehide',()=>{if(presBeat&&rankUid)pvpRemote().then(db=>db&&rankFs.setDoc(rankFs.doc(db,'presence',rankUid),{name:myName(),...myTtl(),status:'미접속',at:rankFs.serverTimestamp()})).catch(()=>{});});   // kept as 'last seen'
+async function presencePulse(){try{const db=await pvpRemote();if(!db)return;userPeerStart();presSent=presStatus();await rankFs.setDoc(rankFs.doc(db,'presence',rankUid),{name:myName(),...myTtl(),status:presSent,at:rankFs.serverTimestamp()});}catch{}}
+function presenceStart(){if(presBeat)return;presBeat=setInterval(presencePulse,30000);presStateBeat=setInterval(()=>{if(presStatus()!==presSent)presencePulse();},3000);presencePulse();}   // a new status goes out within 3 s
+addEventListener('visibilitychange',()=>{if(!document.hidden)presencePulse();});addEventListener('focus',presencePulse);addEventListener('pageshow',presencePulse);   // browser timer throttling must not leave an active player stale
 async function userPeerStart(){if(userPeer&&!userPeer.destroyed||!rankUid)return;try{await loadPeer();}catch{return;}if(userPeer&&!userPeer.destroyed)return;const pr=new Peer('spinlab-u-'+rankUid);userPeer=pr;
 pr.on('connection',c=>c.on('data',m=>{if(m&&typeof m.from==='string'){fconns[m.from]=c;onFriendMsg(m);}}));pr.on('disconnected',()=>setTimeout(()=>revive(pr),1500));pr.on('error',e=>{if(e.type==='unavailable-id'){pr.destroy();if(userPeer===pr)userPeer=null;setTimeout(userPeerStart,4000);}});   /* the old id is still held for a moment after a reload: try again soon */}
 function fconn(uid){const old=fconns[uid];if(old&&old.open)return Promise.resolve(old);return new Promise((ok,fail)=>{if(!userPeer||userPeer.disconnected)return fail();const c=userPeer.connect('spinlab-u-'+uid,{reliable:true});fconns[uid]=c;c.on('open',()=>ok(c));c.on('data',m=>m&&onFriendMsg({...m,from:uid}));c.on('error',fail);userPeer.once('error',fail);setTimeout(fail,8000);});}
