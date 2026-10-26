@@ -6,9 +6,9 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const chapters = [...dialog.querySelectorAll('[data-chapter]')];
   const scenes = [
-    ['travel', '4개 마을을 지나, 대회 코트로.', '선택한 내 캐릭터가 스핀항에서 출발해 드라이브시와 커트골을 지나 챔피언 광장으로 향합니다.'],
-    ['route', '마을 대표 로고를 따라 이동.', '각 마을의 상징을 지나며 대회 출전 루트를 완성합니다.'],
-    ['ready', '다음 랠리의 주인공은 당신.', '챔피언 광장에 도착하면, 선택한 캐릭터로 대회를 시작할 준비가 끝납니다.']
+    ['serve', '탁구의 순간을, 내 손끝으로.', '민희쌤 vs 올인 도박사. SPP의 코트에서 첫 번째 랠리가 시작됩니다.'],
+    ['spin', '동료가 이어 주고, 내가 끝낸다.', '동료가 먼저 공을 이어 치고 마지막 타격으로 마무리하는 SPP의 필살기 연출.'],
+    ['ready', '다음 랠리의 주인공은 당신.', '캐릭터를 고르고, 나만의 코디로 코트에 서 보세요.']
   ];
   const starts = [0, 5200, 11000];
   let elapsed = 0, last = 0, frame = 0, paused = false, scene = -1, previewReady = false;
@@ -23,7 +23,11 @@
     previewReady = !!ready;
     return previewReady;
   }
-  Promise.resolve().then(() => { if (dialog.open) drawRally(elapsed); });
+  Promise.allSettled(['minhee','gambler'].map(key => FACES[key].decode())).then(() => {
+    if (dialog.open && !drawRally(elapsed)) {
+      document.getElementById('prologue-loading').textContent = '미리보기를 불러오지 못했어요. 아래에서 게임을 시작할 수 있어요.';
+    }
+  });
 
   function showScene(index) {
     if (scene === index) return;
