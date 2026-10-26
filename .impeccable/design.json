@@ -1,0 +1,383 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T00:00:00Z",
+  "title": "Design System: SPP — Snap Ping Pong",
+  "extensions": {
+    "colorMeta": {
+      "electric-cyan": {
+        "role": "primary",
+        "displayName": "Electric Cyan",
+        "canonical": "var(--cyan)",
+        "tonalRamp": [
+          "oklch(15% 0.04 210)",
+          "oklch(25% 0.07 210)",
+          "oklch(35% 0.1 210)",
+          "oklch(45% 0.12 210)",
+          "oklch(55% 0.13 210)",
+          "oklch(65% 0.12 210)",
+          "oklch(80% 0.08 210)",
+          "oklch(95% 0.03 210)"
+        ]
+      },
+      "cyan-glow": {
+        "role": "primary",
+        "displayName": "Cyan Glow",
+        "canonical": "var(--cyan2)",
+        "tonalRamp": [
+          "oklch(15% 0.04 205)",
+          "oklch(25% 0.07 205)",
+          "oklch(35% 0.1 205)",
+          "oklch(45% 0.12 205)",
+          "oklch(55% 0.13 205)",
+          "oklch(65% 0.12 205)",
+          "oklch(80% 0.08 205)",
+          "oklch(95% 0.03 205)"
+        ]
+      },
+      "trophy-gold": {
+        "role": "secondary",
+        "displayName": "Trophy Gold",
+        "canonical": "var(--gold)",
+        "tonalRamp": [
+          "oklch(15% 0.04 85)",
+          "oklch(25% 0.07 85)",
+          "oklch(35% 0.1 85)",
+          "oklch(45% 0.12 85)",
+          "oklch(55% 0.13 85)",
+          "oklch(65% 0.12 85)",
+          "oklch(80% 0.08 85)",
+          "oklch(95% 0.03 85)"
+        ]
+      },
+      "gold-light": {
+        "role": "secondary",
+        "displayName": "Gold Light",
+        "canonical": "var(--gold2)",
+        "tonalRamp": [
+          "oklch(15% 0.04 88)",
+          "oklch(25% 0.07 88)",
+          "oklch(35% 0.1 88)",
+          "oklch(45% 0.12 88)",
+          "oklch(55% 0.13 88)",
+          "oklch(65% 0.12 88)",
+          "oklch(80% 0.08 88)",
+          "oklch(95% 0.03 88)"
+        ]
+      },
+      "opponent-red": {
+        "role": "tertiary",
+        "displayName": "Opponent Red",
+        "canonical": "var(--red)",
+        "tonalRamp": [
+          "oklch(15% 0.04 15)",
+          "oklch(25% 0.07 15)",
+          "oklch(35% 0.1 15)",
+          "oklch(45% 0.12 15)",
+          "oklch(55% 0.13 15)",
+          "oklch(65% 0.12 15)",
+          "oklch(80% 0.08 15)",
+          "oklch(95% 0.03 15)"
+        ]
+      },
+      "stadium-void": {
+        "role": "neutral",
+        "displayName": "Stadium Void",
+        "canonical": "var(--bg0)",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(25% 0.07 265)",
+          "oklch(35% 0.1 265)",
+          "oklch(45% 0.12 265)",
+          "oklch(55% 0.13 265)",
+          "oklch(65% 0.12 265)",
+          "oklch(80% 0.08 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      },
+      "stadium-navy": {
+        "role": "neutral",
+        "displayName": "Stadium Navy",
+        "canonical": "var(--bg1)",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(25% 0.07 265)",
+          "oklch(35% 0.1 265)",
+          "oklch(45% 0.12 265)",
+          "oklch(55% 0.13 265)",
+          "oklch(65% 0.12 265)",
+          "oklch(80% 0.08 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      },
+      "panel-raised": {
+        "role": "neutral",
+        "displayName": "Panel Raised",
+        "canonical": "var(--bg2)",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(25% 0.07 265)",
+          "oklch(35% 0.1 265)",
+          "oklch(45% 0.12 265)",
+          "oklch(55% 0.13 265)",
+          "oklch(65% 0.12 265)",
+          "oklch(80% 0.08 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      },
+      "panel-lifted": {
+        "role": "neutral",
+        "displayName": "Panel Lifted",
+        "canonical": "var(--bg3)",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(25% 0.07 265)",
+          "oklch(35% 0.1 265)",
+          "oklch(45% 0.12 265)",
+          "oklch(55% 0.13 265)",
+          "oklch(65% 0.12 265)",
+          "oklch(80% 0.08 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Lobby card title, result title."
+      },
+      "score": {
+        "displayName": "Score",
+        "purpose": "Scorebug points, result score, level label."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Korean section and dialog headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Korean body copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "XP readouts, tier names, mode label, gauge chip."
+      }
+    },
+    "shadows": [
+      {
+        "name": "arena",
+        "value": "0 18px 50px rgba(0,0,0,.45)",
+        "purpose": "Court frame."
+      },
+      {
+        "name": "lobby-card",
+        "value": "0 24px 60px rgba(0,0,0,.55)",
+        "purpose": "Start overlay card."
+      },
+      {
+        "name": "dialog",
+        "value": "0 30px 80px rgba(0,0,0,.6)",
+        "purpose": "All modals."
+      },
+      {
+        "name": "cyan-lift",
+        "value": "0 10px 28px rgba(20,224,255,.28)",
+        "purpose": "Primary bar only."
+      },
+      {
+        "name": "gold-lit",
+        "value": "0 0 0 3px rgba(255,201,74,.18), 0 10px 24px rgba(255,201,74,.18)",
+        "purpose": "Selected player card."
+      }
+    ],
+    "motion": [
+      {
+        "name": "press",
+        "value": "translateY(1px)",
+        "purpose": "Active state on lobby buttons."
+      }
+    ],
+    "shape": {
+      "chamfer": "polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"
+    },
+    "focus": {
+      "outline": "2px solid var(--cyan)",
+      "offset": "3px"
+    },
+    "selection": {
+      "background": "var(--cyan)",
+      "color": "var(--cyan-ink)"
+    },
+    "scrollbar": {
+      "width": "8px",
+      "thumb": "#2a3a6a",
+      "radius": "8px",
+      "track": "transparent"
+    },
+    "tiers": {
+      "쉬움": [
+        "#d08a4e",
+        "#7a4a22"
+      ],
+      "보통": [
+        "#c9d3e6",
+        "#6e7b96"
+      ],
+      "어려움": [
+        "#ffc94a",
+        "#a8781a"
+      ],
+      "매우 어려움": [
+        "#ff5c8a",
+        "#7b2bd6"
+      ],
+      "default": [
+        "#9aa7c7",
+        "#5b6789"
+      ]
+    },
+    "fonts": {
+      "Barlow Condensed": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&display=swap",
+      "Pretendard Variable": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    },
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "375-430px portrait (primary)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one cyan chamfered commitment bar per view.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">경기 시작 <span>VS AI</span></button>",
+      "css": ".ds-btn{font-family:var(--sans);font-weight:800;min-height:48px;padding:0 20px;cursor:pointer;transition:background .15s}.ds-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.ds-btn:active{transform:translateY(1px)}.ds-btn-primary{background:var(--cyan);color:var(--cyan-ink);border:0;border-radius:0;clip-path:var(--chamfer);min-height:56px;font-size:19px;font-weight:900;text-align:left;box-shadow:0 10px 28px rgba(20,224,255,.28);width:100%}.ds-btn-primary span{float:right;font-family:var(--num);font-style:italic}.ds-btn-primary:hover{background:var(--cyan2)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral raised action.",
+      "html": "<button class=\"ds-btn ds-btn-sec\">모드 설정</button>",
+      "css": ".ds-btn{font-family:var(--sans);font-weight:800;min-height:48px;padding:0 20px;cursor:pointer;transition:background .15s}.ds-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.ds-btn:active{transform:translateY(1px)}.ds-btn-sec{background:var(--bg2);color:var(--ink);border:1px solid var(--line2);border-radius:10px}.ds-btn-sec:hover{background:var(--bg3);border-color:rgba(20,224,255,.45)}"
+    },
+    {
+      "name": "Reward Button",
+      "kind": "button",
+      "refersTo": "button-reward",
+      "description": "Gold chamfered action for rewards and recommendations.",
+      "html": "<button class=\"ds-btn ds-btn-reward\">대회 참가</button>",
+      "css": ".ds-btn{font-family:var(--sans);font-weight:800;min-height:48px;padding:0 20px;cursor:pointer;transition:background .15s}.ds-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.ds-btn:active{transform:translateY(1px)}.ds-btn-reward{background:linear-gradient(100deg,#ffd76a,#f0a92a);color:#2a1700;border:0;border-radius:0;clip-path:var(--chamfer);box-shadow:0 8px 22px rgba(255,201,74,.25)}"
+    },
+    {
+      "name": "Lobby Tile",
+      "kind": "custom",
+      "refersTo": "lobby-tile",
+      "description": "Menu tile with drawn line icon and cyan count badge.",
+      "html": "<button class=\"ds-tile\">퀘스트 <b>3</b></button>",
+      "css": ".ds-tile{position:relative;display:flex;align-items:center;min-height:48px;padding:0 12px 0 40px;font:800 14px var(--sans);color:var(--ink);background:linear-gradient(180deg,#141f40,#0f1733);border:1px solid var(--line2);border-radius:10px;cursor:pointer}.ds-tile::before{content:'';position:absolute;left:12px;top:50%;width:20px;height:20px;margin-top:-10px;background:var(--cyan);-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Crect x='5' y='3' width='14' height='18' rx='2'/%3E%3Cpath d='M9 8h6M9 12h6M9 16h4'/%3E%3C/svg%3E\") center/contain no-repeat}.ds-tile b{margin-left:auto;font:800 12px var(--num);color:var(--cyan-ink);background:var(--cyan);border-radius:999px;padding:1px 7px}.ds-tile:hover{background:var(--bg3);border-color:rgba(20,224,255,.45)}.ds-tile:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}"
+    },
+    {
+      "name": "Player Card",
+      "kind": "card",
+      "refersTo": "player-card",
+      "description": "Character pick framed by difficulty tier; selected = gold-lit.",
+      "html": "<div class=\"ds-cards\"><button class=\"ds-card\" data-tier=\"쉬움\"><i></i>민수<small>쉬움</small></button><button class=\"ds-card\" data-tier=\"어려움\" aria-checked=\"true\"><i></i>세훈<small>어려움</small></button><button class=\"ds-card\" data-tier=\"매우 어려움\"><i></i>보스<small>매우 어려움</small></button></div>",
+      "css": ".ds-cards{display:flex;gap:8px}.ds-card{--t:#9aa7c7;--t2:#5b6789;position:relative;display:grid;justify-items:center;gap:4px;width:88px;min-height:96px;padding:10px 4px 8px;overflow:hidden;font:800 13px var(--sans);color:#fff;background:linear-gradient(170deg,color-mix(in srgb,var(--t) 22%,#101935),#0b1229 60%);border:1px solid color-mix(in srgb,var(--t) 55%,transparent);border-radius:12px;cursor:pointer}.ds-card::after{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--t2),var(--t),var(--t2))}.ds-card i{width:46px;height:46px;border-radius:50%;background:#1a2550;box-shadow:0 0 0 2px #0b1229,0 0 0 3px var(--t)}.ds-card small{font:700 11px var(--num);letter-spacing:.04em;color:var(--t)}.ds-card[data-tier='쉬움']{--t:#d08a4e;--t2:#7a4a22}.ds-card[data-tier='보통']{--t:#c9d3e6;--t2:#6e7b96}.ds-card[data-tier='어려움']{--t:#ffc94a;--t2:#a8781a}.ds-card[data-tier='매우 어려움']{--t:#ff5c8a;--t2:#7b2bd6}.ds-card[aria-checked='true']{background:linear-gradient(170deg,#3a2c0a,#1a1406 70%);border:2px solid var(--gold);box-shadow:0 0 0 3px rgba(255,201,74,.18),0 10px 24px rgba(255,201,74,.18);color:var(--gold2)}.ds-card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}"
+    },
+    {
+      "name": "Scorebug",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Broadcast score bar atop the arena.",
+      "html": "<div class=\"ds-bug\"><span>RANK</span><div><em>나</em><b>7</b><i>:</i><b>5</b><em>AI</em></div></div>",
+      "css": ".ds-bug{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:linear-gradient(180deg,#101a3a,#0a1128);border:1px solid var(--line2);border-radius:14px 14px 0 0}.ds-bug span{font:700 13px var(--num);letter-spacing:.06em;color:var(--cyan2)}.ds-bug div{display:flex;gap:8px;align-items:center}.ds-bug b{font:italic 800 30px var(--num);color:#fff}.ds-bug em{font:normal 700 11px var(--sans);color:#c9d4f2}.ds-bug i{color:#4d5f8f}"
+    },
+    {
+      "name": "Header",
+      "kind": "nav",
+      "refersTo": "header-pill",
+      "description": "Slim top bar: brand left, settings and sound right.",
+      "html": "<header class=\"ds-hd\"><b>SPP</b><button>사운드 켬</button></header>",
+      "css": ".ds-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:linear-gradient(#070d22ee,#070d2200)}.ds-hd b{font:italic 800 26px var(--num);color:#fff}.ds-hd button{min-height:44px;padding:0 16px;font:700 12px var(--sans);color:var(--ink);background:var(--bg2);border:1px solid var(--line2);border-radius:999px}.ds-hd button:hover{border-color:var(--cyan)}.ds-hd button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented",
+      "description": "Track with cyan-underlined active item.",
+      "html": "<div class=\"ds-seg\"><button class=\"on\">쉬움</button><button>보통</button><button>어려움</button></div>",
+      "css": ".ds-seg{display:inline-flex;gap:2px;padding:3px;background:#0a1128;border:1px solid var(--line);border-radius:10px}.ds-seg button{min-height:40px;padding:0 14px;font:700 13px var(--sans);color:#9fb0d6;background:none;border:0;border-radius:8px;cursor:pointer}.ds-seg button.on{background:var(--bg3);color:#fff;box-shadow:inset 0 -2px var(--cyan)}.ds-seg button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}"
+    },
+    {
+      "name": "Dialog",
+      "kind": "card",
+      "refersTo": "dialog",
+      "description": "Shared modal shell.",
+      "html": "<div class=\"ds-dlg\"><h3>퀘스트</h3><p>오늘의 퀘스트 3개</p></div>",
+      "css": ".ds-dlg{max-width:320px;padding:20px;color:var(--ink);background:linear-gradient(180deg,#0e1733,#090f24);border:1px solid var(--line2);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.6)}.ds-dlg h3{margin:0 0 6px;font:800 18px var(--sans);letter-spacing:-.02em;color:#fff}.ds-dlg p{margin:0;color:#a9b8dc}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Raised field with cyan focus.",
+      "html": "<input class=\"ds-in\" placeholder=\"방 코드\">",
+      "css": ".ds-in{min-height:44px;padding:0 12px;background:var(--bg2);color:var(--ink);border:1px solid var(--line2);border-radius:10px;font:400 14px var(--sans)}.ds-in::placeholder{color:#7d8fb8}.ds-in:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night-Match Broadcast",
+    "overview": "SPP dresses a club table-tennis game as a top-shelf mobile sports title under stadium lights. Everything sits on a deep navy ground lit from above by a soft blue floodlight wash; panels step up in two raised tones and are separated by cool hairlines, never by heavy borders. Numbers are the stars: scores, levels and results set in condensed italic sports numerals, the way a broadcast scorebug reads.\n\nColour is a strict signal system. Electric cyan means \"act\" or \"live\"; gold means \"earned\" (levels, XP, rewards, tiers, the selected card); red means \"opponent or danger\". The lobby reads as a game menu (tiles with drawn line icons, a gold-lit player card grid, one full-width cyan chamfered start bar in the thumb zone), not a form.",
+    "keyCharacteristics": [
+      "Night-stadium navy ground with a fixed radial floodlight gradient.",
+      "Two-step raised panels plus cool hairlines for depth.",
+      "One action colour (cyan), one reward colour (gold), one danger colour (red).",
+      "Condensed italic numerals (Barlow Condensed) for every number that matters; Pretendard for Korean.",
+      "A single 10px chamfer on the primary and reward actions.",
+      "Player cards framed bronze / silver / gold / special by difficulty."
+    ],
+    "rules": [
+      {
+        "name": "The Signal Rule",
+        "body": "Cyan = act/live, gold = earned, red = opponent/danger. A colour never borrows another's meaning; a decorative cyan or gold is a bug.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Bar Rule",
+        "body": "Each view has exactly one solid cyan chamfered bar: the primary action (경기 시작, 다시 하기, 이어하기).",
+        "section": "colors"
+      },
+      {
+        "name": "The Numerals Rule",
+        "body": "Any score, level, rating, XP or count is set in Barlow Condensed; Korean words never are.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glow Is A Signal Rule",
+        "body": "Only cyan actions and gold rewards may glow. Neutral surfaces use dark ambient shadows or none.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Cut Corner Rule",
+        "body": "The chamfer marks a commitment action (play, retry, reward). Never chamfer neutral buttons, panels or cards.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** use cyan only for actions and live state, gold only for earned things, red only for opponent/danger.",
+      "**Do** set every number in Barlow Condensed italic 800 at scoreboard sizes.",
+      "**Do** give each view one cyan chamfered primary bar in the thumb zone.",
+      "**Do** frame player cards by `data-tier` using the tier pairs; light the selected card gold.",
+      "**Do** draw icons as inline SVG line masks tinted with a signal colour."
+    ],
+    "donts": [
+      "**Don't** use emoji as icons or in 필살기 / skill-tree names.",
+      "**Don't** return to purple glow cards; neutral surfaces get dark ambient shadows only.",
+      "**Don't** chamfer neutral buttons, panels or cards.",
+      "**Don't** put white text on cyan or gold; use cyan ink / gold ink."
+    ]
+  }
+}
