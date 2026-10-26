@@ -33,8 +33,8 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(await page.locator('#skin-list button').first().isDisabled(),true);
     const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {equipped:championSkin(),level:enhanceCombatLevel()};});
     assert.deepEqual(skin,{equipped:true,level:3});
-    const regional=await page.evaluate(()=>{prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();return {level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,set:trophySetBonus()};});
-    assert.deepEqual(regional,{level:9,cards:4,set:3});
+    const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,set:trophySetBonus(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
+    assert.deepEqual(regional,{level:9,cards:4,set:3,display:true,name:'전설 · 부산시대회 우승 트로피'});
     assert.equal(await page.evaluate(()=>{const impact={x:100,y:100,t:time,champion:championSkin()};return impact.champion;}),true);
     await page.evaluate(()=>{prog.q._trophies=[];prog.q._racketSkin='';});
     await page.locator('#racket-skins').evaluate(d=>d.close());
