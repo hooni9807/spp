@@ -1564,7 +1564,7 @@ if(R.lens){ctx.beginPath();ctx.ellipse(0,y0+9,hw*.36,4.6,0,0,Math.PI*2);ctx.fill
 if(type==='jpen'){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.42,hw*.72,hw*.62,0,0,Math.PI*2);ctx.fillStyle='#c9a46b';ctx.fill();ctx.fillStyle='#a8834e70';for(const [px,py] of [[-2,-1],[1.5,1],[0,-2.5],[2.5,-2],[-1.5,2]]){ctx.fillRect(px,y0+R.hl*.42+py,.8,.8);}}
 if(type==='cpen'){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.55,hw*.55,hw*.45,0,0,Math.PI*2);ctx.fillStyle='#8f6a3f';ctx.fill();}
 if(skin)grip(R,type,face===BLACK,skin,y0);
-if(champion){const fy=-H*1.34+Math.sin(time*3)*1.4;ctx.save();ctx.translate(0,fy);ctx.shadowColor='#ffd166';ctx.shadowBlur=7;ctx.fillStyle='#f8c64e';ctx.beginPath();ctx.moveTo(-7,-5);ctx.lineTo(7,-5);ctx.lineTo(4,3);ctx.quadraticCurveTo(0,7,-4,3);ctx.closePath();ctx.fill();ctx.fillRect(-1.7,6,3.4,4);ctx.fillRect(-6,10,12,2);ctx.strokeStyle='#fff2a8';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#fff2a8';ctx.beginPath();ctx.arc(-2.6,-1.8,1.4,0,Math.PI*2);ctx.fill();ctx.restore();}
+if(champion){const fy=-H*1.78+Math.sin(time*3)*1.4;ctx.save();ctx.translate(0,fy);ctx.shadowColor='#ffd166';ctx.shadowBlur=7;ctx.fillStyle='#f8c64e';ctx.beginPath();ctx.moveTo(-7,-5);ctx.lineTo(7,-5);ctx.lineTo(4,3);ctx.quadraticCurveTo(0,7,-4,3);ctx.closePath();ctx.fill();ctx.fillRect(-1.7,6,3.4,4);ctx.fillRect(-6,10,12,2);ctx.strokeStyle='#fff2a8';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#fff2a8';ctx.beginPath();ctx.arc(-2.6,-1.8,1.4,0,Math.PI*2);ctx.fill();ctx.restore();}
 ctx.restore();
 }
 // The hand on the racket, in racket space (head toward -y, handle toward +y), per grip:
