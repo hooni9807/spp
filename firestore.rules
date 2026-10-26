@@ -48,6 +48,10 @@ service cloud.firestore {
       allow read: if true;
       allow create: if valid(10000);
     }
+    match /rally_ai_unight/{id} {
+      allow read: if true;
+      allow create: if valid(10000);
+    }
     match /rally_rank/{id} {
       allow read: if true;
       allow create: if valid(10000);
