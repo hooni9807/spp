@@ -1043,12 +1043,12 @@ FIT_TOPS.push(
  ['studio_midnight','별자리 테일러드 코트',{shirt:'#252e50',sleeve:'#252e50',collar:'#d6bb75',longSleeve:true,pat:{k:'studio_midnight',a:'#d6bb75',b:'#818bb9'}}],
  ['studio_varsity','캠퍼스 바시티 재킷',{shirt:'#743c4b',sleeve:'#eee1c5',collar:'#eee1c5',longSleeve:true,pat:{k:'studio_varsity',a:'#eee1c5',b:'#c8a86a'}}]
 );
-// Lightweight colour-and-pattern variants: no image assets or extra animation required.
+// Trend-led, brand-free garments drawn with the existing canvas renderer.
 FIT_TOPS.push(
- ['night_runner','나이트 러너 집업',{shirt:'#102c38',sleeve:'#102c38',collar:'#9af6ec',longSleeve:true,pat:{k:'bolt',a:'#9af6ec'}}],
- ['sunset_court','선셋 코트 폴로',{shirt:'#ff735f',sleeve:'#ff735f',collar:'#fff3df',pat:{k:'band',a:'#ffc55b'}}],
- ['checkmate','체크메이트 링거 티',{shirt:'#f4f0e8',sleeve:'#18222e',collar:'#18222e',pat:{k:'hoops',a:'#18222e'}}],
- ['orchid_shell','오키드 윈드브레이커',{shirt:'#6e4aa6',sleeve:'#6e4aa6',collar:'#d9fbf5',hoodie:true,longSleeve:true,pat:{k:'grad',a:'#9a78ca',b:'#334f7d'}}]
+ ['night_runner','레트로 트랙 재킷',{shirt:'#24395e',sleeve:'#e8e5db',collar:'#f4d06f',longSleeve:true,pat:{k:'trend_track',a:'#f4d06f',b:'#cf5b52'}}],
+ ['sunset_court','럭비 클럽 저지',{shirt:'#f5f1e6',sleeve:'#f5f1e6',collar:'#182940',longSleeve:true,pat:{k:'trend_rugby',a:'#182940',b:'#a9454c'}}],
+ ['checkmate','시티 트레일 베스트',{shirt:'#d9ddd7',sleeve:'#d9ddd7',collar:'#28323b',longSleeve:true,pat:{k:'trend_trail',a:'#28323b',b:'#d97745'}}],
+ ['orchid_shell','오픈 니트 폴로',{shirt:'#c9d1be',sleeve:'#c9d1be',collar:'#24473f',pat:{k:'trend_polo',a:'#24473f',b:'#f3e6c6'}}]
 );
 FIT_BOTS.push(
  ['studio_club','포레스트 플리츠',{pants:'#244f42',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#244f42',skirtTrim:'#f2eddb',socks:true}],
@@ -1059,10 +1059,10 @@ FIT_BOTS.push(
  ['studio_varsity','크림 캠퍼스 쇼츠',{pants:'#eee1c5',shorts:true,shortsLen:.8,pstripe:'#743c4b',socks:true}]
 );
 FIT_BOTS.push(
- ['night_runner','리플렉트 조거',{pants:'#132b35',shorts:false,pstripe:'#9af6ec'}],
- ['sunset_court','선셋 라인 쇼츠',{pants:'#ffb458',shorts:true,shortsLen:.55,pstripe:'#fff3df'}],
- ['checkmate','체크메이트 슬랙스',{pants:'#18222e',shorts:false,pstripe:'#f4f0e8'}],
- ['orchid_shell','오키드 트랙 팬츠',{pants:'#403463',shorts:false,pstripe:'#d9fbf5'}]
+ ['night_runner','레트로 파이핑 팬츠',{pants:'#24395e',shorts:false,pstripe:'#f4d06f',legx:'trend_track'}],
+ ['sunset_court','스트레이트 데님',{pants:'#455a70',shorts:false,legx:'trend_rugby'}],
+ ['checkmate','트레일 카고 팬츠',{pants:'#737966',shorts:false,legx:'trend_trail'}],
+ ['orchid_shell','크림 플리츠 스커트',{pants:'#f3e6c6',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#f3e6c6',skirtTrim:'#24473f',socks:true}]
 );
 FIT_ACC.push(
  ['studio_club','클럽 선바이저','head','',{hat:'studio_club',hatC:'#f2eddb'}],
@@ -1090,10 +1090,10 @@ const FIT_COLLECTIONS=[
  {id:'varsity',name:'버건디 바시티',label:'CAMPUS LEAGUE',desc:'버건디 재킷과 크림 쇼츠. 레터 패치로 완성한 캠퍼스 팀 스타일.',colors:['#743c4b','#eee1c5','#c8a86a']}
 ].map(c=>({...c,fit:{top:'studio_'+c.id,bot:'studio_'+c.id,head:'studio_'+c.id}}));
 FIT_COLLECTIONS.push(
- {id:'night_runner',name:'나이트 러너',label:'NIGHT RUNNER',desc:'딥 틸 집업과 리플렉트 민트 라인. 야간 코트에서 또렷하게 보이는 스피드 룩.',colors:['#102c38','#9af6ec','#eafefd'],fit:{top:'night_runner',bot:'night_runner',head:'headset',arm:'wbk',aura:'zap'}},
- {id:'sunset_court',name:'선셋 코트',label:'SUNSET COURT',desc:'코랄 폴로와 골든 쇼츠. 따뜻한 저녁빛을 담은 경쾌한 플레이 룩.',colors:['#ff735f','#ffc55b','#fff3df'],fit:{top:'sunset_court',bot:'sunset_court',head:'cap',arm:'wb',aura:'sparkle'}},
- {id:'checkmate',name:'체크메이트',label:'CHECKMATE',desc:'아이보리와 잉크 블랙의 선명한 대비. 코트 위에서는 한 수 앞을 보는 클래식 룩.',colors:['#f4f0e8','#18222e','#c5d0d5'],fit:{top:'checkmate',bot:'checkmate',head:'beanie',arm:'watch',body:'medal'}},
- {id:'orchid_shell',name:'오키드 스톰',label:'ORCHID STORM',desc:'오키드 퍼플과 아이스 민트의 차가운 대비. 흐린 날에도 분위기를 놓치지 않는 윈드 룩.',colors:['#6e4aa6','#d9fbf5','#334f7d'],fit:{top:'orchid_shell',bot:'orchid_shell',head:'capb',arm:'sleeve',aura:'snow'}},
+ {id:'night_runner',name:'레트로 워밍업',label:'RETRO WARM-UP',desc:'네이비 트랙 재킷에 크림 소매와 골드 파이핑. 경기 전부터 자연스럽게 멋있는 셋업.',colors:['#24395e','#f4d06f','#e8e5db'],fit:{top:'night_runner',bot:'night_runner',head:'capb',arm:'watch'}},
+ {id:'sunset_court',name:'럭비 클럽 07',label:'RUGBY CLUB',desc:'네이비 스트라이프 저지와 스트레이트 데님. 유니폼을 일상복처럼 입는 블록코어 룩.',colors:['#182940','#f5f1e6','#a9454c'],fit:{top:'sunset_court',bot:'sunset_court',head:'cap',arm:'wb'}},
+ {id:'checkmate',name:'시티 트레일',label:'CITY TRAIL',desc:'라이트 셸 위에 테크 베스트를 레이어드한 카고 룩. 코트 밖에서도 자연스러운 고프코어.',colors:['#28323b','#d9ddd7','#d97745'],fit:{top:'checkmate',bot:'checkmate',head:'beanie',arm:'watch'}},
+ {id:'orchid_shell',name:'오픈 니트 폴로',label:'KNIT POLO',desc:'세이지 니트 폴로와 크림 플리츠의 담백한 조합. 과하지 않게 갖춰 입은 프레피 스포츠 룩.',colors:['#24473f','#c9d1be','#f3e6c6'],fit:{top:'orchid_shell',bot:'orchid_shell',head:'hb',arm:'bracelet'}},
  {id:'vet_solo',group:'veteran',name:'혼자서도 충분해',label:'SOLO LEGEND',desc:'Lv 30의 노련함으로 입는 토기 모자와 낡은 수련복. 장비는 가볍게, 랠리는 끝까지.',colors:['#c17e50','#eee2c7','#806950'],req:VET_REQ.solo,fit:{top:'vet_solo',bot:'vet_solo',head:'vet_solo',arm:'vet_wraps'}},
  {id:'vet_sauna',group:'veteran',name:'사우나에서 온 고수',label:'OLD SCHOOL',desc:'울트라 하드 이상을 정복한 선수의 파란 가운, 삿갓, 해진 망토.',colors:['#76b5d4','#cfa665','#816378'],req:VET_REQ.sauna,fit:{top:'vet_sauna',bot:'vet_sauna',head:'vet_sauna',arm:'vet_workgloves',body:'vet_ragcape'}},
  {id:'vet_giant',group:'veteran',name:'전설은 녹슬지 않아',label:'BRASS LEGEND',desc:'모든 보스를 쓰러뜨린 증표. 흠집 난 황동 갑옷과 초록 방패의 묵직한 존재감.',colors:['#b79556','#4a6655','#514636'],req:VET_REQ.giant,fit:{top:'vet_giant',bot:'vet_giant',head:'vet_giant',body:'vet_grassshield'}},
@@ -1897,6 +1897,31 @@ function studioTorso(look,ux,top,th,s,isBack,at,q){
  }
 }
 for(const id of ['club','cloud','arcade','rose','midnight','varsity'])FIT_EXT.top['studio_'+id]=studioTorso;
+function trendTorso(look,ux,top,th,s,isBack,at,q){
+ ctx.translate(ux,top);ctx.scale(s,th/64);ctx.lineJoin='round';
+ const fill=(x,y,w,h,c,r=0)=>{ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
+ const seam=(pts,c,w=1)=>{ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();};
+ const text=(t,x,y,size,c)=>{ctx.font=`800 ${size}px Arial`;ctx.textAlign='center';ctx.fillStyle=c;ctx.fillText(t,x,y);};
+ if(q.k==='trend_track'){
+  fill(-18,0,36,64,'#24395e');fill(-18,0,4,64,'#e8e5db');fill(14,0,4,64,'#e8e5db');
+  seam([[-12,0],[-9,20],[-10,59]],q.a,1.4);seam([[12,0],[9,20],[10,59]],q.a,1.4);fill(-2,0,4,59,'#1a2a48');
+  if(isBack){fill(-10,19,20,18,'#314c76',2);text('SPIN',0,31,6,'#f4d06f');seam([[-12,45],[12,45]],q.b,1.3);}
+  else{fill(-8,0,16,8,'#e8e5db',1);seam([[0,9],[0,58]],'#f4d06f',1.5);for(let y=16;y<55;y+=8)fill(-1.4,y,2.8,2.8,'#f4d06f',1);fill(-13,22,7,7,'#cf5b52',1);text('S',-9.5,27.5,5,'#fff7df');}
+ }else if(q.k==='trend_rugby'){
+  fill(-18,0,36,64,'#f5f1e6');for(const y of [12,31,50])fill(-18,y,36,10,'#182940');for(const y of [22,41])fill(-18,y,36,2,'#a9454c');
+  if(isBack){fill(-10,3,20,7,'#f5f1e6',1);text('07',0,39,18,'#f5f1e6');}
+  else{fill(-10,0,20,10,'#f8f6ee',1);seam([[-11,0],[0,16],[11,0]],'#182940',2);fill(-1.5,15,3,4,'#f5f1e6',1);text('C',-10,28,6,'#f5f1e6');}
+ }else if(q.k==='trend_trail'){
+  fill(-18,0,36,64,'#d9ddd7');fill(-15,4,30,55,'#28323b',3);fill(-12,7,24,5,'#3d4b55',1);seam([[0,5],[0,59]],'#d97745',1.6);
+  if(isBack){fill(-11,18,22,3,'#e5eeea');fill(-11,24,22,2,'#d97745');seam([[-12,33],[12,33]],'#71808a',1);}
+  else{for(const x of [-11,4]){fill(x,28,7,13,'#3a4a53',1);seam([[x+1,30],[x+6,30]],'#d97745',.8);}fill(4,14,7,7,'#d97745',1);text('T',7.5,19.5,5,'#28323b');}
+ }else if(q.k==='trend_polo'){
+  fill(-18,0,36,64,'#c9d1be');for(let x=-16;x<18;x+=5)seam([[x,12],[x+3,59]],'#ffffff28',.7);fill(-18,59,36,5,'#24473f');
+  if(isBack){seam([[-11,5],[0,10],[11,5]],'#24473f',2);text('COURT',0,34,5,'#24473f');}
+  else{fill(-10,0,20,7,'#f3e6c6',1);seam([[-10,0],[0,16],[10,0]],'#24473f',2.4);seam([[0,16],[0,37]],'#24473f',1.2);for(const y of [21,28,35])fill(-1,y,2,2,'#f3e6c6',1);fill(-13,23,7,1.5,'#f3e6c6',1);}
+ }
+}
+for(const id of ['night_runner','sunset_court','checkmate','orchid_shell'])FIT_EXT.top[id]=trendTorso;
 function studioHead(look,hx,hd,s,ph,isBack,at,{ht,hw,fh}){
  const seat=look.hat==='studio_arcade'?ht:fh-5*s;
  ctx.translate(hx,seat);ctx.scale(s,s);const w=hw/s,c=look.hatC;
@@ -1970,6 +1995,17 @@ for(const id of ['studio_cloud','studio_arcade','studio_midnight','jeans','cargo
   ctx.save();ctx.translate(foot.x,foot.y);ctx.rotate(Math.atan2(foot.y-knee.y,foot.x-knee.x)-Math.PI/2);ctx.scale(s,s);
   ctx.fillStyle=tint(look.pants,-.2);ctx.fillRect(-3.5,-5.5,7,4);ctx.strokeStyle='#ffffff40';ctx.lineWidth=.5;ctx.beginPath();for(let x=-2.5;x<=3;x+=1.5){ctx.moveTo(x,-5);ctx.lineTo(x,-2);}ctx.stroke();ctx.restore();
  }
+};
+for(const id of ['night_runner','sunset_court','checkmate'])FIT_EXT.bot[id]=(look,cx,hy,leg,s,at,legs=[])=>{
+ for(const limb of legs)fitThigh(limb,s,len=>{
+  if(id==='sunset_court'){
+   ctx.fillStyle=ctx.createPattern(fitFabric('denim'),'repeat');ctx.fillRect(-3.6,1,7.2,len*.9);ctx.strokeStyle='#d2b27c';ctx.lineWidth=.65;ctx.setLineDash([1,1]);ctx.beginPath();ctx.moveTo(-2.8,3);ctx.lineTo(-2.5,len*.86);ctx.moveTo(2.8,3);ctx.lineTo(2.5,len*.86);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#e3c58a';ctx.beginPath();ctx.arc(0,4,.7,0,Math.PI*2);ctx.fill();
+  }else if(id==='checkmate'){
+   const y=len*.34;ctx.fillStyle='#596052';ctx.beginPath();ctx.roundRect(-3.9,y,7.8,Math.min(10,len*.38),1);ctx.fill();ctx.fillStyle='#858b78';ctx.beginPath();ctx.moveTo(-3.8,y);ctx.lineTo(3.8,y);ctx.lineTo(3,y+3);ctx.lineTo(-3,y+3);ctx.closePath();ctx.fill();line({x:-2.8,y:y+1},{x:2.8,y:y+1},'#d97745',.65);line({x:0,y:y+4},{x:0,y:y+Math.min(8,len*.35)},'#d8ded5',.55);
+  }else{
+   line({x:-2.5,y:2},{x:-2.5,y:len*.9},'#f4d06f',1);line({x:2.5,y:2},{x:2.5,y:len*.9},'#f4d06f',1);line({x:-1.5,y:4},{x:1.5,y:4},'#cf5b52',1.2);
+  }
+ });
 };
 function veteranSeam(points,color,width=1){
  ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();
