@@ -3120,7 +3120,7 @@ $('character').onchange=()=>showCharInfo($('character').value);$('char-info').ad
 const SOLO_SAVE_MODES=new Set(['practice','match','boss','doubles','trio','cutman','hiball','threeclick','fourclick']);
 function clearSave(){try{localStorage.removeItem('spinlab.save');}catch{}}
 function loadSave(){try{const v=JSON.parse(store.get('save'));return v&&Number.isInteger(v.you)&&Number.isInteger(v.cpu)&&SOLO_SAVE_MODES.has(v.mode)?v:null;}catch{return null;}}
-function saveRun(){if(net||rankOn||!SOLO_SAVE_MODES.has(mode))return null;const v={you,cpu,mode,charge,driveBonus,aiChar,aiTier,bossChoice,tour:tournament?.state==='playing'?JSON.parse(JSON.stringify(tournament)):null};store.set('save',JSON.stringify(v));if(v.tour)tourSave();return v;}
+function saveRun(){if(net||rankOn||!SOLO_SAVE_MODES.has(mode))return null;const v={you,cpu,mode,charge,driveBonus,aiChar,aiTier,bossChoice,tour:tournament?.state==='playing'?JSON.parse(JSON.stringify(tournament)):null};store.set('save',JSON.stringify(v));return v;}
 function resumeLabel(v){return `이어하기 (${v.you} : ${v.cpu} · ${v.tour?tourEvent()?.name||'대회':v.mode==='boss'?'보스전':v.mode==='match'?'AI전':modeText(v.mode)}) `;}
 function showResume(v){$('resume').firstChild.textContent=resumeLabel(v);$('resume').hidden=false;}
 $('mychar-open').onclick=()=>$('mychar').showModal();$('mychar-close').onclick=()=>$('mychar').close();
