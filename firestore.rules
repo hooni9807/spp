@@ -6,7 +6,7 @@ service cloud.firestore {
     function valid(maxValue) {
       let d = request.resource.data;
       return request.auth != null && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
-        && d.keys().hasOnly(['name', 'ttl', 'value', 'level', 'character', 'racket', 'detail', 'at'])
+        && d.keys().hasOnly(['name', 'ttl', 'value', 'level', 'character', 'racket', 'detail', 'streak', 'at'])
         && (!('ttl' in d) || d.ttl is string && d.ttl.size() <= 12)
         && d.keys().hasAll(['name', 'value', 'level', 'character', 'racket', 'detail', 'at'])
         && d.name is string && d.name.size() >= 1 && d.name.size() <= 12
@@ -16,6 +16,7 @@ service cloud.firestore {
         && d.character in ['매혹범', '휴고범', '리신범', '퍼시벌', '만취범', '아재범', '민희쌤', '일병3호봉', '빽종령', '금호관장', '송스타', '날먹세', '김치성', '지킬앤 하이범', '아담 성', '올인 도박사', '유리대포']
         && d.racket is string && d.racket.size() <= 10
         && d.detail is string && d.detail.size() <= 20
+        && (!('streak' in d) || d.streak is int && d.streak >= 0 && d.streak <= 9999)
         && d.at == request.time;
     }
     match /rally/{id} {
@@ -72,7 +73,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if valid(10000);
     }
-    // AI 대전 승리 점수: ((부수 x 10 + 점수 차 + 맞드라이브 보너스) x 난이도 배율) - 실점 패널티
+    // AI 대전 승리 점수: 난이도 기본점수 + 승점 차 + 투터치 + 무실점 + 연승 보너스
     match /wins/{id} {
       allow read: if true;
       allow create: if valid(10000);

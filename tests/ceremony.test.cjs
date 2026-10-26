@@ -445,10 +445,12 @@ test('two-click timing brings up the second target sooner and leaves a longer sw
   assert.equal(client.value('DUAL_CLOSE'), 0.55);
 });
 
-test('AI win score adds drive-rally bonuses and subtracts conceded-point penalties', () => {
+test('AI win score applies difficulty, score gap, two-touch, shutout and streak bonuses', () => {
   const client = createClient();
-  assert.equal(client.value('rankWinScore(4,4,3,7,2)'), 80);
-  assert.equal(client.value('rankWinScore(4,2,0,9,1)'), 24);
-  assert.equal(client.value('rankWinScore(1,2,0,99,1)'), 1);
-  assert.equal(client.value('rankWinScore(8,100,1000,0,2)'), 500);
+  assert.equal(client.value("rankWinScore('ultra',4,3,false,4)"), 103);
+  assert.equal(client.value("rankWinScore('easy',2,0,false,1)"), 28);
+  assert.equal(client.value("rankWinScore('easy',0,0,true,3)"), 33);
+  assert.equal(client.value("rankWinScore('unight',100,1000,true,100)"), 500);
+  assert.equal(client.value("aiRankValue({level:'울트라',detail:'11:7 · 투3',streak:4,value:1})"), 103);
+  assert.equal(client.value("aiRankValue({level:'하드',detail:'11:0',value:1})"), 89);
 });
