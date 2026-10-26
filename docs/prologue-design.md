@@ -2,22 +2,20 @@
 
 ## Gameplay preview (2026-10-21)
 
-The introduction renders Minhee and All-in Gambler with the same `person`, `withFit`, `racket`, `project`, `arenaBg`, and `drawTable` code used by the game. Both use their original character outfits. Minhee also uses the actual serve and forehand face variants. No external character art or video is embedded.
+The introduction renders the currently selected player character on a procedural tournament map. Its face and outfit colors are used directly; no external character art or video is embedded.
 
-`prologue-match.js` choreographs a continuous exhibition rally: a service toss and two service bounces, then alternating drives/backhands and periodic smashes. Ball endpoints use the real arm-length-clamped racket position via the renderer's non-drawing `measureOnly` argument. Characters shuffle and recover between strokes. The counter is a demo rally count; 08–08 is a decorative exhibition scoreboard, not a live ranked match.
+`prologue-match.js` renders a tournament-entry map: the selected player character travels from 스핀항 through 드라이브시 and 커트골 to 챔피언 광장. Four procedurally drawn town-logo badges mark the route. The counter is the current town, not a live ranked match.
 
 The preview has its own canvas and temporary render state, restored in `finally`. It never starts a game or updates rankings, inventory, score, auth, or saves. Rendering of the covered main court is suspended while the dialog is open. Existing login/entry behavior is retained.
 
-SPP, Snap Ping Pong, the headline, score overlay, chapter copy, footer and color palette now use a consistent dark violet / lime treatment. The inline first-paint guard remains in place. Motion can be paused or replayed; hidden tabs stop animation. Reduced-motion users see a static rally frame, including after images finish loading.
+SPP, Snap Ping Pong, the headline, map overlay, chapter copy, footer and color palette use a consistent dark violet / lime treatment. The inline first-paint guard remains in place. Motion can be paused or replayed; hidden tabs stop animation. Reduced-motion users see a static map frame.
 
 ## Startup behavior
 
-The preview starts as soon as Minhee's and the Gambler's base portraits are ready. Their base images are preloaded at high priority; Minhee's serve and forehand portraits are optional and replace the base portrait once available. A failed or slow optional portrait never blocks the prologue, its entry button, or the main page. Returning visitors can additionally use their browser image cache.
+The map can start before the selected portrait loads; it uses the character's initial as a temporary fallback. A failed or slow portrait never blocks the prologue, its entry button, or the main page.
 
 ## References
 
-- [PingSkills — Forehand & Backhand Counterhit (YouTube)](https://www.youtube.com/watch?v=iYRJ2YV3PGY): alternating rally rhythm and stroke variety, consulted via the video's indexed description.
-- [ITTF Education — Footwork and balance](https://www.ittfeducation.com/joze-urh-impact-footwork-balance-making-contact-ball/): coordination of foot positioning, balance, and contact.
 - [web.dev — Animation and motion](https://web.dev/learn/accessibility/motion): reduced-motion and explicit pause controls.
 
 These are movement and accessibility references, not copied assets. The demo is choreographed using game renderers rather than a recording or an autonomous competitive match.
@@ -30,10 +28,8 @@ Run from the repository root with Playwright installed:
 node tests/prologue-preview.cjs
 ```
 
-`PLAYWRIGHT_MODULE` can point to an existing Playwright installation; `CHROME_PATH` optionally selects an installed browser. The smoke check covers desktop/mobile width, exact rally contact counters, restored game state, no page errors, reduced motion and entering the main screen. It also blocks Minhee's optional portraits to confirm that the preview and entry still work. It blocks external requests and does not test Google login or multiplayer. Visual captures were also inspected at service, contact and follow-through.
+`PLAYWRIGHT_MODULE` can point to an existing Playwright installation; `CHROME_PATH` optionally selects an installed browser. The smoke check covers desktop/mobile width, four town transitions, restored game state, no page errors, reduced motion and entering the main screen. It blocks external requests and does not test Google login or multiplayer.
 
-## Ultimate showcase
+## Town route
 
-Every 12 contacts, Minhee fires Meteor Smash (contact index 4) and the Gambler replies with Comet Drive (index 9). These use the actual `ULT_BY` definitions, `drawUltFx` particles and `drawUltCutin` face/name artwork, plus a colored ball trail and glow. The incoming lob sets up the smash. A small impact shake is limited to 0.3 seconds; the intro does not use the gameplay cut-in's full-screen white flash. Preview speed lines are deterministic so paused frames remain stable.
-
-The cut-in renderer accepts optional effect/time arguments, leaving ordinary gameplay calls unchanged. `ultFx` and `ball` are restored with all other preview state. No `fireUlt`, skill activation, sound, loadout or progression changes occur. Reduced-motion mode omits camera shake and the moving cut-in. The smoke check asserts both ultimate cues and preservation of effect, ball and progression state.
+The route progresses through 스핀항, 드라이브시, 커트골 and 챔피언 광장. Each stop has a distinct procedural logo badge and the player avatar runs between them. The animation is visual only: no game, skill, inventory, ranking or save state changes occur.

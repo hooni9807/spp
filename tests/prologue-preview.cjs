@@ -26,15 +26,15 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
       const result=await page.evaluate(()=>{
         const canvas=document.getElementById('prologue-court');
         const before=JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog]);
-        const effects=[5.3,9.6].map(seconds=>{drawPrologueMatch(canvas,seconds);return canvas.dataset.ultimate;});
-        return {effects,unchanged:before===JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog])};
+        const towns=[.3,3.3,6.3,9.3].map(seconds=>{drawPrologueMatch(canvas,seconds);return canvas.dataset.town;});
+        return {towns,unchanged:before===JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog])};
       });
-      assert.deepEqual(result.effects,['radiant','phoenix']);
+      assert.deepEqual(result.towns,['스핀항','드라이브시','커트골','챔피언 광장']);
       assert.equal(result.unchanged,true);
-      if(options.reducedMotion){const before=Number(await page.locator('#prologue-court').getAttribute('data-rally'));await page.waitForTimeout(2800);const after=Number(await page.locator('#prologue-court').getAttribute('data-rally'));assert.ok(after>before,'reduced-motion prologue still advances the rally');}
+      if(options.reducedMotion){const before=await page.locator('#prologue-court').evaluate(canvas=>canvas.toDataURL());await page.waitForTimeout(2800);const after=await page.locator('#prologue-court').evaluate(canvas=>canvas.toDataURL());assert.notEqual(after,before,'reduced-motion prologue still moves the player');}
       await page.close();
     }
     assert.deepEqual(errors,[]);
-    console.log('prologue ultimate relay preview preserves gameplay state');
+    console.log('prologue tournament map preview preserves gameplay state');
   }finally{await browser.close();server.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
