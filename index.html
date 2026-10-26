@@ -486,6 +486,7 @@ const characterAvailable=k=>!!LOOKS[k]&&!LOOKS[k].disabled&&k!=='ai';
 // This also hides legacy rows whose character used to fall back to "선수".
 const RANKING_CHARACTERS=new Set(['매혹범','휴고범','리신범','퍼시벌','만취범','아재범','민희쌤','일병3호봉','빽종령','금호관장','송스타','날먹세','김치성','지킬앤 하이범','아담 성','올인 도박사','유리대포']);
 const rankingCharacterAllowed=character=>RANKING_CHARACTERS.has(character);
+const CHARACTER_TIER={percival:'S',ttalgak:'S',glass:'S',jersey:'A',leesin:'A',ajae:'A',minhee:'A',songstar:'A',seohyun:'B',jongryeong:'B',kumho:'B',adam:'B',gambler:'B',jiseong:'B',sleepy:'B',smashman:'B',drunk:'C'};
 // ===== 레벨 · 캐릭터 해금: every account starts at Lv 1 with 휴고범 only. Wins give XP (AI전 50 · 1대1 80 · 보스전 100),
 // every 100 XP is a level, and each level lets you unlock one character out of 3 random locked ones (2 → pick of 2, 1 → given).
 // Stored on the device and in progress/{uid} (cloud wins when it has more XP).
@@ -547,7 +548,7 @@ function gainXp(n,why){n=Math.round(n*(1+R_('utXp')));lastGain=n;lastXpFrom=prog
 function offerUnlock(){const locked=normalizeUnlockState();if(picksOwed()<=0||$('unlock').open){if(picksOwed()<=0&&prog.offer)prog.offer=null;return;}
 if(!prog.offer||prog.offer.some(k=>!locked.includes(k)))prog.offer=locked.sort(()=>Math.random()-.5).slice(0,3);
 const list=$('ul-list');list.textContent='';$('ul-title').textContent=`🎉 레벨 업! Lv ${progLevel()}`+(picksOwed()>1?` · 해금 ${picksOwed()}번 남음`:'');$('ul-sub').textContent=prog.offer.length>1?'해금할 캐릭터를 하나 고르세요':'마지막 남은 캐릭터가 해금됐어요!';
-for(const k of prog.offer){const b=document.createElement('button'),c=document.createElement('canvas'),sm=document.createElement('small');b.type='button';b.dataset.char=k;c.width=c.height=144;b.append(c,LOOKS[k].nick||LOOKS[k].name);sm.textContent=CHAR_INFO[k]?.tag||'';b.append(sm);drawFace(c,LOOKS[k]);
+for(const k of prog.offer){const b=document.createElement('button'),c=document.createElement('canvas'),sm=document.createElement('small');b.type='button';b.dataset.char=k;c.width=c.height=144;b.append(c,LOOKS[k].nick||LOOKS[k].name);sm.textContent=(CHARACTER_TIER[k]?`티어 ${CHARACTER_TIER[k]} · `:'')+(CHAR_INFO[k]?.tag||'');b.append(sm);drawFace(c,LOOKS[k]);
 const last=prog.offer.length===1;if(last&&!prog.unlocked.includes(k)){prog.unlocked.push(k);prog.offer=null;saveProg();}   // only one left: it is simply given
 b.onclick=()=>{const fresh=!prog.unlocked.includes(k);if(!last&&fresh)prog.unlocked.push(k);prog.offer=null;saveProg();$('unlock').close();if(fresh)toast(`🔓 ${LOOKS[k].nick} 해금! 캐릭터 선택에서 고를 수 있어요`,2.5);setTimeout(offerUnlock,400);};list.append(b);}
 $('unlock').showModal();}
