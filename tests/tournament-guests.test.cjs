@@ -7,7 +7,8 @@ let n=0;const names=context.names(44,['김치성','아담 성'],()=>((n++*17)%10
 assert.equal(names.length,44);assert.equal(new Set(names).size,44);assert(!names.includes('김치성'));assert(!names.includes('아담 성'));
 assert.equal(context.names(0).length,0);
 assert(html.includes('id="tournament-open"'));
-assert(html.includes('🏆 시대회 출전'));
+assert(html.includes('id="tournament-open" type="button">대회 출전'));
+assert(html.includes('id="net-quick" type="button">빠른 대전 찾기'));
 assert(html.includes('id="tournament-select"'));
 assert(html.includes('data-tour="sejong"'));
 assert(html.includes('id="tour-bracket"'));
