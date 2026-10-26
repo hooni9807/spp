@@ -224,6 +224,7 @@ service cloud.firestore {
         && request.resource.data.from == resource.data.from && request.resource.data.to == resource.data.to
         && request.resource.data.at == request.time;
       allow read: if request.auth != null && resource.data.from == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.from == request.auth.uid;
     }
     match /players/{uid} {
       allow read: if true;
