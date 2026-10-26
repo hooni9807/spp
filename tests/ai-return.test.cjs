@@ -9,6 +9,18 @@ context.globalThis = context;
 vm.runInNewContext(physics[2], context);
 context.P = context.module.exports;
 vm.runInNewContext(html.slice(html.indexOf('function fitReturn(b,'), html.indexOf('function endInfDrive')), context);
+context.clickPrac = () => false;
+context.tierNow = () => 'ultra';
+context.aiDif = () => 'b4';
+vm.runInNewContext([html.match(/^const DUAL_RATE=.*$/m)[0], html.match(/^const DUAL_TIER_RATE=.*$/m)[0].replace(/,dualOff=.*$/, ';')].join('\n'), context);
+
+test('higher AI tiers mix one-touch and two-touch balls at configured ratios', () => {
+  const rates = { ultra: .65, uhard: .75, uext: .85, unight: .90 };
+  for (const [tier, rate] of Object.entries(rates)) {
+    context.tierNow = () => tier;
+    assert.equal(vm.runInNewContext('dualRate()', context), rate, tier);
+  }
+});
 
 test('fast AI returns clear the net and land inside the table', () => {
   for (const z of [-.2, 0, .2, .4]) for (const speed of [3, 5, 7, 9]) for (const type of ['drive', 'cut', 'smash']) {
