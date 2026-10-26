@@ -24,6 +24,11 @@ test('fast AI returns clear the net and land inside the table', () => {
   }
 });
 
+test('AI rhythm includes both a slower and faster return pace', () => {
+  assert.equal(context.P.aiRhythm(() => .49), .72);
+  assert.equal(context.P.aiRhythm(() => .5), 1.28);
+});
+
 test('moving back preserves the relative hit position and timing', () => {
   const regular = { owner: 'ai', bounces: 1, y: -.27, z: .2, vy: -3, vz: 0 };
   const long = { ...regular, y: regular.y - .2, retreat: .2 };
