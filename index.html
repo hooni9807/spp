@@ -543,7 +543,7 @@ const aiStreak=()=>Math.max(0,Math.floor(+(prog.q?._aiStreak||0)));
 function setAiStreak(n){prog.q??={};prog.q._aiStreak=Math.max(0,Math.floor(n));saveProg();}
 const aiStreakMatch=()=>mode==='match'&&!net&&!rankOn&&tournament?.state!=='playing';
 function gainXp(n,why){n=Math.round(n*(1+R_('utXp')));lastGain=n;lastXpFrom=prog.xp;const before=progLevel();prog.xp+=n;saveProg();toast(`+${n} XP · ${why}`+(progLevel()>before?` · 🎉 Lv ${progLevel()}!`:''),2.2);if(progLevel()>before){if(!resPending)levelUpFx(progLevel());setTimeout(offerUnlock,resPending?4200:2800);}}
-function offerUnlock(){const locked=normalizeUnlockState();if(picksOwed()<=0||$('unlock').open){if(picksOwed()<=0&&prog.offer)prog.offer=null;return;}
+let offerUnlockQueued=false;function offerUnlock(){if($('auth-gate')?.open||document.body.classList.contains('prologue-open')){offerUnlockQueued=true;return;}offerUnlockQueued=false;const locked=normalizeUnlockState();if(picksOwed()<=0||$('unlock').open){if(picksOwed()<=0&&prog.offer)prog.offer=null;return;}
 if(!prog.offer||prog.offer.some(k=>!locked.includes(k)))prog.offer=locked.sort(()=>Math.random()-.5).slice(0,3);
 const list=$('ul-list');list.textContent='';$('ul-title').textContent=`🎉 레벨 업! Lv ${progLevel()}`+(picksOwed()>1?` · 해금 ${picksOwed()}번 남음`:'');$('ul-sub').textContent=prog.offer.length>1?'해금할 캐릭터를 하나 고르세요':'마지막 남은 캐릭터가 해금됐어요!';
 for(const k of prog.offer){const b=document.createElement('button'),c=document.createElement('canvas'),sm=document.createElement('small'),[difficulty]=charDifficulty(k);b.type='button';b.dataset.char=k;c.width=c.height=144;b.append(c,LOOKS[k].nick||LOOKS[k].name);sm.textContent=`난이도 ${difficulty} · `+(CHAR_INFO[k]?.tag||'');b.append(sm);drawFace(c,LOOKS[k]);
@@ -3774,7 +3774,7 @@ const c=victoryCeremony;if(ceremonyId&&c?.id===ceremonyId)c.ratingLine=line;if(!
 $('net-nick').value=store.get('nick')||'';updatePvpMe();
 $('google-login').onclick=$('auth-google-login').onclick=googleLogin;$('naver-login').onclick=naverLogin;$('google-logout').onclick=googleLogout;if(FIREBASE_CONFIG)naverReturn().then(ok=>{if(!ok)showLogin();});else{$('login-box').hidden=true;syncGoogleLoginButtons();loginStatus('메인 화면에서 코트와 캐릭터를 둘러보세요.');}
 $('auth-gate').addEventListener('cancel',e=>{if(FIREBASE_CONFIG&&!TEST_HOST&&!googleUser)e.preventDefault();});   /* Esc cannot skip the sign-in */
-$('auth-gate').addEventListener('close',queuePatchNotes);
+$('auth-gate').addEventListener('close',()=>{queuePatchNotes();if(offerUnlockQueued)setTimeout(offerUnlock,0);});
 $('auth-gate').addEventListener('prologue-before-open',e=>{if(net){e.preventDefault();toast('온라인 대전을 마친 뒤 프롤로그를 볼 수 있어요',2);return;}if(playing&&!paused)pause();});
 $('rank-send').onclick=sendRank;$('rank-name').onkeydown=e=>{if(e.key==='Enter')sendRank();};document.querySelectorAll('.rank-tabs button').forEach(b=>b.onclick=()=>showBoard(b.dataset.board));document.querySelectorAll('#boss-filter input').forEach(c=>c.onchange=()=>showBoard('boss'));showBoard('pvp');
 // iOS Safari ignores user-scalable=no: block its pinch gestures and multi-touch zoom over the court.
