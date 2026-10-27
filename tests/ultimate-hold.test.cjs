@@ -10,8 +10,8 @@ test('ultimate cut-in never pauses live physics', () => {
     tickVictoryCeremony() {}, pingNetClock() {}, update() { updates++; }, guestUpdate() { updates++; },
     render() {}, requestAnimationFrame() {}, $: () => ({ style: {}, open: true }),
     net: null, last: 1000, playing: true, paused: false, samples: [], paddle: {vx:0, vy:0}, Math };
-  const hold = html.slice(html.indexOf('const ULT_HOLD_MS='), html.indexOf('function fireUlt('));
-  const frame = html.slice(html.indexOf('function frame(t)'), html.indexOf('requestAnimationFrame(frame);', html.indexOf('function frame(t)')) + 'requestAnimationFrame(frame);'.length) + '}';
+  const hold = html.slice(html.indexOf('const ULT_HOLD_MS='), html.indexOf('function ultSceneDuration('));
+  const frame = html.match(/function frame\(t\)\{[\s\S]*?finally\{requestAnimationFrame\(frame\);\}\}/)[0];
   vm.runInNewContext(hold + frame + '\nholdUltimate(); frame(1100);', ctx);
 assert.ok(updates > 0);
   vm.runInNewContext('holdUltimate(9000)', ctx);
