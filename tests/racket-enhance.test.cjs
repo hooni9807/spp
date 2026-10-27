@@ -35,13 +35,13 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(await page.locator('#racket-skins').evaluate(d=>d.open),true);
     assert.equal(await page.locator('#skin-list button').first().isDisabled(),true);
     const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {equipped:championSkin(),level:enhanceCombatLevel()};});
-    assert.deepEqual(skin,{equipped:true,level:3});
-    const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,set:trophySetBonus(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
-    assert.deepEqual(regional,{level:9,cards:4,set:3,display:true,name:'전설 · 부산시대회 우승 트로피'});
+    assert.deepEqual(skin,{equipped:true,level:0});
+    const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,miss:enhanceShownAiMiss(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
+    assert.deepEqual(regional,{level:0,cards:4,miss:.04,display:true,name:'전설 · 부산시대회 우승 트로피'});
     const usage=await page.evaluate(()=>{store.set('character-usage','');recordCharacterUsage({id:'usage-1',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-2',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-3',charKey:'leesin',racketType:'defense',rubberType:'speed'});return charUsageRows().map(r=>[r.id,r.matches,r.racket,r.rubber]);});
     assert.deepEqual(usage,[['jersey',2,'쉐이크핸드','09C'],['leesin',1,'수비수 라켓','롱']]);
     assert.equal(await page.evaluate(()=>{const impact={x:100,y:100,t:time,champion:championSkin()};return impact.champion;}),true);
-    await page.evaluate(()=>{prog.q._trophies=[];prog.q._racketSkin='';});
+    await page.evaluate(()=>{prog.q._trophies=[];prog.q._racketSkin='';prog.q._racketChampion=0;});
     await page.locator('#racket-skins').evaluate(d=>d.close());
     await page.locator('#enhance-home').click();
     assert.equal(await page.locator('#enhance').evaluate(d=>d.open),true);
@@ -54,6 +54,9 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(state.level,1);assert.ok(state.coins<10000);assert.ok(racketEffect.player,'+10 player racket should render an effect');assert.ok(racketEffect.ai,'AI racket should not render the player enhancement effect');assert.ok(state.miss>0);assert.equal(await page.locator('#enhance-speed').isVisible(),false);assert.equal(await page.locator('#enhance-spin').isVisible(),false);
     const curve=await page.evaluate(()=>[15,20,24,25,30].map(level=>{prog.racketEnhance=level;return enhanceShownAiMiss();}));
     assert.ok(Math.abs(curve[0]-.015)<1e-12);assert.ok(Math.abs(curve[1]-.05)<1e-12);assert.ok(Math.abs(curve[2]-.09)<1e-12);assert.ok(Math.abs(curve[3]-(.09+.11/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
+    const trophyFormula=await page.evaluate(()=>{prog.racketEnhance=30;prog.q._trophies=TOUR_REWARDS.map(r=>r.id);mode='match';rankOn=false;net=null;return {skin:enhanceCombatLevel(),shown:enhanceShownAiMiss(),active:enhanceAiMiss()};});
+    assert.deepEqual(trophyFormula,{skin:30,shown:.26,active:.26});
+    await page.evaluate(()=>{prog.q._trophies=[];});
     const failure=await page.evaluate(()=>{const attempt=dropRoll=>{prog.racketEnhance=29;prog.coins=10000;renderEnhance();const original=Math.random,rolls=[.5,dropRoll];Math.random=()=>rolls.shift();$('enhance-try').click();Math.random=original;return enhanceLevel();};prog.racketEnhance=30;const title=TITLES.find(t=>t[0]==='enh30')[3](),shown=enhanceShownAiMiss();return {dropped:attempt(.24),held:attempt(.25),title,shown,levelText:$('enhance-level').textContent};});
     assert.equal(failure.title,true);assert.equal(failure.shown,.2);assert.equal(failure.dropped,28);assert.equal(failure.held,29);assert.equal(failure.levelText,'+29 / +30');assert.deepEqual(errors,[]);
     console.log('Racket enhancement spends spin coins and applies combat bonuses');
