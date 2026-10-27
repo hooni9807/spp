@@ -1,7 +1,7 @@
 /* A choreographed preview using the game's character, clothing, racket and court renderers. */
 (() => {
   const duration = .86, serveAt = 1.6;
-  const cast = ['minhee', 'gambler'];
+  const cast = ['minhee', 'drunk'];
   // The two rally players remain opponents.  Relay helpers are separate team
   // members, so neither side ever appears to join the other player's move.
   const helperPool = ['jersey', 'leesin', 'yunhwan', 'seohyun', 'kumho'];

@@ -17,6 +17,10 @@ const assert = require('node:assert/strict');
     await page.goto(`http://127.0.0.1:${server.address().port}`);
     await page.waitForFunction(() => document.getElementById('prologue-loading').hidden);
     const result = await page.evaluate(() => {
+      if ($('auth-gate').open) $('auth-gate').close();
+      if ($('unlock').open) $('unlock').close();
+      document.body.classList.remove('prologue-open');
+      offerUnlockQueued = false;
       const saved = prog;
       const oldToast = toast;
       const notes = [];

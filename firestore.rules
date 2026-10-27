@@ -65,6 +65,10 @@ service cloud.firestore {
       allow read: if true;
       allow create: if valid(10000);
     }
+    match /rally_survival/{id} {
+      allow read: if true;
+      allow create: if valid(10000);
+    }
     match /rally_boss/{id} {
       allow read: if true;
       allow create: if valid(10000);
@@ -155,6 +159,21 @@ service cloud.firestore {
         && request.resource.data.unlocked is list && request.resource.data.unlocked.size() <= 40
         && request.resource.data.at == request.time;
     }
+    // Trophy ownership is mirrored separately so profile progress and collection data stay independent.
+    match /trophies/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
+        && request.resource.data.keys().hasOnly(['name', 'trophies', 'regions', 'count', 'at'])
+        && request.resource.data.keys().hasAll(['name', 'trophies', 'regions', 'count', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
+        && request.resource.data.trophies is list && request.resource.data.trophies.size() <= 6
+        && request.resource.data.trophies.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'seoul', 'attendance'])
+        && request.resource.data.regions is list && request.resource.data.regions.size() <= 5
+        && request.resource.data.regions.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'seoul'])
+        && request.resource.data.count is int && request.resource.data.count == request.resource.data.trophies.size()
+        && request.resource.data.at == request.time;
+    }
     // 스핀코인과 라켓 강화는 진행 데이터와 분리한 개인 지갑에 저장한다.
     match /wallets/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;
@@ -165,6 +184,23 @@ service cloud.firestore {
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.coins is int && request.resource.data.coins >= 0
         && request.resource.data.racketEnhance is int && request.resource.data.racketEnhance >= 0 && request.resource.data.racketEnhance <= 100
+        && request.resource.data.at == request.time;
+    }
+    // Latest daily attendance receipt. Players may read it, but only an admin may
+    // correct it in the Firebase console; browser clients must never write rewards.
+    match /attendance_records/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+    }
+    // Public attendance leaderboard. Each signed-in player may update only their own row.
+    match /attendance_leaderboard/{uid} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
+        && request.resource.data.keys().hasOnly(['name', 'days', 'character', 'at'])
+        && request.resource.data.keys().hasAll(['name', 'days', 'character', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
+        && request.resource.data.days is int && request.resource.data.days >= 1 && request.resource.data.days <= 36500
+        && request.resource.data.character is string && request.resource.data.character.size() >= 1 && request.resource.data.character.size() <= 24
         && request.resource.data.at == request.time;
     }
     // 캐릭터 사용 통계: the public character-popularity board sums every
@@ -186,7 +222,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['name', 'cleared', 'wins', 'best', 'at'])
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.cleared is int && request.resource.data.cleared >= 0 && request.resource.data.cleared <= 4
+        && request.resource.data.cleared is int && request.resource.data.cleared >= 0 && request.resource.data.cleared <= 10
         && request.resource.data.wins is int && request.resource.data.wins >= 0 && request.resource.data.wins <= 100000
         && request.resource.data.best is int && request.resource.data.best >= 0 && request.resource.data.best <= 6
         && request.resource.data.at == request.time;
