@@ -220,7 +220,7 @@
 - 참고: [Critical Features of the Forehand Topspin](https://protabletennis.net/content/critical-features-forehand-topspin), [How to Play a Backhand Push](https://www.experttabletennis.com/how-to-play-a-backhand-push-in-table-tennis/), [Backhand Push (tabletennisteacher)](https://tabletennisteacher.com/learn-backhand-push/)
 
 ## 탈주닌자 맹타치
-- 드라이브 불가: 드라이브 스윙도 쇼트로 넘어가요 (상대 드라이브엔 블록) · 쇼트 속도 ×1.4
+- 드라이브 불가: 드라이브 스윙도 쇼트로 넘어가요 (상대 드라이브엔 블록) · 탭(터치) 쇼트 속도 ×1.4 · 드라이브 스윙이 바뀐 쇼트는 ×1.2
 - 상대 커트 공은 커트 스윙으로 받아야 해요 · 뜬 공은 스매시
 - 필살기는 쇼트 · 커트 · 스매시 계열만
-- PERFECT: "닌닌~ 탈주!"
+- PERFECT: "줴줴이야~"
