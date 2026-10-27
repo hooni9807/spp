@@ -20,6 +20,8 @@ assert(html.includes("!b.charmId.startsWith('fail-')&&Math.random()<.15"));
 assert(html.includes('charmT=time'));
 assert(html.includes('pHeart(hx+k*4.5*s,hd+1*s,3.4*s)'));
 assert(html.includes('function drawBrokenHeart'));
+assert(html.includes('ctx.globalAlpha=.55*fade'));
+assert(html.includes('Math.min(W,H)*.48'));
 assert(html.includes("ball.charmId?.startsWith('fail-')&&Math.random()<.5)brokenHeartT=performance.now()"));
 assert(html.includes('function aiCharmFail'));
 assert(!html.includes('function drawCharm'));
