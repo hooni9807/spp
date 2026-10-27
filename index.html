@@ -1063,6 +1063,13 @@ FIT_TOPS.push(
  ['lux_tailor','슬레이트 더블 테일러드',{shirt:'#56616b',sleeve:'#56616b',collar:'#e8dfcf',longSleeve:true,pat:{k:'lux_tailor',a:'#e8dfcf',b:'#29343d'}},{online:10}],
  ['lux_garden','로즈 가든 카디건',{shirt:'#d7a2a5',sleeve:'#d7a2a5',collar:'#fff5ec',longSleeve:true,pat:{k:'lux_garden',a:'#fff5ec',b:'#79465b'}},{tier:'uext'}]
 );
+FIT_TOPS.push(
+ ['ref_garden','가든 갈라 베스트',{shirt:'#aabf9c',sleeve:'#fff7ed',collar:'#fff7ed',longSleeve:true,pat:{k:'ref_garden',a:'#d2ad5d',b:'#40644d'}},{lv:22}],
+ ['ref_pixel','미드나잇 픽셀 후드',{shirt:'#171527',sleeve:'#171527',collar:'#9e77ff',hoodie:true,longSleeve:true,pat:{k:'ref_pixel',a:'#9e77ff',b:'#57e3ff'}},{tier:'hard'}],
+ ['ref_moon','문라이트 아키비스트 코트',{shirt:'#252946',sleeve:'#252946',collar:'#f5ead8',longSleeve:true,pat:{k:'ref_moon',a:'#d7b36a',b:'#5a3154'}},{lv:30}],
+ ['ref_neo','네오 스트리트 라이더 재킷',{shirt:'#1d54cf',sleeve:'#1d54cf',collar:'#111825',longSleeve:true,pat:{k:'ref_neo',a:'#e9eff8',b:'#151a23'}},{tier:'ultra'}],
+ ['ref_coral','코랄 코스트 셔츠',{shirt:'#ef7465',sleeve:'#ef7465',collar:'#fff3dc',pat:{k:'ref_coral',a:'#fff3dc',b:'#53cfc1'}},{lv:10}]
+);
 FIT_BOTS.push(
  ['studio_club','포레스트 플리츠',{pants:'#244f42',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#244f42',skirtTrim:'#f2eddb',socks:true}],
  ['studio_cloud','라벤더 조거 팬츠',{pants:'#a899c8',shorts:false,pstripe:'#eeeaf5',legx:'studio_cloud'}],
@@ -1088,6 +1095,13 @@ FIT_BOTS.push(
  ['lux_alpine','실버 퀼팅 팬츠',{pants:'#9aa6ae',shorts:false,pstripe:'#c9a75f'}],
  ['lux_tailor','아이보리 슬랙스',{pants:'#ded7c9',shorts:false,pstripe:'#56616b'}],
  ['lux_garden','크림 플리츠 스커트',{pants:'#fff5ec',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#fff5ec',skirtTrim:'#79465b',socks:true}]
+);
+FIT_BOTS.push(
+ ['ref_garden','세이지 와이드 팬츠',{pants:'#9caf91',shorts:false,pstripe:'#d2ad5d'}],
+ ['ref_pixel','오로라 플리츠 스커트',{pants:'#32275b',shorts:true,shortsLen:.04,skirt:'pleat',skirtC:'#5746a1',skirtTrim:'#57e3ff',socks:true}],
+ ['ref_moon','플럼 아카이브 팬츠',{pants:'#5a3154',shorts:false,pstripe:'#d7b36a'}],
+ ['ref_neo','리플렉트 카고 팬츠',{pants:'#20242d',shorts:false,pstripe:'#e9eff8',legx:'cargo'}],
+ ['ref_coral','샌드 카고 쇼츠',{pants:'#ead7af',shorts:true,shortsLen:.62,pstripe:'#53cfc1'}]
 );
 FIT_ACC.push(
  ['studio_club','클럽 선바이저','head','',{hat:'studio_club',hatC:'#f2eddb'}],
@@ -1129,12 +1143,17 @@ FIT_COLLECTIONS.push(
  {id:'lux_alpine',name:'알파인 에크루',label:'ALPINE EDITION',desc:'에크루 퀼팅과 실버 라인으로 만든 차분한 겨울 스포츠 룩.',colors:['#e8e5dd','#8996a3','#c9a75f'],fit:{top:'lux_alpine',bot:'lux_alpine',head:'beanie',arm:'wb'}},
  {id:'lux_tailor',name:'슬레이트 테일러드',label:'MODERN TAILOR',desc:'슬레이트 그레이 더블 재킷과 아이보리 슬랙스의 담백한 대비.',colors:['#56616b','#e8dfcf','#29343d'],fit:{top:'lux_tailor',bot:'lux_tailor',head:'capb',arm:'watch'}},
  {id:'lux_garden',name:'로즈 가든',label:'GARDEN KNIT',desc:'로즈 카디건과 크림 플리츠에 작은 꽃 자수를 더한 가든 룩.',colors:['#d7a2a5','#fff5ec','#79465b'],fit:{top:'lux_garden',bot:'lux_garden',head:'flower',arm:'bracelet'}},
+ {id:'ref_garden',name:'가든 갈라',label:'GARDEN GALA',desc:'세이지 베스트와 벌룬 블라우스, 골드 체인으로 완성한 정원 파티 룩.',colors:['#aabf9c','#fff7ed','#d2ad5d'],fit:{top:'ref_garden',bot:'ref_garden',head:'flower',arm:'bracelet'}},
+ {id:'ref_pixel',name:'미드나잇 픽셀 스타',label:'PIXEL STAR',desc:'별 그래픽 후드와 오로라 플리츠. 밤빛 헤드셋까지 더한 네온 룩.',colors:['#171527','#9e77ff','#57e3ff'],fit:{top:'ref_pixel',bot:'ref_pixel',head:'headset',arm:'sleeve',aura:'sparkle'}},
+ {id:'ref_moon',name:'문라이트 아키비스트',label:'MOON ARCHIVIST',desc:'별과 달의 골드 자수를 두른 롱 코트와 플럼 팬츠의 마법서 수집가 룩.',colors:['#252946','#d7b36a','#5a3154'],fit:{top:'ref_moon',bot:'ref_moon',head:'wizard',body:'bag'}},
+ {id:'ref_neo',name:'네오 스트리트 라이더',label:'NEO RIDER',desc:'코발트 봄버와 리플렉트 카고의 스피드 레이어드 룩.',colors:['#1d54cf','#e9eff8','#151a23'],fit:{top:'ref_neo',bot:'ref_neo',head:'capb',arm:'watch'}},
+ {id:'ref_coral',name:'코랄 코스트 데이',label:'CORAL COAST',desc:'코랄 플라워 셔츠와 샌드 카고 쇼츠로 만든 휴양지 코트 룩.',colors:['#ef7465','#fff3dc','#53cfc1'],fit:{top:'ref_coral',bot:'ref_coral',head:'studio_club',arm:'rainbow'}},
  {id:'vet_solo',group:'veteran',name:'혼자서도 충분해',label:'SOLO LEGEND',desc:'Lv 30의 노련함으로 입는 토기 모자와 낡은 수련복. 장비는 가볍게, 랠리는 끝까지.',colors:['#c17e50','#eee2c7','#806950'],req:VET_REQ.solo,fit:{top:'vet_solo',bot:'vet_solo',head:'vet_solo',arm:'vet_wraps'}},
  {id:'vet_sauna',group:'veteran',name:'사우나에서 온 고수',label:'OLD SCHOOL',desc:'울트라 하드 이상을 정복한 선수의 파란 가운, 삿갓, 해진 망토.',colors:['#76b5d4','#cfa665','#816378'],req:VET_REQ.sauna,fit:{top:'vet_sauna',bot:'vet_sauna',head:'vet_sauna',arm:'vet_workgloves',body:'vet_ragcape'}},
  {id:'vet_giant',group:'veteran',name:'전설은 녹슬지 않아',label:'BRASS LEGEND',desc:'모든 보스를 쓰러뜨린 증표. 흠집 난 황동 갑옷과 초록 방패의 묵직한 존재감.',colors:['#b79556','#4a6655','#514636'],req:VET_REQ.giant,fit:{top:'vet_giant',bot:'vet_giant',head:'vet_giant',body:'vet_grassshield'}},
  {id:'vet_party',group:'veteran',name:'만렙의 종이 왕관',label:'PARTY VETERAN',desc:'온라인 10승으로 증명한 고수의 보라 왕관과 금테 망토.',colors:['#b291d8','#254e50','#d9ba71'],req:VET_REQ.party,fit:{top:'vet_party',bot:'vet_party',head:'vet_party',body:'vet_mastercape'}}
 );
-const TODAY_FIT_REQ={night_runner:{lv:5},sunset_court:{lv:8},checkmate:{lv:12},orchid_shell:{lv:15},lux_tweed:{lv:18},lux_trench:{lv:20},lux_leather:{tier:'hard'},lux_weave:{lv:25},lux_yacht:{tier:'ultra'},lux_opera:{lv:30},lux_silk:{tier:'uhard'},lux_alpine:{bosses:true},lux_tailor:{online:10},lux_garden:{tier:'uext'}};
+const TODAY_FIT_REQ={night_runner:{lv:5},sunset_court:{lv:8},checkmate:{lv:12},orchid_shell:{lv:15},lux_tweed:{lv:18},lux_trench:{lv:20},lux_leather:{tier:'hard'},lux_weave:{lv:25},lux_yacht:{tier:'ultra'},lux_opera:{lv:30},lux_silk:{tier:'uhard'},lux_alpine:{bosses:true},lux_tailor:{online:10},lux_garden:{tier:'uext'},ref_garden:{lv:22},ref_pixel:{tier:'hard'},ref_moon:{lv:30},ref_neo:{tier:'ultra'},ref_coral:{lv:10}};
 for(const [id,req] of Object.entries(TODAY_FIT_REQ)){const bot=FIT_BOTS.find(x=>x[0]===id),set=FIT_COLLECTIONS.find(x=>x.id===id);if(bot)bot[3]=req;if(set)set.req=req;}
 const FIT_LABELS={collection:'스튜디오 컬렉션',veteran:'고인물 아카이브',top:'상의',bot:'하의',head:'머리',arm:'손목',body:'목 · 몸',wing:'날개',aura:'이펙트',pet:'펫'};
 let fitBack=false;
@@ -1975,6 +1994,18 @@ function luxuryTorso(look,ux,top,th,s,isBack,at,q){
  if(isBack)line([-12,24],[12,24],q.a,1);
 }
 for(const id of ['lux_tweed','lux_trench','lux_leather','lux_weave','lux_yacht','lux_opera','lux_silk','lux_alpine','lux_tailor','lux_garden'])FIT_EXT.top[id]=luxuryTorso;
+function referenceTorso(look,ux,top,th,s,isBack,at,q){
+ ctx.translate(ux,top);ctx.scale(s,th/64);const fill=(x,y,w,h,c,r=0)=>{ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
+ const line=(a,b,c,w=1)=>{ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();};
+ const star=(x,y,r,c)=>{ctx.fillStyle=c;pStar(x,y,r,r*.42);ctx.fill();};fill(-18,0,36,64,look.shirt);
+ if(q.k==='ref_garden'){fill(-13,0,26,56,'#aabf9c',2);line([-12,2],[-2,20],q.a,1.5);line([12,2],[2,20],q.a,1.5);for(const y of [19,30,41]){ctx.fillStyle=q.a;ctx.beginPath();ctx.arc(0,y,2,0,Math.PI*2);ctx.fill();}for(const [x,y] of [[10,12],[12,16]])star(x,y,2,q.b);}
+ else if(q.k==='ref_pixel'){fill(-18,0,36,64,'#171527');star(0,29,9,q.a);for(const [x,y,r] of [[-11,17,2],[12,21,3],[-8,47,2],[10,50,2]])star(x,y,r,q.b);line([-8,1],[-6,20],q.a,1);line([8,1],[6,20],q.a,1);}
+ else if(q.k==='ref_moon'){fill(-18,0,36,64,'#252946');line([-14,0],[-5,64],q.a,1.2);line([14,0],[5,64],q.a,1.2);for(const [x,y] of [[-10,18],[9,25],[-6,42],[11,49]])star(x,y,1.8,q.a);ctx.strokeStyle=q.a;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(0,17,5,.3,Math.PI*1.7);ctx.stroke();}
+ else if(q.k==='ref_neo'){fill(-18,0,36,64,'#1d54cf');fill(-3,0,6,58,'#151a23');for(const x of [-14,11])line([x,4],[x+5,54],q.a,2);line([-16,27],[-6,30],q.a,1.2);line([16,27],[6,30],q.a,1.2);fill(-11,37,8,10,'#151a23',1);fill(3,37,8,10,'#151a23',1);}
+ else if(q.k==='ref_coral'){for(const [x,y] of [[-10,16],[9,22],[-6,34],[10,45],[-12,51]]){ctx.fillStyle=q.a;for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(x+Math.cos(i*1.256)*2.2,y+Math.sin(i*1.256)*2.2,1.5,0,Math.PI*2);ctx.fill();}ctx.fillStyle=q.b;ctx.beginPath();ctx.arc(x,y,1.4,0,Math.PI*2);ctx.fill();}line([-10,0],[0,16],q.a,1.8);line([10,0],[0,16],q.a,1.8);}
+ if(isBack)line([-13,22],[13,22],q.a,1);
+}
+for(const id of ['ref_garden','ref_pixel','ref_moon','ref_neo','ref_coral'])FIT_EXT.top[id]=referenceTorso;
 function studioHead(look,hx,hd,s,ph,isBack,at,{ht,hw,fh}){
  const seat=look.hat==='studio_arcade'?ht:fh-5*s;
  ctx.translate(hx,seat);ctx.scale(s,s);const w=hw/s,c=look.hatC;
