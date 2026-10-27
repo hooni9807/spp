@@ -26,10 +26,13 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
       const result=await page.evaluate(()=>{
         const canvas=document.getElementById('prologue-court');
         const before=JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog]);
-        const effects=[5.3,9.6].map(seconds=>{drawPrologueMatch(canvas,seconds);return canvas.dataset.ultimate;});
-        return {effects,unchanged:before===JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog])};
+        const effects=[5.3,9.6].map(seconds=>{drawPrologueMatch(canvas,seconds);return {id:canvas.dataset.ultimate,shot:canvas.dataset.shot};});
+        return {effects,tiers:[ULT_BY.radiant.tier,ULT_BY.phoenix.tier],copy:document.getElementById('prologue-story-copy').textContent,hud:document.querySelector('.pl-match-hud').textContent,unchanged:before===JSON.stringify([W,H,view,time,mode,YAW,me,foe,you,cpu,playing,VIEWS.tp,ultFx,ultCut,ball,prog])};
       });
-      assert.deepEqual(result.effects,['radiant','phoenix']);
+      assert.deepEqual(result.effects,[{id:'radiant',shot:'민희쌤 · 빛의 반격'},{id:'phoenix',shot:'만취범 · 불사조 스매시'}]);
+      assert.deepEqual(result.tiers,[4,3]);
+      assert.match(result.copy,/민희쌤 vs 만취범/);
+      assert.match(result.hud,/민희쌤.*만취범/);
       assert.equal(result.unchanged,true);
       if(options.reducedMotion){const before=Number(await page.locator('#prologue-court').getAttribute('data-rally'));await page.waitForTimeout(2800);const after=Number(await page.locator('#prologue-court').getAttribute('data-rally'));assert.ok(after>before,'reduced-motion prologue still advances the rally');}
       await page.close();

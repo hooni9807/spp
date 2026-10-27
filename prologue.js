@@ -6,8 +6,8 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const chapters = [...dialog.querySelectorAll('[data-chapter]')];
   const scenes = [
-    ['serve', '탁구의 순간을, 내 손끝으로.', '민희쌤 vs 올인 도박사. SPP의 코트에서 첫 번째 랠리가 시작됩니다.'],
-    ['spin', '동료가 이어 주고, 내가 끝낸다.', '동료가 먼저 공을 이어 치고 마지막 타격으로 마무리하는 SPP의 필살기 연출.'],
+    ['serve', '탁구의 순간을, 내 손끝으로.', '민희쌤 vs 만취범. SPP의 코트에서 첫 번째 랠리가 시작됩니다.'],
+    ['spin', '최신 필살기의 순간.', '민희쌤의 4티어 빛의 반격과 만취범의 3티어 불사조 스매시가 교차합니다.'],
     ['ready', '다음 랠리의 주인공은 당신.', '캐릭터를 고르고, 나만의 코디로 코트에 서 보세요.']
   ];
   const starts = [0, 5200, 11000];
@@ -23,7 +23,7 @@
     previewReady = !!ready;
     return previewReady;
   }
-  Promise.allSettled(['minhee','gambler'].map(key => FACES[key].decode())).then(() => {
+  Promise.allSettled(['minhee','drunk'].map(key => FACES[key].decode())).then(() => {
     if (dialog.open && !drawRally(elapsed)) {
       document.getElementById('prologue-loading').textContent = '미리보기를 불러오지 못했어요. 아래에서 게임을 시작할 수 있어요.';
     }

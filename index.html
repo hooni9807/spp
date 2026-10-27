@@ -178,7 +178,7 @@ html.prologue-pending #auth-gate[open]{visibility:visible}
 })();
 </script>
 <link rel="preload" as="image" href="minhee-face.png" fetchpriority="high">
-<link rel="preload" as="image" href="gambler-face.png" fetchpriority="high">
+<link rel="preload" as="image" href="drunk-face.png" fetchpriority="high">
 <link rel="stylesheet" href="prologue.css?v=4" onerror="window.mysPrologueBoot?.fail()"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head>
 <body><button id="settings-fab" type="button" aria-label="게임 설정">⚙</button><dialog id="racket-skins"><button type="button" class="dlg-x" aria-label="닫기" onclick="this.closest('dialog').close()">✕</button><h3>🏓 라켓 스킨</h3><div id="skin-list"></div></dialog><style>#enhance .enhance-stats{display:block}#enhance .enhance-stats span:nth-child(-n+2){display:none}</style>
 <dialog id="auth-gate" aria-labelledby="auth-title" data-scene="serve">
@@ -192,17 +192,17 @@ html.prologue-pending #auth-gate[open]{visibility:visible}
         <p class="pl-kicker"><i aria-hidden="true"></i>SPP / SNAP PING PONG</p>
         <h1 id="auth-title" class="pl-heading" aria-label="SPP Snap Ping Pong"><span><b>SPP<em>.</em></b></span></h1>
         <p class="pl-wordmark">Snap Ping Pong</p>
-        <div class="pl-story"><strong id="prologue-story-title">탁구의 순간을, 내 손끝으로.</strong><p id="prologue-story-copy">민희쌤 vs 올인 도박사. SPP의 코트에서 첫 번째 랠리가 시작됩니다.</p></div>
+        <div class="pl-story"><strong id="prologue-story-title">탁구의 순간을, 내 손끝으로.</strong><p id="prologue-story-copy">민희쌤 vs 만취범. SPP의 코트에서 첫 번째 랠리가 시작됩니다.</p></div>
         <div class="pl-actions">
           <button id="auth-google-login" class="pl-google" type="button" disabled><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.5 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Google로 나의 랠리 시작</button>
           <button id="auth-enter" class="pl-enter" type="button" data-prologue-close hidden>▶ 메인으로 시작하기 <span aria-hidden="true">→</span></button>
           <span id="auth-status" role="status" aria-live="polite">로그인 상태 확인 중…</span>
         </div>
       </section>
-      <section class="pl-art" aria-label="민희쌤과 올인 도박사의 게임 플레이 미리보기">
+      <section class="pl-art" aria-label="민희쌤과 만취범의 게임 플레이 미리보기">
         <div class="pl-preview-top"><span><i></i> PLAY PREVIEW</span><b>SPP / EXHIBITION MATCH</b></div>
         <div class="pl-match">
-          <div class="pl-match-hud"><span>민희쌤 <b>08</b></span><i>VS</i><span><b>08</b> 올인 도박사</span></div>
+          <div class="pl-match-hud"><span>민희쌤 <b>08</b></span><i>VS</i><span><b>08</b> 만취범</span></div>
           <canvas id="prologue-court" width="960" height="640" aria-label="실제 게임 캐릭터와 코디로 재생하는 탁구 랠리 데모"></canvas>
           <div id="prologue-loading">코트에 입장하는 중<span>SPP · Snap Ping Pong</span></div>
           <div class="pl-match-caption"><span id="prologue-shot">SERVICE</span><b>RALLY <span id="prologue-rally">00</span></b></div>
@@ -3820,7 +3820,7 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1||e.target===canv
 let lastTouchEnd=0;document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<350&&e.target===canvas)e.preventDefault();lastTouchEnd=now;},{passive:false});   // double tap on the court = smash, never zoom
 function recoverGameLoop(error,phase='simulation'){console.error('게임 루프 오류', {phase,playing,hasBall:!!ball,score:`${you}:${cpu}`,rally},error);/* Drawing is cosmetic. A failed effect/portrait must never erase an active rally. */if(phase==='render'){renderFaultUntil=performance.now()+250;return;}if(playing){/* point() clears the ball before finishing its optional effects.  Preserve that confirmed point instead of treating it as a new rally. */const scoreJustCommitted=!ball&&wait>1.45;ball=null;wait=scoreJustCommitted?Math.max(wait,.2):1.2;rally=0;trail=[];fx=[];swingMemory=null;lastTap=null;cdUntil=0;ultHoldUntil=0;release();$('rally').textContent='0';return;}paused=false;cdUntil=0;ultHoldUntil=0;try{reset();lockPage(false);}catch(recoveryError){console.error('게임 복구 화면을 표시하지 못했습니다.',recoveryError);}}
 function frame(t){try{tickVictoryCeremony();if(net&&net.dbl)dblView();if(net?.role==='guest'&&performance.now()-net.clockPingAt>5000)pingNetClock();const elapsed=Math.min((t-last)/1000||0,.1);last=t;for(let left=elapsed;left>1e-6&&playing&&!paused;left-=1/60)(net&&net.role==='guest'?guestUpdate:update)(Math.min(left,1/60));sendNetState(t);if(samples.length&&t-samples.at(-1).t>120){paddle.vx=paddle.vy=0;}$('speed').innerHTML=Math.round(Math.hypot(paddle.vx,paddle.vy))+' <small>px/s</small>';$('meter').style.width=Math.min(100,Math.hypot(paddle.vx,paddle.vy)/18)+'%';}catch(error){recoverGameLoop(error);}try{if(!$('auth-gate').open&&performance.now()>=renderFaultUntil)render();}catch(error){recoverGameLoop(error,'render');}finally{requestAnimationFrame(frame);}}requestAnimationFrame(frame);
-</script><script src="prologue-match.js?v=9"></script><script src="prologue.js?v=8" onerror="window.mysPrologueBoot?.fail()"></script><script src="ceremony-media.js?v=synth2"></script><style id="spp-theme">/* ===== SPP 테마: 모바일 스포츠 게임 표준 (기준: eFootball · FIFA Mobile) =====
+</script><script src="prologue-match.js?v=10"></script><script src="prologue.js?v=9" onerror="window.mysPrologueBoot?.fail()"></script><script src="ceremony-media.js?v=synth2"></script><style id="spp-theme">/* ===== SPP 테마: 모바일 스포츠 게임 표준 (기준: eFootball · FIFA Mobile) =====
    밤 경기장 네이비 바탕 · 행동 색은 시안 하나 · 보상/레벨/티어는 골드 · 상대/위험은 레드
    숫자·점수는 콘덴스드 이탤릭(Barlow Condensed), 한글은 Pretendard. 모서리는 한 번 깎은 챔퍼. */
 :root{--ink:#eef3ff;--muted:#93a4cc;--paper:#070b18;--line:rgba(150,180,255,.14);--orange:#14e0ff;
