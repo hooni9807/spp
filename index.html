@@ -927,7 +927,7 @@ g.fillStyle='rgba(255,255,255,.22)';g.fillRect(2,2,20,7);return ULT_ICON[u.id]=c
 let ultTab='cut',ultSel=null;
 function renderUlts(){const ch=ultChar||charType,set=ultSet(ch),n=ultSlots();$('ul-head').textContent=`필살기 · ${LOOKS[ch].nick||LOOKS[ch].name}`+(ch===charType?' (선택 중)':'');
 {const sel=$('ult-char');sel.textContent='';for(const k of UNLOCKABLE().concat(START_CHARS).filter(charUnlocked)){const o=document.createElement('option');o.value=k;o.textContent=(LOOKS[k].nick||LOOKS[k].name)+(k===charType?' ✓':'');sel.append(o);}sel.value=ch;}
-const unlock=$('ult-unlock');unlock.textContent='';for(const u of ULTS.filter(u=>u.tier>=3)){const item=document.createElement('span'),label=document.createElement('b'),detail=document.createElement('small');label.textContent=`${u.tier}티어 · ${u.name}`;detail.textContent=ultReqBrief(u,ch);item.append(label,detail);unlock.append(item);}
+$('ult-unlock').replaceChildren();
 $('ult-slots').innerHTML=[0,1,2].map(i=>{const u=ULT_BY[set[i]];return `<div class="ms-slot${i>=n?' lock':''}" data-slot="${i}">${i>=n?`<span>Lv ${i===1?10:20}</span>`:u?`<img src="${ultIcon(u)}" alt="${u.name}" draggable="false" data-from="${i}" data-drag="${u.id}"><em>${u.name}</em>`:'<span>빈 칸</span>'}<b>${i+1}</b></div>`;}).join('');
 const trigs=Object.keys(ULT_TRIG);(()=>{const q=(prog.q??={})._u??={};if((q[ch]||[]).some(k=>k&&!ultOk(ULT_BY[k],ch))){q[ch]=q[ch].map(k=>k&&ultOk(ULT_BY[k],ch)?k:null);saveProg(false);}})();
 $('ult-tabs').innerHTML='';
@@ -4018,6 +4018,7 @@ html body .ms-rec{border:0;border-radius:0;clip-path:var(--chamfer);background:v
 html body .ms-row,html body .ms-cell,html body .ms-detail,html body .ms-slot{background:#0d1530;border-color:var(--line2)}
 /* Keep unlock progress compact so the selected move's explanation remains the reading focus. */
 html body .ms-unlock{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;max-height:76px;margin:6px 0;padding:6px 8px;overflow:auto;font-size:10px;line-height:1.25}
+html body #ult-unlock{display:none!important}
 html body .ms-unlock span{gap:1px;padding-left:5px}
 html body .ms-unlock b{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html body .ms-unlock small{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
