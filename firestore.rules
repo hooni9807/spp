@@ -65,6 +65,10 @@ service cloud.firestore {
       allow read: if true;
       allow create: if valid(10000);
     }
+    match /rally_survival/{id} {
+      allow read: if true;
+      allow create: if valid(10000);
+    }
     match /rally_boss/{id} {
       allow read: if true;
       allow create: if valid(10000);
