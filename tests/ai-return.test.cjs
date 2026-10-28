@@ -204,6 +204,14 @@ assert.ok(context.P.returnRoll({type:'drive',defMiss:.2},'uext',1)<=.75,'20% ski
   assert.ok(context.P.returnRoll({type:'drive',ult:'ultimate',defMiss:.95},'uext',.99)<=.05,'ultimate return chance is capped at five percent');
 });
 
+test('ultimate returns use the requested tier rates regardless of AI difficulty', () => {
+  const expected={1:.5,2:.3,3:.1,4:.05};
+  for(const [tier,rate] of Object.entries(expected)){
+    assert.equal(context.P.returnRoll({type:'drive',ult:'tier-test',ultTier:+tier},'uext',.99),rate);
+    assert.equal(context.P.returnRoll({type:'drive',ult:'tier-test',ultTier:+tier},'easy',.1),rate);
+  }
+});
+
 test('every marginal out ball can become an edge and net cords have a five percent pass', () => {
   const edge = { owner:'ai', x:.9, y:.7 };
   assert.equal(context.P.edgeSave(edge, () => 0), true);
