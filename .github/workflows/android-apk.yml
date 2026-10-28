@@ -36,8 +36,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           APK: android/app/build/outputs/apk/debug/app-debug.apk
         run: |
+          cp "$APK" SPP.apk
           if gh release view android-latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload android-latest "$APK#SPP.apk" --clobber --repo "$GITHUB_REPOSITORY"
+            gh release upload android-latest SPP.apk --clobber --repo "$GITHUB_REPOSITORY"
           else
-            gh release create android-latest "$APK#SPP.apk" --title "SPP 최신 Android APK" --notes "main 최신 빌드입니다." --repo "$GITHUB_REPOSITORY"
+            gh release create android-latest SPP.apk --title "SPP 최신 Android APK" --notes "main 최신 빌드입니다." --repo "$GITHUB_REPOSITORY"
           fi
