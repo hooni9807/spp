@@ -218,6 +218,17 @@ test('every marginal out ball can become an edge and net cords have a five perce
   assert.equal(context.P.netCord(() => .05), false);
 });
 
+test('gambler hidden achievements only boost the local player edge and net-cord rolls', () => {
+  context.gamblerSecretEdge = () => true;
+  context.gamblerSecretNet = () => true;
+  assert.equal(context.P.edgeSave({owner:'you',x:0,y:2.8}, () => .039), true);
+  assert.equal(context.P.edgeSave({owner:'ai',x:0,y:.7}, () => .039), false);
+  assert.equal(context.P.netCord(() => .099, true), true);
+  assert.equal(context.P.netCord(() => .099, false), false);
+  context.gamblerSecretEdge = () => false;
+  context.gamblerSecretNet = () => false;
+});
+
 test('long-ball timing stays available until the playable reach limit', () => {
   const long = {owner:'ai', bounces:1, y:-1.5, z:.2, vy:-3, vz:0, retreat:.35};
   assert.equal(context.P.timing(long), 'late');
