@@ -67,6 +67,11 @@ test('each AI tier uses its configured ordinary-shot return rate', () => {
   assert.equal(context.P.returnChance({type:'drive'}, 'uext', 1, .1), .99);
 });
 
+test('AI serve returns have an 80 percent final floor', () => {
+  assert.match(html,/serveFloor=ball\.type==='serve'\?\.8:0/);
+  assert.match(html,/Math\.max\(serveFloor,P\.returnRoll\(ball,/);
+});
+
 vm.runInNewContext(html.slice(html.indexOf('function landGuard(s,b)'), html.indexOf('function hit(tap)')), context);
 test('late two-touch returns stay low or miss the net', () => {
   for (const y of [-.3, -.7, -1.1]) for (const z of [-.45, -.2, 0, .2]) for (const type of ['block', 'short', 'drive', 'cut']) {
@@ -211,6 +216,21 @@ test('every marginal out ball can become an edge and net cords have a five perce
   assert.equal(context.P.edgeSave({owner:'ai',x:0,y:1.6}, () => 0), false, 'wrong-court balls are never rescued as edges');
   assert.equal(context.P.netCord(() => .049), true);
   assert.equal(context.P.netCord(() => .05), false);
+});
+
+test('gambler hidden achievements only boost the local player edge and net-cord rolls', () => {
+  context.gamblerSecretEdge = () => true;
+  context.gamblerSecretNet = () => true;
+  context.playerEdgeChance = () => .04;
+  context.playerNetCordChance = () => .10;
+  assert.equal(context.P.edgeSave({owner:'you',x:0,y:2.8}, () => .039), true);
+  assert.equal(context.P.edgeSave({owner:'ai',x:0,y:.7}, () => .039), false);
+  assert.equal(context.P.netCord(() => .099, true), true);
+  assert.equal(context.P.netCord(() => .099, false), false);
+  context.gamblerSecretEdge = () => false;
+  context.gamblerSecretNet = () => false;
+  context.playerEdgeChance = () => .01;
+  context.playerNetCordChance = () => .05;
 });
 
 test('long-ball timing stays available until the playable reach limit', () => {

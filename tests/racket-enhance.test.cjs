@@ -34,13 +34,14 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     await page.evaluate(()=>{renderSkins();$('racket-skins').showModal();});
     assert.equal(await page.locator('#racket-skins').evaluate(d=>d.open),true);
     assert.equal(await page.locator('#skin-list button').first().isDisabled(),true);
-    const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {equipped:championSkin(),level:enhanceCombatLevel()};});
-    assert.deepEqual(skin,{equipped:true,level:0});
+    const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {orbit:racketOrbit(),level:enhanceCombatLevel()};});
+    assert.deepEqual(skin,{orbit:'🥖',level:0});
     const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,miss:enhanceShownAiMiss(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
     assert.deepEqual(regional,{level:0,cards:4,miss:.04,display:true,name:'전설 · 부산시대회 우승 트로피'});
     const usage=await page.evaluate(()=>{store.set('character-usage','');recordCharacterUsage({id:'usage-1',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-2',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-3',charKey:'leesin',racketType:'defense',rubberType:'speed'});return charUsageRows().map(r=>[r.id,r.matches,r.racket,r.rubber]);});
     assert.deepEqual(usage,[['jersey',2,'쉐이크핸드','09C'],['leesin',1,'수비수 라켓','롱']]);
-    assert.equal(await page.evaluate(()=>{const impact={x:100,y:100,t:time,champion:championSkin()};return impact.champion;}),true);
+    assert.deepEqual(await page.evaluate(()=>{const expected={champion:'🥖',sejong:'🌸',busan:'🦈',okcheon:'🍇',pyeongtaek:'🍐',seoul:'🏆',attendance_astral:'7'};prog.q._trophies=TOUR_REWARDS.map(r=>r.id);return Object.fromEntries(Object.keys(expected).map(id=>{prog.q._racketSkin=id;return [id,racketOrbit()];}));}),{champion:'🥖',sejong:'🌸',busan:'🦈',okcheon:'🍇',pyeongtaek:'🍐',seoul:'🏆',attendance_astral:'7'});
+    assert.equal(fs.readFileSync(path.join(root,'index.html'),'utf8').includes('<b>🍐 ${event.name}</b>'),false);
     await page.evaluate(()=>{prog.q._trophies=[];prog.q._racketSkin='';prog.q._racketChampion=0;});
     await page.locator('#racket-skins').evaluate(d=>d.close());
     await page.locator('#enhance-home').click();
@@ -53,7 +54,7 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     const racketEffect=await page.evaluate(()=>{const old=ctx,c=document.createElement('canvas');c.width=c.height=180;ctx=c.getContext('2d');prog.racketEnhance=0;racket(90,90,0,'shake','#1b1b1b',1,null,true);const base=c.toDataURL();ctx.clearRect(0,0,180,180);prog.racketEnhance=10;time=.5;racket(90,90,0,'shake','#1b1b1b',1);const ai=c.toDataURL();ctx.clearRect(0,0,180,180);racket(90,90,0,'shake','#1b1b1b',1,null,true);const enhanced=c.toDataURL();ctx=old;return {player:base!==enhanced,ai:base===ai};});
     assert.equal(state.level,1);assert.ok(state.coins<10000);assert.ok(racketEffect.player,'+10 player racket should render an effect');assert.ok(racketEffect.ai,'AI racket should not render the player enhancement effect');assert.ok(state.miss>0);assert.equal(await page.locator('#enhance-speed').isVisible(),false);assert.equal(await page.locator('#enhance-spin').isVisible(),false);
     const curve=await page.evaluate(()=>[15,20,24,25,30].map(level=>{prog.racketEnhance=level;return enhanceShownAiMiss();}));
-    assert.ok(Math.abs(curve[0]-.015)<1e-12);assert.ok(Math.abs(curve[1]-.05)<1e-12);assert.ok(Math.abs(curve[2]-.09)<1e-12);assert.ok(Math.abs(curve[3]-(.09+.11/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
+    assert.ok(Math.abs(curve[0]-.075)<1e-12);assert.ok(Math.abs(curve[1]-.10)<1e-12);assert.ok(Math.abs(curve[2]-.15)<1e-12);assert.ok(Math.abs(curve[3]-(.15+.05/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
     assert.deepEqual(await page.evaluate(()=>[0,9,10,18,19].map(level=>{prog.racketEnhance=level;return enhanceCost();})),[10,10,120,120,600]);
     assert.deepEqual(await page.evaluate(()=>[0,1,9,10,19,20,29].map(level=>{prog.racketEnhance=level;return [enhanceRate(),enhanceFxTier()];})),[[1,0],[.98,0],[.82,0],[.70,1],[.52,1],[.30,2],[.21,2]]);
     const trophyFormula=await page.evaluate(()=>{prog.racketEnhance=30;prog.q._trophies=TOUR_REWARDS.map(r=>r.id);mode='match';rankOn=false;net=null;return {skin:enhanceCombatLevel(),shown:enhanceShownAiMiss(),active:enhanceAiMiss()};});
