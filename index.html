@@ -1614,7 +1614,7 @@ TIERS.uext={...TIERS.uhard,name:'울트라 익스트림',base:Object.fromEntries
    // 울트라: 익스트림 AI, but every ball is a 투클릭 공
 let aiTier=(()=>{try{const v=localStorage.getItem('tier');return TIERS[v]?v:'easy';}catch{return 'easy';}})(),aiCharge=0;
 const bossCharm=()=>mode==='boss'&&!net&&aiChar==='aribeom',tourBoost=()=>tournament?.state==='playing'&&tournament.round>=3?1+.04*(tournament.round-2):1,runeResist=()=>net||pracLike()||mode==='cutman'||mode==='infdrive'?0:mode==='boss'?.5:TIERS[tierNow()].resist||0,tierNow=()=>bossCharm()?'uext':survival()?'hard':mode==='match'&&!net?aiTier:'easy',tierP=()=>{const t=tierNow();return t==='easy'?null:TIERS[t];},tierL=L=>{const t=tierP(),b=tourBoost();return t?{...L,speed:L.speed*t.speed*b*tourSpeed(),serve:L.serve*t.serve*b*tourSpeed(),aim:L.aim*t.aim*b}:L;},aiPressure=()=>{const p=TIERS[tierNow()]?.pressure||{speed:1,spin:1,aim:1,longSpeed:0,longSpin:0,longMax:0,charge:1},b=tourBoost();return {...p,speed:p.speed*b*tourSpeed(),spin:p.spin*b,aim:p.aim*b};};
-const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.08,DUAL_CLOSE=.45;   // 투클릭: ② appears DUAL_GAP s after ① was touched and closes in over DUAL_CLOSE s
+const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.06,DUAL_CLOSE=.30;   // 투클릭: every ball uses the same 0.36 s ①→② rhythm
 function triE(){return (ball.pre-ball.preHit)*(ball.pre===2?QUAD_BEAT:DUAL_GAP+DUAL_CLOSE)-(ball.y+P.back(ball)+.08)/Math.max(.3,-ball.vy);}   // pre-touch on the incoming ball: >0 late, <0 early; due 1 beat (쓰리터치) or 2 beats (포터치, first) before the 투클릭 part
 function quadE(){return -(2.8-ball.y)/Math.max(.3,ball.vy)-.07;}
 let nightmareTouchMatch='',nightmareTouchBag=[];
@@ -1663,10 +1663,11 @@ $('special-status').textContent=ready?(equipped?'✦ 충전 완료 · 상황에 
 // Shrinking ring: appears as the ball crosses the net and closes in on a racket-sized circle; when they match (PERFECT window,
 // just past my end line) swing. It keeps shrinking and turns red while the ball is late.
 // 투클릭 rings, rhythm-game style: ① shows first; once it is touched a ✓ stays and ② appears DUAL_GAP later, closing in so that it is PERFECT when it meets the racket circle.
-// after ① the ball flies on slowly (35% speed) past ① over to ② until ② is due + a little grace, so ② stays on screen
-function dualCloseFor(b){if((b.retreat||0)<.08&&b.y>-.8)return DUAL_CLOSE;const g=6+(b.spin||0)*P.EQUIP.spin*.55,d=b.vz*b.vz+2*g*(b.z+.6),fall=d>0?(b.vz+Math.sqrt(d))/g:0,limit=(-2.4-P.back(b)-b.y)/Math.min(-.01,b.vy),available=Math.min(fall,limit);return P.clamp(available-DUAL_GAP-.04,.08,DUAL_CLOSE);}
+// After ①, pause flight until the fixed ② beat: speed no longer changes the input rhythm.
+function dualCloseFor(){return DUAL_CLOSE;}
 const dualElapsed=b=>b?.dualWall!=null?(performance.now()-b.dualWall)/1000:time-(b?.dualT??time);
 function dualBeat(b=ball){const close=b?.dualClose??DUAL_CLOSE,elapsed=dualElapsed(b),ringTime=elapsed-DUAL_GAP,error=ringTime-close;return{elapsed,ringTime,close,error,perfect:Math.abs(error)<.16+(R_('utDual')||0)};}
+const dualPause=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE));
 const dualHold=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE)+.35);
 function dualRing(p0,state){const off=dualOff(),R0=19*p0.scale*P.EQUIP.len;ctx.save();ctx.textAlign='center';
 const ring=(x,r,col,w,label)=>{ctx.setLineDash([3,4]);ctx.lineWidth=1.5;ctx.strokeStyle='#f3eeff70';ctx.beginPath();ctx.arc(x,p0.y,R0*ringK,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.lineWidth=w;ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(x,p0.y,r*ringK,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle=col;ctx.font='900 20px Arial';ctx.lineWidth=4;ctx.strokeStyle='#160d2d';ctx.strokeText(label,x,p0.y+7);ctx.fillText(label,x,p0.y+7);};
@@ -3031,6 +3032,7 @@ function pace(){return (ball&&ball.owner==='ai'?1-R_('defSlow'):(net||aiRn)&&bal
 function update(dt){if(performance.now()<cdUntil)return;if(ball&&!ball.held)dt*=P.EQUIP.speed*pace();time+=dt;statusToast();if(!ball){wait-=dt;if(wait<=0)startServe();return;}if(mode==='trio'){trioUpdate(dt);return;}if(net&&net.dbl&&lastHit!==net.d.lastHit){net.d.lastHit=lastHit;if(!ball||!ball.held)net.d.turn.A^=1;}
 if(ball.held&&(ball.owner!=='you'||net&&net.dbl&&net.d.server!==1))return;
 if(ball.held){if(!ball.tossed)ballToHand();else{ball.vz-=6*dt;ball.z+=ball.vz*dt;if(ball.vz<0&&ball.z<ball.tossZ){ball.tossed=false;toast('놓쳤어요 · 다시 토스하세요',1.5);}}hit();return;}mateCheck();if(ball&&ball.owner==='ai'&&ball.bounces===0)ball.retreat=P.incomingRetreat(ball);if(ball&&ball.owner==='you'&&!ball.held&&ball.quadNext==null&&!net&&mode!=='doubles')ball.quadNext=Math.random()<dualRate()*quadRate();hit();if(!ball||performance.now()<ultHoldUntil)return;const prevY=ball.y,prevZ=ball.z;if(dualHold()&&ball.dualX!=null)ball.x+=(ball.dualX-ball.x)*Math.min(1,dt*9);   // after ① the ball glides over to ②
+if(dualPause())return;
 P.step(ball,dt);if((prevY-1.37)*(ball.y-1.37)<0){const z=prevZ+(ball.z-prevZ)*(1.37-prevY)/(ball.y-prevY);if(z<.1525){if(P.netCord()){ball.z=.17;ball.vz=Math.max(ball.vz,.18);ball.netCord=true;toast('네트 맞고 넘어갔어요! 🍀 (5%)',1.2);}else{point(ball.owner==='ai','네트에 걸렸어요');return;}}}
 if(ball.serving&&ball.z<=0&&ball.vz<0){ball.x=P.clamp(ball.x,-.7,.7);ball.y=ball.owner==='you'?P.clamp(ball.y,.1,1.25):P.clamp(ball.y,1.49,2.64);   // no serve faults: it always lands in
 ball.serving=false;ball.z=0;ball.vz=-ball.vz*.8;ball.vy*=1.03;beep(270);}

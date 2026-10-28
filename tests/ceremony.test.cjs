@@ -439,10 +439,10 @@ test('only infinite drive hides the point score', () => {
   assert.equal(client.nodes.get('.score i').hidden, true);
 });
 
-test('two-click timing brings up the second target sooner and leaves a longer swing window', () => {
+test('two-click timing has one short fixed beat', () => {
   const client = createClient();
-  assert.equal(client.value('DUAL_GAP'), 0.2);
-  assert.equal(client.value('DUAL_CLOSE'), 0.55);
+  assert.equal(client.value('DUAL_GAP'), 0.06);
+  assert.equal(client.value('DUAL_CLOSE'), 0.30);
 });
 
 test('AI win score applies difficulty, score gap, two-touch, shutout and streak bonuses', () => {
