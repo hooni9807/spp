@@ -487,7 +487,8 @@ const RUBBERS={spin:{name:'09C',speed:.9,spin:1.4,err:.03,note:'속도 ↓ · �
 // sometimes flies off it long and an opponent's cut sometimes floats up
 pips:{name:'SP 숏핌플',speed:1.3,spin:.6,err:.1,vsDrive:.25,vsCut:.25,note:'속도 ×1.3 · 회전 적음 · 컨트롤 어려움 · 상대 드라이브는 날아갈 수 있음 · 상대 커트는 붕 뜰 수 있음'}};
 let bladeType='ply',rubberType='control';   // saved choice is read once store exists (below)
-const characterAvailable=k=>!!LOOKS[k]&&!LOOKS[k].disabled&&k!=='ai'&&k!=='plain';
+const PLAIN_PLAYER_UIDS=new Set(['6K0J35BkzpQOitXzb9GcVuxQ8Gr1']),plainPlayerAllowed=()=>PLAIN_PLAYER_UIDS.has(googleUser?.uid);
+const characterAvailable=k=>!!LOOKS[k]&&!LOOKS[k].disabled&&k!=='ai'&&(k!=='plain'||plainPlayerAllowed());
 // Rankings only accept the characters currently exposed in the selection roster.
 // This also hides legacy rows whose character used to fall back to "선수".
 const RANKING_CHARACTERS=new Set(['매혹범','휴고범','리신범','퍼시벌','만취범','아재범','민희쌤','일병3호봉','빽종령','금호관장','송스타','날먹세','김치성','지킬앤 하이범','아담 성','올인 도박사','유리대포']);
@@ -3904,6 +3905,8 @@ loginStatus('네이버 로그인 중…');try{const r=await fetch(NAVER.worker,{
 const au=await authReady();await authLib.signInWithCustomToken(au,d.token);if(d.nickname&&!store.get('nick'))store.set('nick',cleanName(d.nickname));await showLogin();if(!playing&&!net)openSetup();return true;}catch(e){loginStatus('네이버 로그인 실패 ('+(e.message||e)+')');return false;}}
 async function showLogin(){let u=null,ready=false,authError='';syncGoogleLoginButtons();try{const au=await authReady();ready=!!au;u=au&&au.currentUser;}catch(e){authError=e.code||e.message||'초기화 오류';}const g=u&&!u.isAnonymous;googleUser=g?u:null;googleLoginReady=ready;syncGoogleLoginButtons();if(g){const gn=cleanName(u.displayName||'');if(gn)store.set('nick',gn);else if(!store.get('nick'))store.set('nick','선수');}$('start').classList.toggle('locked',!g);if(g){presenceStart();await loadCloudSetup(u.uid);flushPending();loadProgress();setTimeout(inboxLoad,1500);}$('friends-btn').hidden=!g;renderMailboxAlert();
 $('naver-login').hidden=!!g||!NAVER.worker;$('google-logout').hidden=!g;loginStatus(g?`${cleanName(u.displayName||store.get('nick')||'내 계정')} 님으로 로그인됨 · 랭킹전 기록이 어느 기기에서든 이어져요`:authError?`로그인 준비 실패 (${authError}) · 새로고침 후 다시 시도해 주세요`:'Google로 로그인해 주세요 · 경기 기록이 자동으로 랭킹에 남아요');}
+const rawShowLogin=showLogin;
+showLogin=async function(...args){const result=await rawShowLogin(...args);setCharacter(charType);return result;};
 async function applyRated(won,ceremonyId=null){questMatchEnd(won);gainXp(won?XP.pvp*(1+R_('utWinXp')):XP.pvp/2*(1+R_('utLose')),won?'1대1 승리':'1대1 패배 (절반)');const name=cleanName(store.get('nick')||'')||'익명';let before=pvpLocal(),next=P.nextRating(before,won),where='내 기기';
 try{const db=await pvpRemote();if(db){const ref=rankFs.doc(db,'players',rankUid),snap=await rankFs.getDoc(ref);if(snap.exists())before={...before,...snap.data()};next=P.nextRating(before,won);
 await rankFs.setDoc(ref,{name,...myTtl(),rating:next.rating,wins:next.wins,losses:next.losses,streak:next.streak,at:rankFs.serverTimestamp()});where='전체 랭킹';}}catch(e){where='내 기기 (전체 반영 실패)';}
