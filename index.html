@@ -3696,7 +3696,10 @@ let matchId=null,rankDb=null,rankFs=null,rankApp=null,rankUid=null,board='pvp',p
 // A copy served from this computer (localhost) is a test build: it never touches the shared ranking database.
 // names left in the shared ranking by early automated test runs - hidden from the boards
 const TEST_NAMES=new Set(['guest']);
-const TEST_HOST=/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+// Capacitor Android serves the packaged app at localhost too; only a browser
+// localhost page is a test build and must stay away from the shared Firebase data.
+const NATIVE_ANDROID=!!window.Capacitor?.Plugins?.FirebaseAuthentication;
+const TEST_HOST=/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)&&!NATIVE_ANDROID;
 async function remote(){if(!FIREBASE_CONFIG||TEST_HOST)return null;if(rankDb)return rankDb;
 const app=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');rankFs=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js');
 rankApp=app.initializeApp(FIREBASE_CONFIG);rankDb=rankFs.getFirestore(rankApp);return rankDb;}
