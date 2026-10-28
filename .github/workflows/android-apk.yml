@@ -25,16 +25,30 @@ jobs:
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
       - run: npm ci
-      - run: npm run android:apk
+      - name: Restore release signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/spp-upload.jks
+      - run: npm run android:release
+        env:
+          ANDROID_KEYSTORE_PATH: spp-upload.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: spp-upload
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       - uses: actions/upload-artifact@v4
         with:
-          name: spp-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: spp-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spp-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
       - name: Publish direct APK download
         env:
           GH_TOKEN: ${{ github.token }}
-          APK: android/app/build/outputs/apk/debug/app-debug.apk
+          APK: android/app/build/outputs/apk/release/app-release.apk
         run: |
           cp "$APK" SPP.apk
           if gh release view android-latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
