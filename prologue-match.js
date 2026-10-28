@@ -98,7 +98,7 @@
         ultFx=[{u:effect,x:origin.x,y:origin.y,t:swingAt(effectHit)}];ball=null;drawUltFx();
         if(!reduced.matches){
           g.save();g.setTransform(d,0,0,d,0,0);
-          drawUltCutin({u:effect,x:origin.x,y:origin.y,face:FACES[cast[effectHit%2]],nick:LOOKS[cast[effectHit%2]].nick},age,true);
+          drawUltCutin({u:effect,x:origin.x,y:origin.y,face:loadFace(cast[effectHit%2]),nick:LOOKS[cast[effectHit%2]].nick},age,true);
           g.restore();
         }
       }

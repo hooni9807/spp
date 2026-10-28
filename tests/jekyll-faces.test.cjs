@@ -14,5 +14,5 @@ test('Jekyll and Haibeom switch faces every two points', () => {
   assert.equal(vm.runInNewContext('faceImg(look)', context), hyde);
   context.cpu=2;
   assert.equal(vm.runInNewContext('faceImg(look)', context), jekyll);
-  assert.match(html, /look\.jekyll&&FACES\.jh/);
+  assert.match(html, /look\.jekyll&&\(FACES\.jh\|\|loadFace\('jh'\)\)/);
 });

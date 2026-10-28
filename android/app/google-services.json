@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "632748801549",
+    "project_id": "spin-lab-ea7df",
+    "storage_bucket": "spin-lab-ea7df.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632748801549:android:8fc57ce898de03e9c31f44",
+        "android_client_info": {
+          "package_name": "com.hooni9807.spp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632748801549-j3rp9j7tm9qoqvt5hoko4n52n1ifgk0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hooni9807.spp",
+            "certificate_hash": "72497d7719dbecbd2a6b535f8969e08abe0bc1bc"
+          }
+        },
+        {
+          "client_id": "632748801549-1m5f73qku1adu65qvq4hnlho8g762e91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ7sk27RxDPtuFurEuOptEeGg3aFaB5h4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632748801549-1m5f73qku1adu65qvq4hnlho8g762e91.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
