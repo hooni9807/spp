@@ -201,7 +201,8 @@ test('racket skills remain returnable and tier-four miss chance survives AI bonu
   const equipped=context.P.aiChance({type:'lightning',ult:'x',x:0,vy:-3,spin:0},'b5',false,{atk:.3,sp:.45,cap:.999,base:{b5:.95}});
   assert.ok(normal>equipped,'racket skill must not receive the equipped-special penalty');
 assert.ok(context.P.returnRoll({type:'drive',defMiss:.2},'uext',1)<=.75,'20% skill miss is applied after the return tier');
-  assert.ok(context.P.returnRoll({type:'drive',ult:'ultimate',defMiss:.95},'uext',.99)<=.05,'ultimate return chance is capped at five percent');
+  assert.equal(context.P.returnRoll({type:'drive',ult:'ultimate',defMiss:.95},'uext',.99),.05,'ultimate return chance has a five-percent floor');
+  assert.equal(context.P.returnRoll({type:'drive',ult:'ultimate',defMiss:0},'uext',1),.10,'ultimate return chance is capped at ten percent');
 });
 
 test('every marginal out ball can become an edge and net cords have a five percent pass', () => {
