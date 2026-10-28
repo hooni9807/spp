@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SPP</string>
+    <string name="title_activity_main">SPP</string>
+    <string name="package_name">com.hooni9807.spp</string>
+    <string name="custom_url_scheme">com.hooni9807.spp</string>
+</resources>

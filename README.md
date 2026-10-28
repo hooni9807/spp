@@ -16,6 +16,12 @@
 
 로컬에서는 저장소 파일을 함께 둔 뒤 `index.html`을 브라우저로 열면 실행됩니다. 로컬 서버로 확인하려면 `python -m http.server 8765 --bind 127.0.0.1`을 실행한 뒤 `http://127.0.0.1:8765/`로 접속하세요. 빌드나 패키지 설치는 필요하지 않습니다.
 
+## Android APK
+
+`main`에 푸시하면 GitHub Actions의 **Android APK** 작업이 설치용 디버그 APK를 만듭니다. GitHub 저장소의 Actions에서 해당 작업을 열고 `spp-debug-apk` 아티팩트를 내려받으세요. 로컬에서는 Android Studio·SDK를 설치한 뒤 `npm ci && npm run android:apk`을 실행하면 `android/app/build/outputs/apk/debug/app-debug.apk`가 생성됩니다.
+
+앱의 Google/Firebase 로그인에는 Firebase Authentication의 승인된 도메인에 `localhost`를 추가해야 합니다. Play Store 배포는 별도 서명 키와 release AAB 빌드가 필요합니다.
+
 ## 📚 문서
 
 | 문서 | 내용 |
