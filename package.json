@@ -1,5 +1,19 @@
 {
+  "name": "spp",
+  "private": true,
+  "scripts": {
+    "build:web": "node scripts/build-web.cjs",
+    "android:sync": "npm run build:web && cap sync android",
+    "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "android:release": "npm run android:sync && cd android && ./gradlew assembleRelease bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor-firebase/authentication": "^8.5.2",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
+  },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "playwright": "^1.64.1"
   }
 }
