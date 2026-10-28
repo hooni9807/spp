@@ -54,6 +54,7 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     assert.equal(state.level,1);assert.ok(state.coins<10000);assert.ok(racketEffect.player,'+10 player racket should render an effect');assert.ok(racketEffect.ai,'AI racket should not render the player enhancement effect');assert.ok(state.miss>0);assert.equal(await page.locator('#enhance-speed').isVisible(),false);assert.equal(await page.locator('#enhance-spin').isVisible(),false);
     const curve=await page.evaluate(()=>[15,20,24,25,30].map(level=>{prog.racketEnhance=level;return enhanceShownAiMiss();}));
     assert.ok(Math.abs(curve[0]-.015)<1e-12);assert.ok(Math.abs(curve[1]-.05)<1e-12);assert.ok(Math.abs(curve[2]-.09)<1e-12);assert.ok(Math.abs(curve[3]-(.09+.11/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
+    assert.deepEqual(await page.evaluate(()=>[0,9,10,18,19].map(level=>{prog.racketEnhance=level;return enhanceCost();})),[10,10,120,120,600]);
     const trophyFormula=await page.evaluate(()=>{prog.racketEnhance=30;prog.q._trophies=TOUR_REWARDS.map(r=>r.id);mode='match';rankOn=false;net=null;return {skin:enhanceCombatLevel(),shown:enhanceShownAiMiss(),active:enhanceAiMiss()};});
     assert.deepEqual(trophyFormula,{skin:30,shown:.26,active:.26});
     await page.evaluate(()=>{prog.q._trophies=[];});

@@ -522,9 +522,8 @@ const enhanceAiMiss=()=>enhanceActive()?enhanceAiMissAt(enhanceLevel())+trophyMi
 // active yet.  Show the owned level's full future bonus there, not the
 // currently-active in-match value (which is correctly zero outside AI games).
 const enhanceShownAiMiss=()=>enhanceAiMissAt(enhanceLevel())+trophyMissBonus();
-// Early enhancement is deliberately affordable through 울트라 wins.  The
-// economy turns into a long-term goal after +10, then a true end-game sink at +21.
-const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=5?3:n<=10?10:n<=15?45:n<=20?110:220;};
+// +1~10 stays approachable; +11~19 is a commitment and +20~30 is end-game.
+const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=10?10:n<20?120:600;};
 const enhanceRate=()=>{const n=enhanceLevel()+1;return n<=10?1:n<=15?.75:n<=20?.55:.35;};
 function gainCoins(n,why){n=Math.max(0,Math.round(n));if(!n)return;lastCoinGain=n;prog.coins+=n;saveProg();toast(`+${n} ${COIN_NAME} · ${why}`,2.3);}
 function matchCoinReward(){return mode==='match'?(COIN_REWARD[tierNow()]||COIN_REWARD.easy):mode==='boss'?180:0;}
