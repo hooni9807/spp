@@ -483,7 +483,7 @@ const RUBBERS={spin:{name:'09C',speed:.9,spin:1.4,err:.03,note:'속도 ↓ · �
 // sometimes flies off it long and an opponent's cut sometimes floats up
 pips:{name:'SP 숏핌플',speed:1.3,spin:.6,err:.1,vsDrive:.25,vsCut:.25,note:'속도 ×1.3 · 회전 적음 · 컨트롤 어려움 · 상대 드라이브는 날아갈 수 있음 · 상대 커트는 붕 뜰 수 있음'}};
 let bladeType='ply',rubberType='control';   // saved choice is read once store exists (below)
-const characterAvailable=k=>!!LOOKS[k]&&!LOOKS[k].disabled&&k!=='ai';
+const characterAvailable=k=>!!LOOKS[k]&&!LOOKS[k].disabled&&k!=='ai'&&k!=='plain';
 // Rankings only accept the characters currently exposed in the selection roster.
 // This also hides legacy rows whose character used to fall back to "선수".
 const RANKING_CHARACTERS=new Set(['매혹범','휴고범','리신범','퍼시벌','만취범','아재범','민희쌤','일병3호봉','빽종령','금호관장','송스타','날먹세','김치성','지킬앤 하이범','아담 성','올인 도박사','유리대포']);
