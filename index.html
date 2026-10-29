@@ -3527,6 +3527,12 @@ let villainStarting=false;{const b0=begin;begin=function(...a){if(!villainStarti
 {const sr=showResult;showResult=function(won){const v=villainRun;if(v?.live&&mode==='match'&&VILLAINS.includes(aiChar)){v.g++;won?v.my++:v.ai++;if(v.my>=2||v.ai>=2){v.live=false;if(v.my>=2){const first=!tS().villain;tS().villain=1;qOf('tourWin').n++;gainCoins(800,'코닐리우 이벤트 매치 승리');saveProg();setTimeout(()=>toast(first?'코닐리우 이벤트 매치 승리! 코닐리우 유니폼을 해금했어요':'코닐리우 이벤트 매치 승리!',3.2),600);}}}
  sr(won);if(v&&mode==='match'&&VILLAINS.includes(aiChar)){const rt=$('result').querySelector('[data-rs="retry"]');rt.textContent=v.live?`다음 경기 (${v.g+1}단식 · 팀 ${v.my}:${v.ai})`:v.my>=2?`빌런단체전 승리 ${v.my}:${v.ai} · 다시 도전`:`빌런단체전 패배 ${v.my}:${v.ai} · 다시 도전`;}};}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rs="retry"]');if(!b||!villainRun)return;if(!(mode==='match'&&VILLAINS.includes(aiChar)))return;e.stopImmediatePropagation();$('result').close();if(villainRun.live)villainGame();else openVillainPick();},true);
+const VILLAIN_EVENT_NAME='이벤트매치';
+TOURNAMENT_RANK_EVENTS.find(event=>event.id==='villain').name=VILLAIN_EVENT_NAME;
+villainEventButton.querySelector('b').firstChild.textContent=VILLAIN_EVENT_NAME+' ';
+seoulEventButton.querySelector('.tour-level').textContent='매우 어려움';
+const openVillainEventPick=openVillainPick;openVillainPick=function(){openVillainEventPick();const d=$('team-pick');d.querySelector('#tp-title').textContent='이벤트매치 출전 명단';d.querySelector('#tp-copy').textContent='도어정·냄섭·스톤류와 단식 3경기 · 먼저 2승하면 승리 · 상대 순서와 난이도는 매번 무작위 · 이기면 코닐리우 유니폼 해금';};
+const randomVillainGame=villainGame;villainGame=function(){if(villainRun?.g===0)VILLAINS.sort(()=>Math.random()-.5);return randomVillainGame();};
 // ===== 스테이지 돌파전: 목숨 3개로 AI를 연속 격파. 스테이지마다 AI 난이도·공속·회전·필살기 게이지가 오르고,
 // 깰 때마다 증강 3개 중 1개를 고른다(카드마다 새로고침 1번). 증강 효과는 스킬트리 키(R_)에 더해진다.
 // 증강은 LoL 무작위 총력전: 아수라장의 증강 아이디어를 탁구에 맞게 새로 옮긴 것(이름·문구는 자체 작성).

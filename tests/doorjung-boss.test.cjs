@@ -10,4 +10,7 @@ assert.doesNotMatch(html,/tiers:\['uhard','uext','unight'\]/);
 assert.match(html,/if\(you\+cpu===0\)nemFirstServeDone=false/);
 assert.match(html,/Math\.random=\(\)=>0/);
 assert.match(html,/nemServeWaited=true;\}return nemseopStartServe/);
+assert.match(html,/VILLAIN_EVENT_NAME='이벤트매치'/);
+assert.match(html,/seoulEventButton\.querySelector\('\.tour-level'\)\.textContent='매우 어려움'/);
+assert.match(html,/if\(villainRun\?\.g===0\)VILLAINS\.sort\(\(\)=>Math\.random\(\)-\.5\)/);
 console.log('Doorjung remains only in the 3-villain team mode, not as a standalone boss');
