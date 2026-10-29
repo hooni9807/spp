@@ -3027,7 +3027,7 @@ for(const target of [2.22,2.08,2.38,1.94,2.52,2.66,2.78])for(const k of [1,.9,.8
 // If even the calibrated low arcs cannot clear, keep the intended two-touch
 // rule and call it a net rather than launching a high, long error ball.
 return P.miss(s,b.y,b.z,'net');}
-function hit(tap){if(performance.now()<cdUntil||performance.now()<ultHoldUntil||gesture?.dualTap&&down&&!tap)return;
+function hit(tap){if(performance.now()<cdUntil||performance.now()<ultHoldUntil||gesture?.dualTap&&down&&!tap&&!gesture.stroke)return;
 if(mode==='doubles'&&ball&&!ball.held&&ball.owner==='ai'&&myTurn==='mate')return;   // partner's ball
 if(ball&&ball.held){if(playing&&!paused&&ball.owner==='you'&&(!net||!net.dbl||net.d.server===net.d.slot))serveHit();return;}
 if(net&&net.dbl&&!dblMine())return;   // 복식: only the team member whose turn it is can hit
@@ -3235,7 +3235,7 @@ gesture={x:paddle.x,y:paddle.y,t:performance.now(),distance:0,live:!!ball&&ball.
 canvas.addEventListener('pointermove',move);
 canvas.addEventListener('pointerup',e=>{
 if(e.pointerId!==activePointer)return;move(e);const now=performance.now();
-if(gesture?.dualTap){swingMemory=null;queueTap('dual');
+if(gesture?.dualTap){if(gesture.stroke)hit();else{swingMemory=null;queueTap('dual');}
 }else if(gesture&&!gesture.held&&gesture.distance<(touchInput?18:12)&&now-gesture.t<(touchInput?260:200)){
 queueTap('short');
 }
