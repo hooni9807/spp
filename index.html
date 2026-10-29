@@ -1684,7 +1684,7 @@ TIERS.uext={...TIERS.uhard,name:'울트라 익스트림',base:Object.fromEntries
    // 울트라: 익스트림 AI, but every ball is a 투클릭 공
 let aiTier=(()=>{try{const v=localStorage.getItem('tier');return TIERS[v]?v:'easy';}catch{return 'easy';}})(),aiCharge=0;
 const bossCharm=()=>mode==='boss'&&!net&&aiChar==='aribeom',tourBoost=()=>tournament?.state==='playing'&&tournament.round>=3?1+.04*(tournament.round-2):1,runeResist=()=>net||pracLike()||mode==='cutman'||mode==='infdrive'?0:mode==='boss'?.5:TIERS[tierNow()].resist||0,tierNow=()=>bossCharm()?'uext':bossDoor()&&mode==='boss'?'uhard':survival()?'hard':mode==='match'&&!net?aiTier:'easy',tierP=()=>{const t=tierNow();return t==='easy'?null:TIERS[t];},tierL=L=>{const t=tierP(),b=tourBoost();return t?{...L,speed:L.speed*t.speed*b*tourSpeed(),serve:L.serve*t.serve*b*tourSpeed(),aim:L.aim*t.aim*b}:L;},aiPressure=()=>{const p=TIERS[tierNow()]?.pressure||{speed:1,spin:1,aim:1,longSpeed:0,longSpin:0,longMax:0,charge:1},b=tourBoost();return {...p,speed:p.speed*b*tourSpeed(),spin:p.spin*b,aim:p.aim*b};};
-const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.035,DUAL_CLOSE=.26;   // 투클릭: ①→② ideal rhythm is 0.295 s, with a shorter reveal delay.
+const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.06,DUAL_CLOSE=.30;   // 투클릭: ①→②는 기존의 여유 있는 0.36초 리듬으로 유지한다.
 function triE(){return (ball.pre-ball.preHit)*(ball.pre===2?QUAD_BEAT:DUAL_GAP+DUAL_CLOSE)-(ball.y+P.back(ball)+.08)/Math.max(.3,-ball.vy);}   // pre-touch on the incoming ball: >0 late, <0 early; due 1 beat (쓰리터치) or 2 beats (포터치, first) before the 투클릭 part
 function quadE(){return -(2.8-ball.y)/Math.max(.3,ball.vy)-.07;}
 let nightmareTouchMatch='',nightmareTouchBag=[];
@@ -1739,7 +1739,7 @@ $('special-status').textContent=ready?(equipped?'✦ 충전 완료 · 상황에 
 // After ①, pause flight until the fixed ② beat: speed no longer changes the input rhythm.
 function dualCloseFor(){return DUAL_CLOSE;}
 const dualElapsed=b=>b?.dualWall!=null?(performance.now()-b.dualWall)/1000:time-(b?.dualT??time);
-function dualBeat(b=ball){const close=b?.dualClose??DUAL_CLOSE,elapsed=dualElapsed(b),ringTime=elapsed-DUAL_GAP,error=ringTime-close;return{elapsed,ringTime,close,error,perfect:Math.abs(error)<.21+(R_('utDual')||0)};}
+function dualBeat(b=ball){const close=b?.dualClose??DUAL_CLOSE,elapsed=dualElapsed(b),ringTime=elapsed-DUAL_GAP,error=ringTime-close;return{elapsed,ringTime,close,error,perfect:Math.abs(error)<.16+(R_('utDual')||0)};}
 const dualPause=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE));
 const dualHold=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE)+.35);
 function dualRing(p0,state){const off=dualOff(),R0=19*p0.scale*P.EQUIP.len;ctx.save();ctx.textAlign='center';
