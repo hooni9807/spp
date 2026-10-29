@@ -3532,7 +3532,7 @@ AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%'
 ['stalk','골드','밤 사냥꾼','초반 공격 상대 리턴 -8%',{atkEarly:.08}],
 ['overflow','골드','승부사의 감','마무리 상대 리턴 -10% · 상대 리턴 -4%',{atkFinisher:.1,atkPress:.04}],
 ['overload','골드','과부하','역습 속도 +20% · 맞드라이브 +10%',{atkCounterPunch:.2,atkCounter:.1}],
-['ocean','골드','바다의 영혼','목숨 +1 · 내 타구 성공률 +3%',{defSafe:.03},r=>r.lives++],
+['ocean','골드','바다의 영혼','내 타구 성공률 +5% · 실점 직후 성공률 +5%',{defSafe:.05,defKey:.05}],
 ['hextech','프리즘','마공학 영혼','포·백·스매시·PERFECT 속도 +8%',{atkDrive:.08,atkBh:.08,atkSmash:.08,atkPerfect:.08}],
 ['home','프리즘','홈 가드','매 스테이지 2점 앞서 시작',{},r=>r.lead+=2],
 ['crit','프리즘','치명적','PERFECT 판정 범위 +40%',{utPerfect:.4}],
@@ -3543,7 +3543,7 @@ AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%'
 ['omni','프리즘','만능 영혼','무작위 골드 증강 효과 3개',{},r=>augRandom(r,'골드',3)],
 ['grit','프리즘','무법자의 투지','필살기 받기 +25% · 스매시 받기 +25% · 강타 받기 +15%',{defSpecialRx:.25,defSmashRx:.25,defKillRx:.15}],
 ['mystic','프리즘','신비한 주먹','PERFECT마다 상대 필살기 게이지 -30% · 내 충전 +30%',{utSteal:.3,atkCharge:.3}],
-['nature','프리즘','자연 치유','실점 직후 다음 랠리 성공률 +15% · 내 타구 성공률 +5%',{defKey:.15,defSafe:.05}]];
+['nature','프리즘','자연 치유','목숨 +1 · 실점 직후 다음 랠리 성공률 +15% · 내 타구 성공률 +5%',{defKey:.15,defSafe:.05},r=>r.lives++]];
 function augRandom(r,tier,n){const pool=AUGS.filter(a=>a[1]===tier&&!a[5]&&!r.augs.includes(a[0])).sort(()=>Math.random()-.5).slice(0,n);for(const a of pool)for(const [k,v] of Object.entries(a[4]))r.fx[k]=(r.fx[k]||0)+v;toast(`${pool.map(a=>a[2]).join(' · ')} 효과를 얻었어요`,2.2);}
 let stageRun=null,stageStarting=false;
 {const t0=titleFx;titleFx=k=>t0(k)+(stageRun?.live&&mode==='match'?(stageRun.fx[k]||0)+synFx(k):0);}
