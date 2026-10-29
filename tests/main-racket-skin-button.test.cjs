@@ -4,4 +4,5 @@ assert.match(html,/fitOpen\.textContent='코디'/);
 assert.match(html,/skinTab\.hidden=true/);
 assert.match(html,/skinOpen\.id='racket-skin-open'/);
 assert.match(html,/skinOpen\.onclick=\(\)=>\{renderSkins\(\);document\.getElementById\('racket-skins'\)\.showModal\(\);\}/);
+assert.match(html,/html #racket-skin-open\{--ic:url/);
 console.log('Main menu separates outfit and racket skin entry points.');
