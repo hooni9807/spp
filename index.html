@@ -3552,7 +3552,12 @@ function stageStart(){if(playing&&(you||cpu)&&!confirm('진행 중인 점수가 
 const stageOn=()=>stageRun?.live&&mode==='match'&&!net;
 {const b0=begin;begin=function(...a){if(!stageStarting&&stageRun?.live)stageRun=null;return b0.apply(this,a);};}
 {const a0=P.aiReturn;P.aiReturn=(kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(stageOn()){const k=1+(stageRun.stage-1)*.05;speed*=k;spinK*=k;}return a0(kind,x,y,z,speed,aimX,spinK,...rest);};}
-function augRoll(r,not=[]){const w=r.stage<3?[.7,.27,.03]:r.stage<6?[.45,.4,.15]:[.25,.45,.3],x=Math.random(),tier=x<w[0]?'실버':x<w[0]+w[1]?'골드':'프리즘',pool=AUGS.filter(a=>a[1]===tier&&!not.includes(a[0])&&!r.augs.includes(a[0]));return pool.length?pool[Math.random()*pool.length|0]:AUGS.find(a=>!not.includes(a[0])&&!r.augs.includes(a[0]));}
+// 이미 고른 증강·같은 판에 나온 카드는 제외. 목숨을 깎는 증강(유리 대포·불길한 계약)은 목숨 증강(자연 치유)을 가진 뒤에만.
+// 이미 가진 시너지의 증강이 나올 확률 +20%.
+function augRoll(r,not=[]){const w=r.stage<3?[.7,.27,.03]:r.stage<6?[.45,.4,.15]:[.25,.45,.3],x=Math.random(),tier=x<w[0]?'실버':x<w[0]+w[1]?'골드':'프리즘',
+ ok=a=>!not.includes(a[0])&&!r.augs.includes(a[0])&&(!['glass','pact'].includes(a[0])||r.augs.includes('nature')),mine=new Set(r.augs.map(augSyn)),
+ pick=L=>L[Math.random()*L.length|0],tierPool=AUGS.filter(a=>a[1]===tier&&ok(a)),synPool=tierPool.filter(a=>mine.has(augSyn(a[0])));
+ if(synPool.length&&Math.random()<.2)return pick(synPool);return tierPool.length?pick(tierPool):AUGS.find(ok);}
 function openAugPick(){const r=stageRun;let d=$('aug-pick');if(!d){d=document.createElement('dialog');d.id='aug-pick';d.setAttribute('aria-labelledby','aug-title');document.body.append(d);}
 const cards=[];for(let i=0;i<3;i++)cards.push(augRoll(r,cards.map(a=>a[0])));const used=[0,0,0];
 const draw=()=>{d.innerHTML=`<h3 id="aug-title">${r.cleared?TIERS[stageAt(r.stage-1).tier].name+' 구간 클리어! 증강을 골라요':'시작 증강을 골라요'}</h3><p class="aug-sub">목숨 <b class="n">${r.lives}</b> · 다음 스테이지 <b class="n">${r.stage}</b> · 카드마다 새로고침 1번</p><div class="aug-row">${cards.map((a,i)=>`<div class="aug-col"><button type="button" class="aug-card aug-${{실버:'s',골드:'g',프리즘:'p'}[a[1]]}" data-aug="${i}"><i class="aug-tier">${a[1]}</i><b>${a[2]}</b><span>${a[3]}</span><em class="aug-syn">${augSyn(a[0])}</em></button><button type="button" class="aug-re" data-re="${i}"${used[i]?' disabled':''}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3.7h-3.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>${used[i]?'새로고침 사용함':'새로고침'}</button></div>`).join('')}</div>`;
