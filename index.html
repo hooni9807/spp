@@ -475,7 +475,7 @@ minhee:{jaetgi:true,name:'민희쌤',nick:'민희쌤',kit:{name:'MINHEE',color:'
 // 3인 빌런단체전 1번 주자. 팔은 몸통 스윙보다 늦게 따라가게 그려, 특유의 늦은 스윙 타이밍을 보인다.
 doorjung:{name:'도어정',nick:'도어정',kit:{name:'DOORJUNG',color:'#f3bed5'},female5:true,handicap:4,long612:true,lateArm:true,bob:true,stanceK:1.03,crouchK:.08,shirt:'#5a3b75',sleeve:'#5a3b75',collar:'#f3bed5',pants:'#252133',shorts:false,hair:'#4a2630',skin:'#f1c4ad',skinShade:'#ce9987',taunts:['손바닥 가운데에 놓고 서브하세요.','그 서브 다시요.','612 롱으로 받아볼게요.']},
 // 3인 빌런단체전 2번 주자. 기존 렌더러의 belly 실루엣을 이용해 넓은 몸통과 짧고 굵은 팔다리를 만든다.
-nemseop:{name:'냄섭',nick:'냄섭',kit:{name:'NEMSEOP',color:'#b9e58c'},smell:true,handicap:0,fat:1.75,belly:1.6,tall:.88,stanceK:.84,crouchK:.05,shirt:'#587a37',sleeve:'#587a37',collar:'#d8f0a9',pants:'#373b29',shorts:false,hair:'#2d251d',skin:'#e2b18f',skinShade:'#bc886b',taunts:['냄새가 좀 나나?','서브는 천천히 넣어야지.']},
+nemseop:{name:'냄섭',nick:'냄섭',kit:{name:'NEMSEOP',color:'#b9e58c'},smell:true,handicap:0,fat:1.6,belly:1.1,tall:.95,stanceK:.84,crouchK:.05,shirt:'#587a37',sleeve:'#587a37',collar:'#d8f0a9',pants:'#373b29',shorts:false,hair:'#2d251d',skin:'#e2b18f',skinShade:'#bc886b',taunts:['냄새가 좀 나나?','서브는 천천히 넣어야지.']},
 // 3인 빌런단체전 3번 주자. 뾰족 귀 · 가는 눈 · 긴 코 · 콧수염 · 안경으로 족제비 닮은 사람을 게임 스타일로 그린다.
 stoneryu:{name:'스톤류',nick:'스톤류',kit:{name:'STONE',color:'#9cc9f5'},lefty:true,weasel:true,curveLeft:true,handicap:2,glasses:true,shirt:'#596273',sleeve:'#596273',collar:'#d9e5ef',pants:'#252a34',shorts:true,hair:'#4a453f',skin:'#d5a17d',skinShade:'#ae795d',taunts:['왼손 궤도 조심하세요.','백은 안 쳐요. 돌아서 칠게요.']},
 // 탁구 마왕: opponent-only boss for 보스전. Drawn, no photo: horns, glowing red eyes, a blood-red cape and a dark aura.
@@ -2334,6 +2334,9 @@ for(const id of ['vet_ragcape','vet_mastercape','vet_grassshield']){
 function fitBodyPath(look,ux,top,th,s){
  ctx.beginPath();
  const loose=look.hoodie||['studio_cloud','studio_arcade','vet_sauna'].includes(look.pat?.k),hem=(loose?19:16)*s;
+ if(look.fat){const w=24*s,f=28*s;   /* 살찐 체형: 처진 둥근 어깨 · 옆구리 살 · 골반 위로 넓게 */
+ ctx.moveTo(ux-10*s,top-1*s);ctx.quadraticCurveTo(ux-w,top,ux-w,top+12*s);ctx.bezierCurveTo(ux-f-3*s,top+th*.45,ux-f,top+th*.8,ux-f+5*s,top+th);
+ ctx.lineTo(ux+f-5*s,top+th);ctx.bezierCurveTo(ux+f,top+th*.8,ux+f+3*s,top+th*.45,ux+w,top+12*s);ctx.quadraticCurveTo(ux+w,top,ux+10*s,top-1*s);ctx.closePath();return;}
  ctx.moveTo(ux-9*s,top);ctx.quadraticCurveTo(ux-18*s,top,ux-18*s,top+10*s);
  ctx.lineTo(ux-hem,top+th-3*s);ctx.quadraticCurveTo(ux-hem,top+th,ux-hem+3*s,top+th);
  ctx.lineTo(ux+hem-3*s,top+th);ctx.quadraticCurveTo(ux+hem,top+th,ux+hem,top+th-3*s);
@@ -2667,7 +2670,7 @@ const top=hy-60*s*T,th=64*s*T;
 {const n=sad?0:P.clamp((st.vx||0)/160,-1,1)+(look.drunk?Math.sin(time*2.3)*(st.ceremT!=null&&time-st.ceremT<1.6?1.1:.35):0);st.hov=(st.hov||0)*.8+(-n-(st.ho||0))*.22;st.ho=P.clamp((st.ho||0)+st.hov,-1.4,1.4);st.hn=lerp(st.hn||0,n,.15);}
 const hx=ux+st.lean*3*s+pose.twist*side*2*s+st.ho*4*s,hd=top-(look.face?15:12)*s;
 {const nk={x:ux,y:top+4*s},nh={x:hx,y:hd+9*s};line(nk,nh,look.skinShade||'#d9ad88',10.5*s);line({x:nk.x+1*s,y:nk.y},{x:nh.x+1*s,y:nh.y},skin,8*s);}   // neck, shaded at the sides
-ctx.globalAlpha=ca;fitBodyPath(look,ux,top,th,s);ctx.fillStyle=look.shirt;ctx.fill();if(look.belly){const by=top+th*.66,rx=27*s*look.belly,ry=21*s*look.belly;ctx.save();ctx.fillStyle=look.shirt;ctx.beginPath();ctx.ellipse(ux,by,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0003';ctx.beginPath();ctx.ellipse(ux,by+ry*.35,rx*.9,ry*.6,0,0,Math.PI);ctx.fill();ctx.fillStyle='#fff2';ctx.beginPath();ctx.ellipse(ux-rx*.3,by-ry*.4,rx*.35,ry*.25,-.4,0,Math.PI*2);ctx.fill();ctx.restore();}   /* 금호관장 배 */
+ctx.globalAlpha=ca;fitBodyPath(look,ux,top,th,s);ctx.fillStyle=look.shirt;ctx.fill();if(look.belly){const by=top+th*(look.fat?.78:.66),rx=27*s*look.belly,ry=(look.fat?16:21)*s*look.belly;ctx.save();ctx.fillStyle=look.shirt;ctx.beginPath();ctx.ellipse(ux,by,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0003';ctx.beginPath();ctx.ellipse(ux,by+ry*.35,rx*.9,ry*.6,0,0,Math.PI);ctx.fill();ctx.fillStyle='#fff2';ctx.beginPath();ctx.ellipse(ux-rx*.3,by-ry*.4,rx*.35,ry*.25,-.4,0,Math.PI*2);ctx.fill();ctx.restore();}   /* 금호관장 배 */
 if(look.camo){ctx.save();ctx.clip();const q=4*s;for(let i=-5;i<5;i++)for(let j=0;j*q<th;j++){const h=(i*73856093^j*19349663)>>>0,c=look.camo[h%5];if(c){ctx.fillStyle=c;ctx.fillRect(ux+i*q,top+j*q,q*(1+(h>>3)%2),q);}}ctx.restore();}
 if(look.stripes){ctx.save();ctx.clip();const gr=ctx.createLinearGradient(0,top,0,top+th);gr.addColorStop(0,look.stripes[0]);gr.addColorStop(1,look.stripes[1]);ctx.fillStyle=gr;
 for(const i of [-2,-1,0,1,2])ctx.fillRect(ux+(i*8-2)*s,top,(i%2?3:4.5)*s,th);ctx.fillStyle=look.collar;ctx.fillRect(ux-7*s,top,14*s,2.6*s);ctx.restore();}
@@ -2706,6 +2709,7 @@ else if(!look.face){ctx.beginPath();ctx.arc(hx,hd-2*s,13*s,Math.PI,0);ctx.fillSt
 if(hipY<H*.5){ctx.fillStyle='#1a1530';for(const k of [-1,1]){ctx.beginPath();ctx.arc(hx+k*4.5*s,hd+1*s,1.8*s,0,Math.PI*2);ctx.fill();}ctx.beginPath();ctx.arc(hx,hd+5*s,4*s,.2,Math.PI-.2);ctx.lineWidth=1.4*s;ctx.strokeStyle='#1a1530';ctx.stroke();}}   // the far player faces us
 if(look.boss){ctx.fillStyle='#ece3cf';for(const k of [-1,1]){ctx.beginPath();ctx.moveTo(hx+k*5*s,hd-11*s);ctx.quadraticCurveTo(hx+k*20*s,hd-14*s,hx+k*19*s,hd-32*s);ctx.quadraticCurveTo(hx+k*15*s,hd-19*s,hx+k*11*s,hd-8*s);ctx.fill();}   // horns
 if(hipY<H*.5){ctx.fillStyle='#ff2a2a';ctx.shadowColor='#ff0000';ctx.shadowBlur=8*s;for(const k of [-1,1]){ctx.beginPath();ctx.ellipse(hx+k*4.5*s,hd+1*s,2.6*s,1.5*s,k*.35,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;}}   // glowing eyes
+if(look.fat&&!fimg&&!look.face&&!isBack){ctx.fillStyle=skin;ctx.beginPath();ctx.ellipse(hx,hd+5*s,15.5*s,10*s,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle=look.skinShade||'#c08a6a';ctx.lineWidth=1.3*s;ctx.beginPath();ctx.arc(hx,hd+8*s,9*s,.35,Math.PI-.35);ctx.stroke();if(!isBack){ctx.fillStyle='#1a1530';for(const k of[-1,1]){ctx.beginPath();ctx.arc(hx+k*4.5*s,hd+.5*s,1.6*s,0,Math.PI*2);ctx.fill();}ctx.lineWidth=1.3*s;ctx.strokeStyle='#1a1530';ctx.beginPath();ctx.arc(hx,hd+4.5*s,3*s,.3,Math.PI-.3);ctx.stroke();}}   /* 살찐 얼굴: 볼살 · 이중턱 */
 if(look.weasel&&!fimg)weaselHead(hx,hd,s,!isBack);if(look.hat||look.hb)fitHead(look,hx,hd,s,!!fimg,isBack,performance.now()/1000,faceState(look,st,stroke,since,prep),st);
 ctx.restore();
 const charm=st.charmT!=null?time-st.charmT:-1;if(charm>=0&&charm<1.2&&hipY<H*.5){const fade=Math.min(1,charm/.12,(1.2-charm)/.35);ctx.save();ctx.globalAlpha=fade;ctx.fillStyle='#ff3f91';ctx.shadowColor='#ff3f91';ctx.shadowBlur=8*s;for(const k of[-1,1]){pHeart(hx+k*4.5*s,hd+1*s,3.4*s);ctx.fill();}ctx.restore();}
