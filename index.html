@@ -476,8 +476,8 @@ minhee:{jaetgi:true,name:'민희쌤',nick:'민희쌤',kit:{name:'MINHEE',color:'
 doorjung:{name:'도어정',nick:'도어정',kit:{name:'DOORJUNG',color:'#f3bed5'},female5:true,handicap:4,long612:true,lateArm:true,bob:true,stanceK:1.03,crouchK:.08,shirt:'#5a3b75',sleeve:'#5a3b75',collar:'#f3bed5',pants:'#252133',shorts:false,hair:'#4a2630',skin:'#f1c4ad',skinShade:'#ce9987',taunts:['손바닥 가운데에 놓고 서브하세요.','그 서브 다시요.','612 롱으로 받아볼게요.']},
 // 3인 빌런단체전 2번 주자. 기존 렌더러의 belly 실루엣을 이용해 넓은 몸통과 짧고 굵은 팔다리를 만든다.
 nemseop:{name:'냄섭',nick:'냄섭',kit:{name:'NEMSEOP',color:'#b9e58c'},smell:true,handicap:0,fat:1.75,belly:1.6,tall:.88,stanceK:.84,crouchK:.05,shirt:'#587a37',sleeve:'#587a37',collar:'#d8f0a9',pants:'#373b29',shorts:false,hair:'#2d251d',skin:'#e2b18f',skinShade:'#bc886b',taunts:['냄새가 좀 나나?','서브는 천천히 넣어야지.']},
-// 3인 빌런단체전 3번 주자. 회색·갈색 눈가와 큰 둥근 안경으로 너구리 인상을 게임 스타일로 재해석한다.
-stoneryu:{name:'스톤류',nick:'스톤류',kit:{name:'STONE',color:'#9cc9f5'},lefty:true,raccoon:true,curveLeft:true,handicap:2,glasses:true,shirt:'#596273',sleeve:'#596273',collar:'#d9e5ef',pants:'#252a34',shorts:true,hair:'#4a453f',skin:'#d5a17d',skinShade:'#ae795d',taunts:['왼손 궤도 조심하세요.','백은 안 쳐요. 돌아서 칠게요.']},
+// 3인 빌런단체전 3번 주자. 뾰족 귀 · 가는 눈 · 긴 코 · 콧수염 · 안경으로 족제비 닮은 사람을 게임 스타일로 그린다.
+stoneryu:{name:'스톤류',nick:'스톤류',kit:{name:'STONE',color:'#9cc9f5'},lefty:true,weasel:true,curveLeft:true,handicap:2,glasses:true,shirt:'#596273',sleeve:'#596273',collar:'#d9e5ef',pants:'#252a34',shorts:true,hair:'#4a453f',skin:'#d5a17d',skinShade:'#ae795d',taunts:['왼손 궤도 조심하세요.','백은 안 쳐요. 돌아서 칠게요.']},
 // 탁구 마왕: opponent-only boss for 보스전. Drawn, no photo: horns, glowing red eyes, a blood-red cape and a dark aura.
 // 보스 세종 9부 아줌마: starts 4 points up (핸디), returns from her forehand are always smashes (x1.6 speed), and a drive into
 // her forehand is smashed back 50% of the time no matter what; plain spin.
@@ -2597,10 +2597,14 @@ cheek(0,0,false);wheel(0,0,false);   // 가까운 쪽 측판 · 바퀴
 ctx.restore();
 if(st.taunt&&time-st.tauntT<1.6){const fz=Math.max(12,15*s),bx=x,by=hubY-62*s;ctx.save();ctx.font=`900 ${fz}px Arial`;const bw=ctx.measureText(st.taunt).width+fz*1.2,bh=fz*1.8;ctx.fillStyle='#ffffff';ctx.beginPath();ctx.roundRect(bx-bw/2,by-bh/2,bw,bh,bh/2);ctx.fill();ctx.fillStyle='#ff345d';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(st.taunt,bx,by+1);ctx.restore();}}
 
-/* 스톤류: 안경 쓴 너구리 인상 — 둥근 귀 · 눈가 검은 마스크 · 흰 주둥이 · 큰 둥근 안경 */
-function raccoonHead(hx,hd,s,front){ctx.save();for(const k of[-1,1]){ctx.fillStyle='#5b5650';ctx.beginPath();ctx.arc(hx+k*10*s,hd-11*s,4.6*s,0,Math.PI*2);ctx.fill();ctx.fillStyle='#2b2724';ctx.beginPath();ctx.arc(hx+k*10*s,hd-11*s,2.3*s,0,Math.PI*2);ctx.fill();}
-if(front){ctx.fillStyle='#2f2b28';ctx.beginPath();ctx.ellipse(hx,hd+.5*s,11.5*s,3.8*s,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#efe8de';ctx.beginPath();ctx.ellipse(hx,hd+6*s,5.5*s,3.6*s,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#1a1715';ctx.beginPath();ctx.ellipse(hx,hd+4.2*s,1.7*s,1.2*s,0,0,Math.PI*2);ctx.fill();
-for(const k of[-1,1]){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(hx+k*4.6*s,hd+.4*s,1.3*s,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#cfd8e3';ctx.lineWidth=1.3*s;ctx.beginPath();ctx.arc(hx+k*4.8*s,hd+.4*s,3.6*s,0,Math.PI*2);ctx.stroke();}ctx.beginPath();ctx.moveTo(hx-1.2*s,hd+.2*s);ctx.lineTo(hx+1.2*s,hd+.2*s);ctx.stroke();}
+function weaselHead(hx,hd,s,front){ctx.save();   /* 스톤류: 족제비 닮은 사람 - 뾰족 귀 · 가는 눈 · 긴 코 · 앞니 · 콧수염 */
+for(const k of[-1,1]){ctx.fillStyle='#e8bf98';ctx.beginPath();ctx.moveTo(hx+k*10.5*s,hd-1*s);ctx.lineTo(hx+k*13.5*s,hd-7*s);ctx.lineTo(hx+k*9*s,hd-4*s);ctx.fill();}
+if(front){ctx.strokeStyle='#2a211c';ctx.lineWidth=1.4*s;ctx.lineCap='round';
+for(const k of[-1,1]){ctx.beginPath();ctx.moveTo(hx+k*2.6*s,hd+1.2*s);ctx.lineTo(hx+k*6.6*s,hd-.4*s);ctx.stroke();}
+ctx.fillStyle='#d9a47c';ctx.beginPath();ctx.moveTo(hx-1.4*s,hd+1*s);ctx.lineTo(hx,hd+6.4*s);ctx.lineTo(hx+1.4*s,hd+1*s);ctx.fill();
+ctx.lineWidth=1*s;for(const k of[-1,1]){ctx.beginPath();ctx.moveTo(hx+k*1.2*s,hd+7*s);ctx.lineTo(hx+k*5*s,hd+6.2*s);ctx.stroke();}
+ctx.fillStyle='#fff';ctx.fillRect(hx-1*s,hd+7.6*s,2*s,1.8*s);
+ctx.strokeStyle='#cfd8e3';ctx.lineWidth=1.2*s;for(const k of[-1,1]){ctx.beginPath();ctx.arc(hx+k*4.8*s,hd+.6*s,3.4*s,0,Math.PI*2);ctx.stroke();}ctx.beginPath();ctx.moveTo(hx-1.4*s,hd+.4*s);ctx.lineTo(hx+1.4*s,hd+.4*s);ctx.stroke();}
 ctx.restore();}
 function person(st,hipY,target,angle,look,s,type,face,side,stroke,since,prep=null,measureOnly=false){
 if(look.glass)return drawCannon(st,hipY,target,s,side,since);
@@ -2702,7 +2706,7 @@ else if(!look.face){ctx.beginPath();ctx.arc(hx,hd-2*s,13*s,Math.PI,0);ctx.fillSt
 if(hipY<H*.5){ctx.fillStyle='#1a1530';for(const k of [-1,1]){ctx.beginPath();ctx.arc(hx+k*4.5*s,hd+1*s,1.8*s,0,Math.PI*2);ctx.fill();}ctx.beginPath();ctx.arc(hx,hd+5*s,4*s,.2,Math.PI-.2);ctx.lineWidth=1.4*s;ctx.strokeStyle='#1a1530';ctx.stroke();}}   // the far player faces us
 if(look.boss){ctx.fillStyle='#ece3cf';for(const k of [-1,1]){ctx.beginPath();ctx.moveTo(hx+k*5*s,hd-11*s);ctx.quadraticCurveTo(hx+k*20*s,hd-14*s,hx+k*19*s,hd-32*s);ctx.quadraticCurveTo(hx+k*15*s,hd-19*s,hx+k*11*s,hd-8*s);ctx.fill();}   // horns
 if(hipY<H*.5){ctx.fillStyle='#ff2a2a';ctx.shadowColor='#ff0000';ctx.shadowBlur=8*s;for(const k of [-1,1]){ctx.beginPath();ctx.ellipse(hx+k*4.5*s,hd+1*s,2.6*s,1.5*s,k*.35,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;}}   // glowing eyes
-if(look.raccoon&&!fimg)raccoonHead(hx,hd,s,!isBack);if(look.hat||look.hb)fitHead(look,hx,hd,s,!!fimg,isBack,performance.now()/1000,faceState(look,st,stroke,since,prep),st);
+if(look.weasel&&!fimg)weaselHead(hx,hd,s,!isBack);if(look.hat||look.hb)fitHead(look,hx,hd,s,!!fimg,isBack,performance.now()/1000,faceState(look,st,stroke,since,prep),st);
 ctx.restore();
 const charm=st.charmT!=null?time-st.charmT:-1;if(charm>=0&&charm<1.2&&hipY<H*.5){const fade=Math.min(1,charm/.12,(1.2-charm)/.35);ctx.save();ctx.globalAlpha=fade;ctx.fillStyle='#ff3f91';ctx.shadowColor='#ff3f91';ctx.shadowBlur=8*s;for(const k of[-1,1]){pHeart(hx+k*4.5*s,hd+1*s,3.4*s);ctx.fill();}ctx.restore();}
 if(sad){ctx.fillStyle='#8fd3ff';for(const k of [-1,1])for(let i=0;i<3;i++){const ph=(sadT*1.4+i/3)%1;ctx.globalAlpha=1-ph;ctx.beginPath();ctx.arc(hx+k*8*s,hd+4*s+ph*26*s,2.3*s,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;}   // tears
