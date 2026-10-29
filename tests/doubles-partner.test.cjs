@@ -4,6 +4,10 @@ for(const hook of ['function openDoublesPartner()','_doublesPartner','let double
 assert.ok(!html.includes('function mateCheck()'),'partner must not auto-return the ball');
 assert.match(html,/partnerTurn=mode==='doubles'&&!net/);
 assert.match(html,/charType=mateChar/);
+assert.match(html,/doublesLink=0/);
+assert.match(html,/doublesLink\+\(perfect\?50:34\)/);
+assert.match(html,/doublesRelay=\{next:who==='mate'\?'me':'mate'/);
+assert.match(html,/charged=mode==='doubles'&&!net&&doublesLink===100/);
 assert.match(html,/fireUlt\(u,q\.x,q\.y,false,mateChar\)/);
 assert.match(html,/\[data-mode="doubles"\]/);
 console.log('doubles partner hooks verified');
