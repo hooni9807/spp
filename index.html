@@ -550,8 +550,9 @@ unlockedCharacters=()=>[...new Set(prog.unlocked)].filter(characterAvailable),
 characterCount=()=>unlockedCharacters().length,
 characterTotal=()=>UNLOCKABLE().length+START_CHARS.length,
 // Each bracket increases the per-level rise, instead of creating an abrupt XP wall.
-// Lv 1–10: +30, Lv 11–20: +60, Lv 21–30: +120, Lv 31+: +240.
-needXp=l=>{l=Math.max(1,l);return l<=10?100+(l-1)*30:l<=20?400+(l-11)*60:l<=30?1060+(l-21)*120:2260+(l-31)*240;},lvAt=x=>{let l=1;while(x>=needXp(l)){x-=needXp(l);l++;}return[l,x];},progLevel=()=>lvAt(prog.xp)[0],picksOwed=()=>Math.min(progLevel()-1-(characterCount()-START_CHARS.length),UNLOCKABLE().filter(k=>!prog.unlocked.includes(k)).length),xpGainScale=()=>1;
+// Lv 1–10: +40, Lv 11–20: +100, Lv 21–30: +150, Lv 31–40: +200,
+// Lv 41–50: +250, Lv 51 onward: +300.
+needXp=l=>{l=Math.max(1,l);return l<=10?100+(l-1)*40:l<=20?560+(l-11)*100:l<=30?1610+(l-21)*150:l<=40?3160+(l-31)*200:l<=50?5210+(l-41)*250:7760+(l-51)*300;},lvAt=x=>{let l=1;while(x>=needXp(l)){x-=needXp(l);l++;}return[l,x];},progLevel=()=>lvAt(prog.xp)[0],picksOwed=()=>Math.min(progLevel()-1-(characterCount()-START_CHARS.length),UNLOCKABLE().filter(k=>!prog.unlocked.includes(k)).length),xpGainScale=()=>1;
 const MINE_CAP_MS=12*60*60*1000,mineState=()=>{prog.q??={};if(!Number.isFinite(+prog.q._mineAt))prog.q._mineAt=Date.now();prog.q._mineLv=Math.max(0,Math.floor(+prog.q._mineLv||0));return prog.q;},mineLevel=()=>mineState()._mineLv,mineRate=()=>Math.round((2+characterCount()*2+progLevel())*(1+mineLevel()*.15)),mineElapsed=(now=Date.now())=>Math.max(0,Math.min(MINE_CAP_MS,now-mineState()._mineAt)),minePending=(now=Date.now())=>Math.floor(mineRate()*mineElapsed(now)/3600000),mineUpgradeCost=()=>100+mineLevel()*140,mineUpgradeRate=()=>Math.max(.25,.9-mineLevel()*.05);
 function mineClaim(silent=false){const q=mineState(),coins=minePending();q._mineAt=Date.now();if(coins){prog.coins+=coins;saveProg();if(!silent)toast(`+${coins} ${COIN_NAME} · 탄광 정산`,2.4);}else saveProg();return coins;}
 if(!Number.isFinite(+(prog.q||{})._mineAt)){mineState();try{localStorage.setItem('spinlab.progress',JSON.stringify(prog));}catch{}}
