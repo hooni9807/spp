@@ -4,6 +4,7 @@ assert.match(html,/data-board="tour"/);
 assert.match(html,/tournament_progress/);
 assert.match(html,/const TOURNAMENT_RANK_EVENTS=\[\.\.\.TOUR_REWARDS,\{id:'villain',name:'코닐리우 이벤트 매치'\}\]/);
 assert.match(html,/if\(tS\(\)\.villain\)won\.add\('villain'\)/);
+assert.match(html,/qOf\('tourWin'\)\.n\+\+;gainCoins\(800,'코닐리우 이벤트 매치 승리'\)/);
 assert.match(html,/우승 \$\{r\.cleared\|\|0\}\/\$\{TOURNAMENT_RANK_EVENTS\.length\}/);
 assert.match(rules,/match \/tournament_progress\/\{uid\}/);
 console.log('Tournament progress board stores and displays global city tournament completion');
