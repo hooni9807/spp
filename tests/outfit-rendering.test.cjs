@@ -98,7 +98,8 @@ const path = require('node:path');
     assert.deepEqual(result.failures, []);
     assert.ok(result.previews > 200 && result.motions >= 300);
     if (process.env.OUTFIT_GALLERY) {
-      await page.evaluate(() => {
+      const galleryIds = (process.env.OUTFIT_GALLERY_IDS || '').split(',').filter(Boolean);
+      await page.evaluate(ids => {
         document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
         const gallery = document.createElement('div');
         gallery.id = 'outfit-test-gallery';
@@ -109,7 +110,8 @@ const path = require('node:path');
             ...FIT_BOTS.filter(([id]) => ['jeans', 'cargo', 'armor', 'jogger'].includes(id)).map(([id, name]) => ({ name, fit: { bot: id } })),
             ...FIT_TOPS.filter(([id]) => ['hawaii', 'plaid', 'tux'].includes(id)).map(([id, name]) => ({ name, fit: { top: id } })),
           ];
-          for (const collection of [{ name: '기본 코디', fit: {} }, ...FIT_COLLECTIONS, ...details]) {
+          const collections = ids.length ? FIT_COLLECTIONS.filter(c => ids.includes(c.id)) : [{ name: '기본 코디', fit: {} }, ...FIT_COLLECTIONS, ...details];
+          for (const collection of collections) {
             const card = document.createElement('div');
             card.style.cssText = 'background:#252c3d;border:1px solid #4c586f;border-radius:12px;padding:8px;text-align:center';
             const title = document.createElement('div'); title.textContent = collection.name + ' · 앞 / 뒤'; card.append(title);
@@ -121,7 +123,7 @@ const path = require('node:path');
           }
         } finally { charType = old; }
         document.body.append(gallery);
-      });
+      }, galleryIds);
       await page.locator('#outfit-test-gallery').screenshot({ path: process.env.OUTFIT_GALLERY });
     }
     assert.deepEqual(errors, []);
