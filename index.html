@@ -156,6 +156,7 @@ html.prologue-pending{background:#0b0b15}
 html.prologue-pending body{visibility:hidden}
 html.prologue-pending::before{content:'SPP';position:fixed;inset:0;display:grid;place-items:center;color:#f3efe3;font:900 36px Arial,sans-serif;letter-spacing:-2px}
 html.prologue-pending #auth-gate[open]{visibility:visible}
+#boss-filter{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}#boss-filter button{flex:0 0 auto;padding:6px 10px;border-radius:10px;border:1px solid #3a2c5a;background:#1c1438;color:#c9b9e8;font:700 12px inherit;cursor:pointer}#boss-filter button[aria-selected="true"]{border-color:#ffd166;background:#4d3a16;color:#fff0b0}
 </style>
 <script>
 // Decide before the body can paint. If an intro asset fails, always reveal the main page.
@@ -273,7 +274,7 @@ html.prologue-pending #auth-gate[open]{visibility:visible}
 <article class="special-tech"><span class="tech-icon">✦</span><div><b>필살기 · 라켓마다 다름</b><small>게이지 100% → 다음 타격에 자동 발동! 쉐이크 초승달 드라이브 · 중펜 번개 속공 · 일펜 천둥 스매시 · 수비 유령 커트</small></div><span class="tech-number">09</span></article>
 </div></section>
 <section class="ranking" aria-labelledby="rank-title"><div class="tech-heading"><h3 id="rank-title">🏆 랭킹</h3><span id="rank-src">내 기기 기록</span></div>
-<div class="segmented rank-tabs" role="tablist"><button data-board="pvp" class="active" role="tab">PvP 레이팅</button><button data-board="arank" role="tab">🎖️ 랭크전</button><button data-board="level" role="tab">⭐ 레벨</button><button data-board="attendance" role="tab">출석왕</button><button data-board="chars" role="tab">플레이 캐릭터 순위</button><button data-board="tour" role="tab">🏆 대회 진행</button><button data-board="wins" role="tab">AI전 승리</button><button data-board="inf" role="tab">♾️ 무한 드라이브</button><button data-board="boss" role="tab">🏅 보스 클리어</button></div><div id="boss-filter" role="group" aria-label="보스 종류" hidden><label><input type="checkbox" value="minhee" checked> 👑 민희쌤</label><label><input type="checkbox" value="boss" checked> 😈 탁구 마왕</label><label><input type="checkbox" value="sejong" checked> 👵 세종 9부 아줌마</label><label><input type="checkbox" value="godyung" checked> 🃏 사기부수 갓융자</label><label><input type="checkbox" value="aribeom" checked> 💖 매혹범</label></div>
+<div class="segmented rank-tabs" role="tablist"><button data-board="pvp" class="active" role="tab">PvP 레이팅</button><button data-board="arank" role="tab">🎖️ 랭크전</button><button data-board="level" role="tab">⭐ 레벨</button><button data-board="attendance" role="tab">출석왕</button><button data-board="chars" role="tab">플레이 캐릭터 순위</button><button data-board="tour" role="tab">🏆 대회 진행</button><button data-board="wins" role="tab">AI전 승리</button><button data-board="inf" role="tab">♾️ 무한 드라이브</button><button data-board="boss" role="tab">🏅 보스 클리어</button></div><div id="boss-filter" role="tablist" aria-label="보스전 랭킹 종류" hidden><button type="button" role="tab" data-boss-board="all" aria-selected="true">전체</button><button type="button" role="tab" data-boss-board="minhee" aria-selected="false">민희쌤</button><button type="button" role="tab" data-boss-board="boss" aria-selected="false">탁구 마왕</button><button type="button" role="tab" data-boss-board="sejong" aria-selected="false">세종 9부 아줌마</button><button type="button" role="tab" data-boss-board="godyung" aria-selected="false">사기부수 갓융자</button><button type="button" role="tab" data-boss-board="aribeom" aria-selected="false">매혹범</button><button type="button" role="tab" data-boss-board="villain" aria-selected="false">3인 빌런단체전</button></div>
 <ol id="rank-list"></ol><p class="help-note">AI 랭크전은 점수에 따라 7부부터 선수부까지 나뉩니다. PvP 레이팅은 온라인 1:1 점수입니다.</p></section><footer><span>SPP</span> <span>작은 움직임이 만드는, 새로운 랠리.</span><span>BUILT FOR THE FEEL OF PLAY</span></footer></main><script>
 /* Shared swing classification and ball physics. */
 (function(root){
@@ -1683,7 +1684,7 @@ TIERS.uext={...TIERS.uhard,name:'울트라 익스트림',base:Object.fromEntries
    // 울트라: 익스트림 AI, but every ball is a 투클릭 공
 let aiTier=(()=>{try{const v=localStorage.getItem('tier');return TIERS[v]?v:'easy';}catch{return 'easy';}})(),aiCharge=0;
 const bossCharm=()=>mode==='boss'&&!net&&aiChar==='aribeom',tourBoost=()=>tournament?.state==='playing'&&tournament.round>=3?1+.04*(tournament.round-2):1,runeResist=()=>net||pracLike()||mode==='cutman'||mode==='infdrive'?0:mode==='boss'?.5:TIERS[tierNow()].resist||0,tierNow=()=>bossCharm()?'uext':bossDoor()&&mode==='boss'?'uhard':survival()?'hard':mode==='match'&&!net?aiTier:'easy',tierP=()=>{const t=tierNow();return t==='easy'?null:TIERS[t];},tierL=L=>{const t=tierP(),b=tourBoost();return t?{...L,speed:L.speed*t.speed*b*tourSpeed(),serve:L.serve*t.serve*b*tourSpeed(),aim:L.aim*t.aim*b}:L;},aiPressure=()=>{const p=TIERS[tierNow()]?.pressure||{speed:1,spin:1,aim:1,longSpeed:0,longSpin:0,longMax:0,charge:1},b=tourBoost();return {...p,speed:p.speed*b*tourSpeed(),spin:p.spin*b,aim:p.aim*b};};
-const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.06,DUAL_CLOSE=.30;   // 투클릭: every ball uses the same 0.36 s ①→② rhythm
+const DUAL_TIER_RATE={ultra:.65,uhard:.75,uext:.85,unight:.90},pracLike=()=>mode==='practice'||mode==='hiball'||clickPrac(),dualRate=()=>clickPrac()?.85:DUAL_TIER_RATE[tierNow()]??(tierNow()==='extreme'?(DUAL_RATE[aiDif()]??.1):0),dualOff=()=>Math.max(34,W*.055),DUAL_GAP=.035,DUAL_CLOSE=.26;   // 투클릭: ①→② ideal rhythm is 0.295 s, with a shorter reveal delay.
 function triE(){return (ball.pre-ball.preHit)*(ball.pre===2?QUAD_BEAT:DUAL_GAP+DUAL_CLOSE)-(ball.y+P.back(ball)+.08)/Math.max(.3,-ball.vy);}   // pre-touch on the incoming ball: >0 late, <0 early; due 1 beat (쓰리터치) or 2 beats (포터치, first) before the 투클릭 part
 function quadE(){return -(2.8-ball.y)/Math.max(.3,ball.vy)-.07;}
 let nightmareTouchMatch='',nightmareTouchBag=[];
@@ -1738,7 +1739,7 @@ $('special-status').textContent=ready?(equipped?'✦ 충전 완료 · 상황에 
 // After ①, pause flight until the fixed ② beat: speed no longer changes the input rhythm.
 function dualCloseFor(){return DUAL_CLOSE;}
 const dualElapsed=b=>b?.dualWall!=null?(performance.now()-b.dualWall)/1000:time-(b?.dualT??time);
-function dualBeat(b=ball){const close=b?.dualClose??DUAL_CLOSE,elapsed=dualElapsed(b),ringTime=elapsed-DUAL_GAP,error=ringTime-close;return{elapsed,ringTime,close,error,perfect:Math.abs(error)<.16+(R_('utDual')||0)};}
+function dualBeat(b=ball){const close=b?.dualClose??DUAL_CLOSE,elapsed=dualElapsed(b),ringTime=elapsed-DUAL_GAP,error=ringTime-close;return{elapsed,ringTime,close,error,perfect:Math.abs(error)<.21+(R_('utDual')||0)};}
 const dualPause=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE));
 const dualHold=()=>!!(ball&&ball.dual&&ball.dualHit&&ball.owner==='ai'&&dualElapsed(ball)<DUAL_GAP+(ball.dualClose??DUAL_CLOSE)+.35);
 function dualRing(p0,state){const off=dualOff(),R0=19*p0.scale*P.EQUIP.len;ctx.save();ctx.textAlign='center';
@@ -3000,7 +3001,7 @@ for(const target of [2.22,2.08,2.38,1.94,2.52,2.66,2.78])for(const k of [1,.9,.8
 // If even the calibrated low arcs cannot clear, keep the intended two-touch
 // rule and call it a net rather than launching a high, long error ball.
 return P.miss(s,b.y,b.z,'net');}
-function hit(tap){if(performance.now()<cdUntil||performance.now()<ultHoldUntil)return;
+function hit(tap){if(performance.now()<cdUntil||performance.now()<ultHoldUntil||gesture?.dualTap&&down&&!tap)return;
 if(mode==='doubles'&&ball&&!ball.held&&ball.owner==='ai'&&myTurn==='mate')return;   // partner's ball
 if(ball&&ball.held){if(playing&&!paused&&ball.owner==='you'&&(!net||!net.dbl||net.d.server===net.d.slot))serveHit();return;}
 if(net&&net.dbl&&!dblMine())return;   // 복식: only the team member whose turn it is can hit
@@ -3008,6 +3009,7 @@ if(net&&net.dbl&&!dblMine())return;   // 복식: only the team member whose turn
 if(quadPending()){const e=quadE();if(!playing||paused||e<-.35||!tap&&!(swingMemory&&time<=swingMemory.until))return;const q=project(ball.x,ball.y,ball.z);if(Math.hypot(q.x-paddle.x,q.y-paddle.y)>Math.max(touchInput?70:58,W*.08)*ringK*(1+R_('utDualReach')))return;ball.earlyPre=1;swingMemory=null;lastTap=null;const qa=Math.abs(e)<.15?'PERFECT':Math.abs(e)<.25?'GREAT':'GOOD';pops.push({x:q.x,y:q.y,t:time,text:'① '+qa,rgb:'199,146,255'});beep(480);toast(`① ${qa}! 다음 박자에 ②`,1);return;}
 if(preLeft()){const e=triE();if(!playing||paused||ball.owner!=='ai'||e<-.35||ball.y<=-.3||!tap&&!(swingMemory&&time<=swingMemory.until))return;const q=project(ball.x,ball.y,ball.z);if(Math.hypot(q.x-paddle.x,q.y-paddle.y)>Math.max(touchInput?70:58,W*.08)*ringK*(1+R_('utDualReach')))return;const nn=CIRC[ball.preHit];ball.preHit++;swingMemory=null;lastTap=null;fx.push({x:q.x,y:q.y,t:time});const qa=Math.abs(e)<.15?'PERFECT':Math.abs(e)<.25?'GREAT':'GOOD';if(qa==='PERFECT')ball.anyPerf=true;pops.push({x:q.x,y:q.y,t:time,text:nn+' '+qa,rgb:'199,146,255'});beep(420+60*ball.preHit);toast(`${nn} ${qa}! 다음 박자에 ${CIRC[ball.preHit]}`,1);return;}
 if(!playing||paused||!ball||ball.owner!=='ai'||ball.bounces!==1||mode==='trio'&&ball.rcv!==0||time-lastHit<.3||ball.unreturn||ball.dual&&ball.dualHit&&dualElapsed(ball)<DUAL_GAP)return;
+if(tap==='dual')tap=({cut:'drive',drive:'block',smash:'short',spin:'short'})[P.incoming(ball)]||'short';
 if(tap==='short'&&P.incoming(ball)==='drive')tap='block';
 let smash=infd()?false:time<=smashUntil;const state=P.timing(ball);if(state==='wait'||state==='none')return;
 const motion=swingMemory&&time<=swingMemory.until?swingMemory:null,R=RACKETS[racketType];
@@ -3200,12 +3202,13 @@ if(down&&playing&&!paused)hit();
 }
 canvas.addEventListener('pointerdown',e=>{
 if(!playing||paused||activePointer!==null||e.button>0)return;e.preventDefault();touchInput=e.pointerType==='touch';if(ball&&ball.held&&!ball.tossed)toss();swingMemory=null;samples=[];move(e);activePointer=e.pointerId;
-gesture={x:paddle.x,y:paddle.y,t:performance.now(),distance:0,live:!!ball&&ball.owner==='ai'&&!['wait','none'].includes(P.timing(ball))};setStance(gesture);down=true;canvas.setPointerCapture(e.pointerId);
+gesture={x:paddle.x,y:paddle.y,t:performance.now(),distance:0,live:!!ball&&ball.owner==='ai'&&!['wait','none'].includes(P.timing(ball)),dualTap:!!ball?.dual&&!!ball?.dualHit};setStance(gesture);down=true;canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove',move);
 canvas.addEventListener('pointerup',e=>{
 if(e.pointerId!==activePointer)return;move(e);const now=performance.now();
-if(gesture&&!gesture.held&&gesture.distance<(touchInput?18:12)&&now-gesture.t<(touchInput?260:200)){
+if(gesture?.dualTap){swingMemory=null;hit('dual');
+}else if(gesture&&!gesture.held&&gesture.distance<(touchInput?18:12)&&now-gesture.t<(touchInput?260:200)){
 hit('short');
 }
 if(gesture&&gesture.stroke&&time-mySwing.t>.65){mySwing.type=gesture.stroke;mySwing.t=time;mySwing.ult=null;}   // drawn but never met the ball: swing in the air
@@ -3789,8 +3792,8 @@ const TIER_MULT={easy:1,hard:1.5,extreme:2,ultra:2.5,uhard:3,uext:3.5,unight:4};
 const AI_RATING_BASE={easy:20,hard:35,extreme:55,ultra:75,uhard:100,uext:130,unight:165},AI_RANK_CODE={easy:'e',hard:'h',extreme:'ex',ultra:'u',uhard:'uh',uext:'uex',unight:'unm'};
 const rankWinScore=(tier,gap,dual,shutout,streak)=>Math.min(500,Math.max(1,(AI_RATING_BASE[tier]||20)+Math.max(0,gap)*4+Math.min(8,Math.max(0,dual)*2)+(shutout?10:0)+Math.min(15,Math.max(0,streak-2)*3)));
 const aiRankValue=r=>{const tier=Object.keys(TIERS).find(k=>TIERS[k].name===r.level),score=(r.detail||'').match(/(\d+)\s*:\s*(\d+)/),dual=+(r.detail||'').match(/투(\d+)/)?.[1]||0;return tier&&score?rankWinScore(tier,+score[1]-+score[2],dual,+score[2]===0,+r.streak||0):r.value;};
-const BOSS_LABEL={minhee:'김민희 보스',boss:'탁구 마왕',sejong:'세종 9부 아줌마',godyung:'사기부수 갓융자',aribeom:'매혹범 보스'},BOSS_ICON={minhee:'👑',boss:'😈',sejong:'👵',godyung:'🃏',aribeom:'💖'};
-const bossSel=()=>[...document.querySelectorAll('#boss-filter input:checked')].map(c=>c.value);   // 보스 클리어 tab: which bosses to list
+const BOSS_LABEL={minhee:'김민희 보스',boss:'탁구 마왕',sejong:'세종 9부 아줌마',godyung:'사기부수 갓융자',aribeom:'매혹범 보스',villain:'3인 빌런단체전'},BOSS_ICON={minhee:'👑',boss:'😈',sejong:'👵',godyung:'🃏',aribeom:'💖'};
+const bossSel=()=>document.querySelector('#boss-filter [aria-selected="true"]')?.dataset.bossBoard||'all';
 // Boss records from before the boss name was stored say 마왕전. Known ones that were really 민희쌤 are listed here.
 const BOSS_FIX=[{name:'김훈2',detail:'11:9 · 랠리 8',boss:'minhee'}];
 // 세종 9부 아줌마 starts the match with 4 points and 사기부수 갓융자 with 9 (see begin), so those points are not a gap I earned: the 보스 클리어
@@ -3799,6 +3802,7 @@ const BOSS_FIX=[{name:'김훈2',detail:'11:9 · 랠리 8',boss:'minhee'}];
 const BOSS_HAND={sejong:4,godyung:9},bossHandOf=lbl=>BOSS_HAND[Object.keys(BOSS_LABEL).find(k=>BOSS_LABEL[k]===lbl)]||0;
 const bossOfRow=r=>{const f=r.level==='마왕전'&&BOSS_FIX.find(x=>x.name===r.name&&r.detail===x.detail);return f?BOSS_LABEL[f.boss]:r.level==='마왕전'?BOSS_LABEL.boss:r.level;};   // BOSS_FIX only repairs the old 마왕전-labelled records: a real 갓융자 clear with the same score must stay 갓융자
 const bossScore=r=>{const m=(r.detail||'').match(/(\d+)\s*:\s*(\d+)/),rl=(r.detail||'').match(/랠리\s*(\d+)/);if(!m)return r.value;return Math.max(1,+m[1]-(+m[2]-bossHandOf(bossOfRow(r))))*100+Math.min(99,rl?+rl[1]:0);};
+const bossRankValue=(r,selected)=>selected==='villain'?(r.at?.toDate?r.at.toDate().getTime():typeof r.at==='number'?r.at:(r.at?.seconds||0)*1000):bossScore(r);
 const LEVEL_NO={b7:1,b6:2,b5:3,b4:4,b3:5,b2:6,b1:7,pro:8,boss:9},LEVEL_NAME={b7:'7부',b6:'6부',b5:'5부',b4:'4부',b3:'3부',b2:'2부',b1:'1부',pro:'선수부',boss:'마왕전'};
 let matchId=null,rankDb=null,rankFs=null,rankApp=null,rankUid=null,board='pvp',pendingRank=null;
 // A copy served from this computer (localhost) is a test build: it never touches the shared ranking database.
@@ -3826,10 +3830,10 @@ function charUsageRows(){const chars=charUsageLocal().chars;return Object.entrie
 function aggregateCharacterUsage(records){const totals={};for(const record of records||[]){const stats=record?.stats;if(!stats||typeof stats!=="object")continue;for(const [id,value] of Object.entries(stats)){if(!characterAvailable(id))continue;const matches=Math.max(0,Math.min(1000000,Math.floor(Number(value?.matches)||0)));if(!matches)continue;const row=totals[id]??={id,matches:0,players:0};row.matches+=matches;row.players++;}}return Object.values(totals).sort((a,b)=>b.matches-a.matches||b.players-a.players||(LOOKS[a.id]?.nick||a.id).localeCompare(LOOKS[b.id]?.nick||b.id,"ko"));}
 async function syncCharacterUsage(){if(!rankUid)return;const db=await remote();if(!db)return;await rankFs.setDoc(rankFs.doc(db,"character_usage",rankUid),{stats:charUsageLocal().chars,at:rankFs.serverTimestamp()});}
 async function loadCharacterUsage(uid){try{const db=await remote(),snap=db&&await rankFs.getDoc(rankFs.doc(db,"character_usage",uid));if(!snap?.exists())return;const cloud=snap.data().stats;if(cloud&&typeof cloud==="object"){const u=charUsageLocal();u.chars=cloud;store.set(CHAR_USE_KEY,JSON.stringify(u));if(board==="chars")showBoard("chars");}}catch{}}
-function rankRecord(quit){const won=!quit&&!matchDrawn&&you>cpu&&!infd(),boss=mode==='boss'&&!net,aiWon=won&&!boss&&aiStreakMatch(),streak=aiWon?aiStreak():0,
+function rankRecord(quit){const won=!quit&&!matchDrawn&&you>cpu&&!infd(),villainBoss=mode==='match'&&!net&&villainRun?.live&&VILLAINS.includes(aiChar),boss=(mode==='boss'||villainBoss)&&!net,aiWon=won&&!boss&&aiStreakMatch(),streak=aiWon?aiStreak():0,
 tn=mode==='match'&&!net?({easy:'',hard:'H ',extreme:'EX ',ultra:'U ',uhard:'UH ',uext:'UEX '}[aiTier]??''):'',
-rec={id:matchId,rmode:infd()?'inf':boss?'boss':mode==='doubles'?'doubles':mode==='trio'?'trio':rankOn?'rank':'ai_'+(AI_RANK_CODE[aiTier]||'e'),rally:matchBest,wins:aiWon?rankWinScore(aiTier,you-cpu,dualSuccess,cpu===0,streak):0,streak,quit:!!quit,detail:infd()?`점수 ${matchBest}`:`${you}:${cpu}${aiWon?` · 투${dualSuccess}${cpu===0?' · 무실점':''}`:''}${quit?' 중단':''}`,level:infd()?'무한 드라이브':boss?BOSS_LABEL[aiChar]||'보스':mode==='match'&&!rankOn?TIERS[aiTier].name:tn+(LEVEL_NAME[aiDif()]||'4부'),character:LOOKS[charType].nick||'선수',racket:RACKETS[racketType].name.slice(0,10),charKey:charType,racketType,rubberType};
-if(boss&&won){rec.boss=Math.max(1,you-(cpu-bossHandOf(rec.level)))*100+Math.min(99,matchBest);rec.bossDetail=`${you}:${cpu} · 랠리 ${matchBest}`;}return rec;}
+rec={id:matchId,rmode:infd()?'inf':boss?'boss':mode==='doubles'?'doubles':mode==='trio'?'trio':rankOn?'rank':'ai_'+(AI_RANK_CODE[aiTier]||'e'),rally:matchBest,wins:aiWon?rankWinScore(aiTier,you-cpu,dualSuccess,cpu===0,streak):0,streak,quit:!!quit,detail:infd()?`점수 ${matchBest}`:`${you}:${cpu}${aiWon?` · 투${dualSuccess}${cpu===0?' · 무실점':''}`:''}${quit?' 중단':''}`,level:infd()?'무한 드라이브':villainBoss?BOSS_LABEL.villain:boss?BOSS_LABEL[aiChar]||'보스':mode==='match'&&!rankOn?TIERS[aiTier].name:tn+(LEVEL_NAME[aiDif()]||'4부'),character:LOOKS[charType].nick||'선수',racket:RACKETS[racketType].name.slice(0,10),charKey:charType,racketType,rubberType};
+if(villainBoss&&won&&villainRun.my===1){rec.boss=200+Math.min(99,matchBest);rec.bossDetail='3인 빌런단체전 2승 클리어';}else if(boss&&won){rec.boss=Math.max(1,you-(cpu-bossHandOf(rec.level)))*100+Math.min(99,matchBest);rec.bossDetail=`${you}:${cpu} · 랠리 ${matchBest}`;}return rec;}
 // Leaving mid-game (tab closed, app killed): the running match is kept as a 중단 record and sent on the next visit.
 function keepPending(){if(playing&&!net&&matchId&&matchBest>0)store.set('rank-pending',JSON.stringify(rankRecord(true)));}
 function rankEntries(p){if(!rankingCharacterAllowed(p.character))return [];const base={name:cleanName(store.get('nick')||'')||'선수',...myTtl(),level:p.level,character:p.character,racket:p.racket,detail:p.detail};if((p.quit||/ 중단$/.test(p.detail||''))&&p.rally>0)return [['quit_records',{...base,value:p.rally}]];
@@ -3872,16 +3876,16 @@ $('rank-src').textContent=src;const ol=$('rank-list');ol.textContent='';
 if(!rows.length){const li=document.createElement('li');li.className='empty';li.textContent='아직 기록이 없어요. 온라인 1:1 대전을 끝내면 레이팅이 생겨요!';ol.append(li);return;}
 rows.forEach((r,i)=>{const li=document.createElement('li'),no=document.createElement('span'),nm=document.createElement('span'),sub=document.createElement('span'),val=document.createElement('span');
 no.className='no';no.textContent=i+1;nm.className='nm';nameTtl(nm,r);sub.className='sub';sub.textContent=`${r.wins}승 ${r.losses}패${streakText(r.streak)}`;val.className='val';val.textContent=r.rating+'점';li.append(no,nm,sub,val);ol.append(li);});return;}
-$('boss-filter').hidden=k!=='boss';const sel=bossSel(),bk=k==='inf'?'rally':k,bl=k==='boss'?sel.map(b=>BOSS_LABEL[b]):null,ofBoss=r=>k==='inf'?r.level==='무한 드라이브':k==='rally'?r.level!=='무한 드라이브':!bl||bl.includes(bossOfRow(r));   // older boss records say 마왕전
-let rows=localBoard(bk).filter(r=>ofBoss(r)&&rankingCharacterAllowed(r.character)),src='내 기기 기록';if(k==='boss')rows.sort((a,b)=>bossScore(b)-bossScore(a));else if(k==='wins')rows.sort((a,b)=>aiRankValue(b)-aiRankValue(a));
+$('boss-filter').hidden=k!=='boss';const sel=bossSel(),bk=k==='inf'?'rally':k,bl=k==='boss'&&sel!=='all'?BOSS_LABEL[sel]:null,ofBoss=r=>k==='inf'?r.level==='무한 드라이브':k==='rally'?r.level!=='무한 드라이브':!bl||bossOfRow(r)===bl;   // older boss records say 마왕전
+let rows=localBoard(bk).filter(r=>ofBoss(r)&&rankingCharacterAllowed(r.character)),src='내 기기 기록';if(k==='boss')rows.sort((a,b)=>bossRankValue(b,sel)-bossRankValue(a,sel));else if(k==='wins')rows.sort((a,b)=>aiRankValue(b)-aiRankValue(a));
 try{const db=await remote();if(db){const cols=k==='inf'?['rally_inf','rally']:k==='rally'?['rally_ai_e','rally_ai_h','rally_ai_ex','rally_ai_u','rally_ai_uh','rally_ai_uex','rally_ai_unm','rally_ai_unight','rally_ai','rally_rank','rally_doubles','rally_trio','rally_boss','rally']:[bk];   // rally records live in one collection per mode (rally_ai, rally_inf ...); 'rally' holds the older ones
 const got=await Promise.all(cols.map(c=>rankFs.getDocs(rankFs.query(rankFs.collection(db,c),...(k==='wins'?[rankFs.limit(500)]:[rankFs.orderBy('value','desc'),rankFs.limit(bl||k==='inf'||k==='rally'?80:25)]))).then(q=>q.docs.map(d=>d.data())).catch(()=>[])));
-rows=got.flat().filter(d=>!TEST_NAMES.has(d.name)&&ofBoss(d)&&rankingCharacterAllowed(d.character)).sort((a,b)=>k==='boss'?bossScore(b)-bossScore(a):k==='wins'?aiRankValue(b)-aiRankValue(a):b.value-a.value).slice(0,20);src=k==='wins'?'전체 랭킹 · 새 레이팅 공식 재산정':'전체 랭킹 · 상위 20';}}catch{src='전체 랭킹을 불러오지 못해 내 기기 기록을 보여줘요';}
+rows=got.flat().filter(d=>!TEST_NAMES.has(d.name)&&ofBoss(d)&&rankingCharacterAllowed(d.character)).sort((a,b)=>k==='boss'?bossRankValue(b,sel)-bossRankValue(a,sel):k==='wins'?aiRankValue(b)-aiRankValue(a):b.value-a.value).slice(0,20);src=k==='wins'?'전체 랭킹 · 새 레이팅 공식 재산정':'전체 랭킹 · 상위 20';}}catch{src='전체 랭킹을 불러오지 못해 내 기기 기록을 보여줘요';}
 $('rank-src').textContent=src;const ol=$('rank-list');ol.textContent='';
-if(!rows.length){const li=document.createElement('li');li.className='empty';li.textContent=k==='inf'?'아직 기록이 없어요. 무한 드라이브에서 랠리를 이어 보세요! ♾️':bl?(bl.length?'아직 고른 보스를 쓰러뜨린 사람이 없어요. 보스전에서 이겨 보세요! 👑':'보고 싶은 보스를 하나 이상 체크하세요'):'아직 기록이 없어요. 11점 경기를 끝내고 등록해 보세요!';ol.append(li);return;}
+if(!rows.length){const li=document.createElement('li');li.className='empty';li.textContent=k==='inf'?'아직 기록이 없어요. 무한 드라이브에서 랠리를 이어 보세요! ♾️':bl?'아직 이 보스를 쓰러뜨린 사람이 없어요. 보스전에서 이겨 보세요!':'아직 기록이 없어요. 11점 경기를 끝내고 등록해 보세요!';ol.append(li);return;}
 const rankDateTime=v=>{const d=v?.toDate?v.toDate():new Date(typeof v==='number'?v:(v?.seconds||0)*1000);return Number.isNaN(+d)||!+d?'—':`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;},aiRankCode=r=>AI_RANK_CODE[Object.keys(TIERS).find(k=>TIERS[k].name===r.level)]||'';
 rows.forEach((r,i)=>{const li=document.createElement('li'),no=document.createElement('span'),nm=document.createElement('span'),sub=document.createElement('span'),val=document.createElement('span'),score=((r.detail||'').match(/\d+\s*:\s*\d+/)||[''])[0].replace(/\s/g,'').replace(':',' : ');
-no.className='no';no.textContent=i+1;nm.className='nm';if(k==='boss')nm.textContent=cleanName(r.name||'')||'선수';else nameTtl(nm,r);sub.className='sub';sub.textContent=k==='wins'?[rankDateTime(r.at),aiRankCode(r),score].filter(Boolean).join(' · '):k==='boss'?[r.character,rankDateTime(r.at)].filter(Boolean).join(' · '):[r.level,r.character].filter(Boolean).join(' · ');sub.textContent=sub.textContent.replace(/김민희/g,'민희쌤').replace(/차윤환/g,'카사노바 윤');val.className='val';val.textContent=k==='rally'||k==='inf'?r.value+' 랠리':k==='boss'?r.value+'점':k==='wins'?aiRankValue(r)+'점':r.value+'점';li.append(no,nm,sub,val);ol.append(li);});}
+no.className='no';no.textContent=i+1;nm.className='nm';if(k==='boss')nm.textContent=cleanName(r.name||'')||'선수';else nameTtl(nm,r);sub.className='sub';sub.textContent=k==='wins'?[rankDateTime(r.at),aiRankCode(r),score].filter(Boolean).join(' · '):k==='boss'&&bossOfRow(r)===BOSS_LABEL.villain?[rankDateTime(r.at),r.character].filter(Boolean).join(' · '):k==='boss'?[r.character,rankDateTime(r.at)].filter(Boolean).join(' · '):[r.level,r.character].filter(Boolean).join(' · ');sub.textContent=sub.textContent.replace(/김민희/g,'민희쌤').replace(/차윤환/g,'카사노바 윤');val.className='val';val.textContent=k==='rally'||k==='inf'?r.value+' 랠리':k==='boss'?r.value+'점':k==='wins'?aiRankValue(r)+'점':r.value+'점';li.append(no,nm,sub,val);ol.append(li);});}
 // ===== PvP rating (online 1:1). Local record always; on Firebase each device signs in anonymously and may only
 // write its own players/{uid} doc, and only with the exact rating step the rules recompute (see firestore.rules).
 function pvpLocal(){try{return {rating:1000,wins:0,losses:0,streak:0,...JSON.parse(store.get('pvp'))};}catch{return {rating:1000,wins:0,losses:0,streak:0};}}
@@ -3986,7 +3990,7 @@ $('google-login').onclick=$('auth-google-login').onclick=googleLogin;$('naver-lo
 $('auth-gate').addEventListener('cancel',e=>{if(FIREBASE_CONFIG&&!TEST_HOST&&!googleUser)e.preventDefault();});   /* Esc cannot skip the sign-in */
 $('auth-gate').addEventListener('close',()=>{queuePatchNotes();if(offerUnlockQueued)setTimeout(offerUnlock,0);});
 $('auth-gate').addEventListener('prologue-before-open',e=>{if(net){e.preventDefault();toast('온라인 대전을 마친 뒤 프롤로그를 볼 수 있어요',2);return;}if(playing&&!paused)pause();});
-$('rank-send').onclick=sendRank;$('rank-name').onkeydown=e=>{if(e.key==='Enter')sendRank();};document.querySelectorAll('.rank-tabs button').forEach(b=>b.onclick=()=>showBoard(b.dataset.board));document.querySelectorAll('#boss-filter input').forEach(c=>c.onchange=()=>showBoard('boss'));showBoard('pvp');
+$('rank-send').onclick=sendRank;$('rank-name').onkeydown=e=>{if(e.key==='Enter')sendRank();};document.querySelectorAll('.rank-tabs button').forEach(b=>b.onclick=()=>showBoard(b.dataset.board));document.querySelectorAll('#boss-filter button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#boss-filter button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));showBoard('boss');});showBoard('pvp');
 // iOS Safari ignores user-scalable=no: block its pinch gestures and multi-touch zoom over the court.
 for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
 // In-app browsers (KakaoTalk) show/hide their address bar whenever the page scrolls, which jumps the court mid-rally.
