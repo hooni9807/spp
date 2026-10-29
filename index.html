@@ -3532,7 +3532,7 @@ AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%'
 ['stalk','골드','밤 사냥꾼','초반 공격 상대 리턴 -8%',{atkEarly:.08}],
 ['overflow','골드','승부사의 감','마무리 상대 리턴 -10% · 상대 리턴 -4%',{atkFinisher:.1,atkPress:.04}],
 ['overload','골드','과부하','역습 속도 +20% · 맞드라이브 +10%',{atkCounterPunch:.2,atkCounter:.1}],
-['ocean','골드','바다의 영혼','내 타구 성공률 +5% · 실점 직후 성공률 +5%',{defSafe:.05,defKey:.05}],
+['ocean','골드','바다의 영혼','목숨 +1',{},r=>r.lives++],
 ['hextech','프리즘','마공학 영혼','포·백·스매시·PERFECT 속도 +8%',{atkDrive:.08,atkBh:.08,atkSmash:.08,atkPerfect:.08}],
 ['home','프리즘','홈 가드','매 스테이지 2점 앞서 시작',{},r=>r.lead+=2],
 ['crit','프리즘','치명적','PERFECT 판정 범위 +40%',{utPerfect:.4}],
@@ -3552,10 +3552,10 @@ function stageStart(){if(playing&&(you||cpu)&&!confirm('진행 중인 점수가 
 const stageOn=()=>stageRun?.live&&mode==='match'&&!net;
 {const b0=begin;begin=function(...a){if(!stageStarting&&stageRun?.live)stageRun=null;return b0.apply(this,a);};}
 {const a0=P.aiReturn;P.aiReturn=(kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(stageOn()){const k=1+(stageRun.stage-1)*.05;speed*=k;spinK*=k;}return a0(kind,x,y,z,speed,aimX,spinK,...rest);};}
-// 이미 고른 증강·같은 판에 나온 카드는 제외. 목숨을 깎는 증강(유리 대포·불길한 계약)은 목숨 증강(자연 치유)을 가진 뒤에만.
+// 이미 고른 증강·같은 판에 나온 카드는 제외. 목숨을 깎는 증강(유리 대포·불길한 계약)은 목숨 증강(바다의 영혼·자연 치유)을 가진 뒤에만.
 // 이미 가진 시너지의 증강이 나올 확률 +20%.
 function augRoll(r,not=[]){const w=r.stage<3?[.7,.27,.03]:r.stage<6?[.45,.4,.15]:[.25,.45,.3],x=Math.random(),tier=x<w[0]?'실버':x<w[0]+w[1]?'골드':'프리즘',
- ok=a=>!not.includes(a[0])&&!r.augs.includes(a[0])&&(!['glass','pact'].includes(a[0])||r.augs.includes('nature')),mine=new Set(r.augs.map(augSyn)),
+ ok=a=>!not.includes(a[0])&&!r.augs.includes(a[0])&&(!['glass','pact'].includes(a[0])||r.augs.includes('nature')||r.augs.includes('ocean')),mine=new Set(r.augs.map(augSyn)),
  pick=L=>L[Math.random()*L.length|0],tierPool=AUGS.filter(a=>a[1]===tier&&ok(a)),synPool=tierPool.filter(a=>mine.has(augSyn(a[0])));
  if(synPool.length&&Math.random()<.2)return pick(synPool);return tierPool.length?pick(tierPool):AUGS.find(ok);}
 function openAugPick(){const r=stageRun;let d=$('aug-pick');if(!d){d=document.createElement('dialog');d.id='aug-pick';d.setAttribute('aria-labelledby','aug-title');document.body.append(d);}
