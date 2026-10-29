@@ -3037,13 +3037,13 @@ if(preLeft()){const e=triE();if(!playing||paused||ball.owner!=='ai'||e<-.35||bal
 if(!playing||paused||!ball||ball.owner!=='ai'||ball.bounces!==1||mode==='trio'&&ball.rcv!==0||time-lastHit<.3||ball.unreturn||ball.dual&&ball.dualHit&&dualElapsed(ball)<DUAL_GAP)return;
 if(tap==='short'&&P.incoming(ball)==='drive')tap='block';
 let smash=infd()?false:time<=smashUntil;const state=P.timing(ball);if(state==='wait'||state==='none')return;
-const motion=swingMemory&&time<=swingMemory.until?swingMemory:null,R=RACKETS[racketType];
+let motion=swingMemory&&time<=swingMemory.until?swingMemory:null;const dualSwing=!!(ball.dual&&ball.dualHit&&gesture?.dualTap&&gesture.stroke);if(!motion&&dualSwing){const g=gesture;motion={above:g.above,course:null,dir:g.dir,below:g.below,side:g.side,vx:paddle.vx,vy:paddle.vy,rise:(g.y-paddle.y)*cam.z,drop:(paddle.y-g.y)*cam.z,dx:(paddle.x-g.x)*cam.z,fromX:g.x,fromY:g.y,x:paddle.x,y:paddle.y,until:time+.05};}const R=RACKETS[racketType];
 if(!smash&&!tap&&motion&&ball.chance&&(motion.dir!=='down'||racketType==='defense'))smash=true;
 let ninjaSwing=false;if(LOOKS[charType].noDrive&&!smash&&!tap&&motion&&motion.dir!=='down'&&!infd()){tap=P.incoming(ball)==='drive'?'block':'short';ninjaSwing=true;}   /* 탈주닌자 맹타치: 드라이브 스윙도 쇼트로 */
 const adamFake=LOOKS[charType].curver&&ball.chance&&motion&&!tap&&!infd();if(adamFake)smash=false;   // a floated chance ball: any swing smashes it (the defender's chop swing too)
 const p0=project(ball.x,ball.y,ball.z),p=ball.dual?(ball.dualHit&&ball.dualX!=null?project(ball.dualX,ball.y,ball.z):{...p0,x:p0.x+(ball.dualHit?dualOff():-dualOff())}):p0;let distance=Math.hypot(p.x-paddle.x,p.y-paddle.y);   // 투클릭: touch point ① (left of the ball) first, then ② (right)
 if(motion){const dx=motion.x-motion.fromX,dy=motion.y-motion.fromY,t=P.clamp(((p.x-motion.fromX)*dx+(p.y-motion.fromY)*dy)/(dx*dx+dy*dy||1),0,1);distance=Math.min(distance,Math.hypot(p.x-motion.fromX-t*dx,p.y-motion.fromY-t*dy));}
-if(distance>ttalgakReach(LOOKS[charType])*Math.max(touchInput?64:52,W*.075)*ringK*(ball.hi?1.3:1)*(1+R_('defReach')+(ball.dual&&!ball.dualHit?R_('utDualReach'):0))*R.reach*(ball.kill?.75:1)*(!net&&LOOKS[aiChar]?.smell?.8:1)*tourReach()||(!smash&&!motion&&!tap))return;   // a kill smash is harder to reach
+if(distance>ttalgakReach(LOOKS[charType])*Math.max(touchInput?64:52,W*.075)*ringK*(ball.hi?1.3:1)*(1+R_('defReach')+(ball.dual&&!ball.dualHit?R_('utDualReach'):0))*R.reach*(ball.kill?.75:1)*(!net&&LOOKS[aiChar]?.smell?.8:1)*tourReach()||(!smash&&!motion&&!tap&&!dualSwing))return;   // a kill smash is harder to reach
 if(ball.dual&&!ball.dualHit){ball.dualHit=true;ball.dualT=time;ball.dualWall=performance.now();ball.dualClose=dualCloseFor(ball);if(state==='perfect')ball.anyPerf=true;{const a=project(ball.x,ball.y,ball.z),b=project(ball.x+.1,ball.y,ball.z);ball.dualX0=ball.x;ball.dualX=ball.x+dualOff()*.1/((b.x-a.x)||1);}swingMemory=null;lastTap=null;mySwing.type='short';mySwing.t=time;fx.push({x:p.x,y:p.y,t:time});pops.push({x:p.x,y:p.y,t:time,text:'①',rgb:'125,255,178'});beep(560);toast(state==='perfect'?'① PERFECT! 공이 ② 로 가요':'① 터치! 공이 ② 로 가요',1.2);return;}
 const beat=ball.dual&&ball.dualHit?dualBeat(ball):null,qs=beat?(beat.perfect?'perfect':beat.error>.25?'late':'ready'):state,dualReach=Math.max(touchInput?58:48,W*.065)*ringK*(1+R_('utPerfect')+(rally>=5?R_('utBreath'):0))*R.reach*(R.perfect||1),quality=qs==='perfect'?(distance<dualReach?'PERFECT':'GREAT'):qs==='late'?(!ball.dual&&R_('defLateT')&&((-.08-P.back(ball)-P.perfectSpan(ball))-ball.y)/Math.max(.5,Math.abs(ball.vy||0))<R_('defLateT')?'GOOD':'LATE'):'GOOD';   // ② green ring and the input judgement share the same wall-clock beat; a normal hit inside that ring is a strong PERFECT
 if(motion&&motion.side)playerSide=motion.side==='right'?1:-1;else updateSide();
@@ -3226,7 +3226,7 @@ const rise=(gesture.y-paddle.y)*cam.z;
 const sideways=Math.abs(paddle.vx)>Math.abs(paddle.vy)*1.5&&Math.hypot(paddle.vx,paddle.vy)>=160,against=gesture.dir==='up'&&paddle.vy>0||gesture.dir==='down'&&paddle.vy<0||!gesture.dir&&(gesture.below||gesture.above)&&!sideways;   // backswing / follow-through: keep the real stroke; from below the ball wait until the stroke picks a direction (a flat sideways swipe still swings)
 if(!against&&(gesture.dir||Math.hypot(paddle.vx,paddle.vy)>=P.STROKE_SPEED)&&(!gesture.side||paddle.vy>=-55||rise>12||sideways)){const previous=samples.length>1?samples[samples.length-2]:paddle;swingMemory={above:gesture.above,course:gesture.dir==='up'?(paddle.x-gesture.loX)/Math.max(gesture.lo-paddle.y,24):gesture.dir==='down'?(paddle.x-gesture.hiX)/Math.max(paddle.y-gesture.hi,24):null,dir:gesture.dir,below:gesture.below,vx:paddle.vx,vy:paddle.vy,side:gesture.side,rise,drop:(paddle.y-gesture.y)*cam.z,dx:(paddle.x-gesture.x)*cam.z,fromX:previous.x,fromY:previous.y,x:paddle.x,y:paddle.y,until:time+.4};}
 }
-if(down&&playing&&!paused)hit();
+if(down&&gesture?.dualTap&&gesture.distance>=(touchInput?18:12))liveStroke();if(down&&playing&&!paused)hit();
 }
 canvas.addEventListener('pointerdown',e=>{
 if(!playing||paused||activePointer!==null||e.button>0)return;e.preventDefault();touchInput=e.pointerType==='touch';if(ball&&ball.held&&!ball.tossed)toss();swingMemory=null;samples=[];move(e);activePointer=e.pointerId;
@@ -3235,7 +3235,7 @@ gesture={x:paddle.x,y:paddle.y,t:performance.now(),distance:0,live:!!ball&&ball.
 canvas.addEventListener('pointermove',move);
 canvas.addEventListener('pointerup',e=>{
 if(e.pointerId!==activePointer)return;move(e);const now=performance.now();
-if(gesture?.dualTap){if(gesture.stroke)hit();else{swingMemory=null;queueTap('dual');}
+if(gesture?.dualTap){if(gesture.stroke||gesture.distance>=(touchInput?18:12)&&liveStroke())hit();else{swingMemory=null;queueTap('dual');}
 }else if(gesture&&!gesture.held&&gesture.distance<(touchInput?18:12)&&now-gesture.t<(touchInput?260:200)){
 queueTap('short');
 }
