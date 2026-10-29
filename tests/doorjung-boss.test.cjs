@@ -5,4 +5,6 @@ assert.match(html,/handicap:4,long612:true,lateArm:true/);
 assert.doesNotMatch(html,/doorjungBossButton/);
 assert.doesNotMatch(html,/data-boss='doorjung'/);
 assert.match(html,/const VILLAINS=\['doorjung','nemseop','stoneryu'\]/);
+assert.match(html,/tiers:Array\.from\(\{length:3\},\(\)=>Math\.random\(\)<\.5\?'uext':'unight'\)/);
+assert.doesNotMatch(html,/tiers:\['uhard','uext','unight'\]/);
 console.log('Doorjung remains only in the 3-villain team mode, not as a standalone boss');
