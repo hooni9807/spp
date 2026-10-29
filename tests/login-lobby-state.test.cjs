@@ -4,6 +4,7 @@ const source=fs.readFileSync(path.join(process.cwd(),'index.html'),'utf8');
 assert.match(source,/const LAST_PLAYED_CHARACTER_KEY='last-played-character'/);
 assert.match(source,/rememberLastPlayedCharacter\(charType\)/);
 assert.match(source,/lastCharacter:v/);
+assert.match(source,/v=d\?\.lastCharacter\|\|d\?\.character/);
 assert.match(source,/restoreLastPlayedCharacter\(\)/);
 assert.match(source,/await loadProgress\(\)/);
 assert.match(source,/if\(!force&&q\.attendanceDate===today\)return/);
