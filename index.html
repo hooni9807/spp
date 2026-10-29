@@ -3510,7 +3510,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 // 난이도 구간: [티어, 스테이지 수]. 구간을 끝낼 때마다 증강 1개. 마지막 나이트메어는 끝없이, 3스테이지마다 증강.
 const STAGE_BLOCKS=[['easy',2],['hard',2],['extreme',3],['ultra',3],['uhard',3],['uext',4],['unight',3]],
 stageAt=n=>{let a=1;for(let i=0;i<STAGE_BLOCKS.length;i++){const [t,c]=STAGE_BLOCKS[i],last=i===STAGE_BLOCKS.length-1;if(last||n<a+c){const k=last?(n-a)%c:n-a;return {tier:t,no:k+1,of:c,end:k===c-1};}a+=c;}},
-AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%',{atkDrive:.12}],['deft','실버','재빠른 손','PERFECT 판정 범위 +25%',{utPerfect:.25}],['aid','실버','응급 처치','목숨 +1',{},r=>r.lives++],['reach','실버','긴 팔','타격 인식 범위 +18%',{defReach:.18}],['erode','실버','침식','상대 리턴 확률 -5%',{atkPress:.05}],['escape','실버','탈출 계획','상대 10점 이상일 때 성공률 +20%',{defClutch:.2}],['spin','실버','회전 저항','상대 회전 실수 -40%',{defSpin:.4}],
+AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%',{atkDrive:.12}],['deft','실버','재빠른 손','PERFECT 판정 범위 +25%',{utPerfect:.25}],['aid','실버','반창고','실점 직후 다음 랠리 성공률 +5%',{defKey:.05}],['reach','실버','긴 팔','타격 인식 범위 +18%',{defReach:.18}],['erode','실버','침식','상대 리턴 확률 -5%',{atkPress:.05}],['escape','실버','탈출 계획','상대 10점 이상일 때 성공률 +20%',{defClutch:.2}],['spin','실버','회전 저항','상대 회전 실수 -40%',{defSpin:.4}],
 ['donate','골드','행운의 부적','엣지·네트 행운 +4% · 내 타구 성공률 +2%',{utLuck:.04,utNetLuck:.04,defSafe:.02}],['excite','골드','흥분','랠리 10타 이상 타구 속도 +15%',{atkLongRally:.15}],['rhythm','골드','크리티컬 리듬','PERFECT 타구 속도 +15%',{atkPerfect:.15}],['brain','골드','빅 브레인','실점 직후 다음 랠리 성공률 +20%',{defKey:.2}],['axiom','골드','비전 공리','필살기 게이지 충전 +40%',{atkCharge:.4}],['smash','골드','망치질','스매시 속도 +25% · 찬스볼 상대 리턴 -10%',{atkSmash:.25,atkChance:.1}],['wall','골드','철벽 블록','쇼트·블록 성공률 +15% · 스매시 받기 +15%',{defBlock:.15,defSmashRx:.15}],
 ['glass','프리즘','유리 대포','목숨 -1(최소 1) · 상대 리턴 -10% · 스매시 +30%',{atkPress:.1,atkSmash:.3},r=>r.lives=Math.max(1,r.lives-1)],['goliath','프리즘','거인','타격 범위 +35% · 내 타구 성공률 +8%',{defReach:.35,defSafe:.08}],['touch','프리즘','못 건드리지','날아오는 상대 공 속도 -15%',{defSlow:.15}],['double','프리즘','더블 탭','투클릭 강타 +30% · ② PERFECT 시간 +0.1초',{atkDualHit:.3,utDual:.1}],['luck','프리즘','행운의 여신','엣지·네트 행운 +6%',{utLuck:.06,utNetLuck:.06}],['final','프리즘','최종 형태','필살기 충전 +60% · 상대 필살기 받기 +20%',{atkCharge:.6,defSpecialRx:.2}],['echo','프리즘','메아리','모든 드라이브·백핸드·맞드라이브 속도 +10%',{atkDrive:.1,atkBh:.1,atkCounter:.1}],
 ['ice','실버','빙결','상대 공 속도 -6% · 회전 실수 -15%',{defSlow:.06,defSpin:.15}],
@@ -3543,7 +3543,7 @@ AUGS=[['blunt','실버','묵직한 한 방','포핸드 드라이브 속도 +12%'
 ['omni','프리즘','만능 영혼','무작위 골드 증강 효과 3개',{},r=>augRandom(r,'골드',3)],
 ['grit','프리즘','무법자의 투지','필살기 받기 +25% · 스매시 받기 +25% · 강타 받기 +15%',{defSpecialRx:.25,defSmashRx:.25,defKillRx:.15}],
 ['mystic','프리즘','신비한 주먹','PERFECT마다 상대 필살기 게이지 -30% · 내 충전 +30%',{utSteal:.3,atkCharge:.3}],
-['nature','프리즘','자연 치유','목숨 +2',{},r=>r.lives+=2]];
+['nature','프리즘','자연 치유','목숨 +3',{},r=>r.lives+=3]];
 function augRandom(r,tier,n){const pool=AUGS.filter(a=>a[1]===tier&&!a[5]&&!r.augs.includes(a[0])).sort(()=>Math.random()-.5).slice(0,n);for(const a of pool)for(const [k,v] of Object.entries(a[4]))r.fx[k]=(r.fx[k]||0)+v;toast(`${pool.map(a=>a[2]).join(' · ')} 효과를 얻었어요`,2.2);}
 let stageRun=null,stageStarting=false;
 {const t0=titleFx;titleFx=k=>t0(k)+(stageRun?.live&&mode==='match'?(stageRun.fx[k]||0)+synFx(k):0);}
@@ -3580,6 +3580,8 @@ const SYN={스나이퍼:{ids:'deft rhythm double light help jewel crit mercy',fx
 '눈오는 날':{ids:'snowball snowman blizzard avalanche iceage ice',fx:[{defSlow:.04},{defSlow:.1}],txt:['상대 공 속도 -4%','상대 공 속도 -10%']}},SYN_AT=[3,5];
 // 눈덩이: 돌파한 스테이지만큼 굴러서 커진다 (synFx에서 계산). 눈사태는 눈덩이 효과 2배.
 AUGS.push(['snowball','실버','눈덩이','돌파한 스테이지마다 포·백 드라이브 +1% (최대 +20%)',{}],['snowman','실버','눈사람','타격 범위 +12% · 상대 공 속도 -3%',{defReach:.12,defSlow:.03}],['blizzard','골드','눈보라','상대 회전 실수 -30% · 상대 리턴 -4%',{defSpin:.3,atkPress:.04}],['avalanche','골드','눈사태','눈덩이 효과 2배 · 스매시 +15%',{atkSmash:.15}],['iceage','프리즘','빙하기','날아오는 상대 공 속도 -12% · 블록 +15%',{defSlow:.12,defBlock:.15}]);
+// 등급 차이를 확실하게: 실버 효과 ×0.3, 프리즘 ×2 (설명의 ±%·초 숫자도 같이 바꾼다). 눈덩이는 synFx에서 따로 계산.
+{const K={실버:.3,골드:1,프리즘:2};for(const a of AUGS){const k=K[a[1]];if(k===1||a[0]==='snowball')continue;for(const key in a[4])a[4][key]*=k;a[3]=a[3].replace(/([+-])(\d+(?:\.\d+)?)(%|초)/g,(m,sg,n,u)=>sg+(u==='초'?+(n*k).toFixed(3):Math.max(1,Math.round(n*k)))+u);}}
 const augSyn=id=>Object.keys(SYN).find(k=>SYN[k].ids.split(' ').includes(id))||'',
 synCount=()=>{const c={};for(const id of stageRun?.augs||[]){const k=augSyn(id);if(k)c[k]=(c[k]||0)+1;}return c;},
 synFx=k=>{let v=0;if((k==='atkDrive'||k==='atkBh')&&stageRun?.augs.includes('snowball'))v+=Math.min(.2,.01*stageRun.cleared)*(stageRun.augs.includes('avalanche')?2:1);const c=synCount();for(const [n,m] of Object.entries(c)){const lv=SYN_AT.filter(t=>m>=t).length;if(lv)v+=SYN[n].fx[lv-1][k]||0;}return v;};
