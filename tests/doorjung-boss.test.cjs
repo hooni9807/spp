@@ -7,4 +7,7 @@ assert.doesNotMatch(html,/data-boss='doorjung'/);
 assert.match(html,/const VILLAINS=\['doorjung','nemseop','stoneryu'\]/);
 assert.match(html,/tiers:Array\.from\(\{length:3\},\(\)=>Math\.random\(\)<\.5\?'uext':'unight'\)/);
 assert.doesNotMatch(html,/tiers:\['uhard','uext','unight'\]/);
+assert.match(html,/if\(you\+cpu===0\)nemFirstServeDone=false/);
+assert.match(html,/Math\.random=\(\)=>0/);
+assert.match(html,/nemServeWaited=true;\}return nemseopStartServe/);
 console.log('Doorjung remains only in the 3-villain team mode, not as a standalone boss');
