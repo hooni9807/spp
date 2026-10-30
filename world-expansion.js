@@ -49,3 +49,31 @@ $('world-map').querySelector('footer').textContent='게임용 단순화 지도 �
 document.querySelector('[data-region="greenland"]').setAttribute('d','M300 40L370 30L355 100L320 120Z');
 PATCH_NOTES.unshift(['그린란드 제패','빙하·오로라 테마 선수 7명과 극광 빙하 연출을 추가했습니다. 7전 4선승으로 도전할 수 있습니다.']);
 PATCH_NOTES.unshift(['세계정복 7개국 확장','러시아·대만·인도·브라질·미국·싱가포르·나이지리아에 신규 선수 49명과 국가별 기술·연출을 추가했습니다.']);
+// Reference-inspired game kits; unverified regional designs are original concepts.
+const NATIONAL_EXTRA_KITS={
+ china:['#c92335','#eead35','#fff0ba','CHN'],russia:['#c72e42','#182c58','#ffffff','RUS'],
+ taiwan:['#123e80','#df3352','#ffffff','TPE'],india:['#1984cc','#f19236','#ffffff','IND'],
+ brazil:['#efda28','#16794a','#164fa2','BRA'],usa:['#182c60','#cf3047','#ffffff','USA'],
+ singapore:['#d6243b','#263340','#ffffff','SGP'],nigeria:['#137848','#f0f4e8','#86caaa','NGR'],
+ canada:['#c82b36','#191d25','#ffffff','CAN'],argentina:['#76bddd','#f5f5ef','#172c49','ARG'],
+ australia:['#eacb27','#175b42','#ffffff','AUS'],southafrica:['#146442','#dfb93a','#ffffff','RSA'],
+ mexico:['#176b4c','#a92e43','#f4eee2','MEX'],greenland:['#f2f1e9','#bf3041','#263f54','GRL']
+};
+Object.entries(NATIONAL_EXTRA_KITS).forEach(([id,[base,trim,accent,code]])=>{
+ EURO_KITS[id]={base,trim,accent,code};
+ Object.entries(LOOKS).forEach(([key,look])=>{if(id==='china'?CHINA_PLAYERS.some(p=>key==='china_'+p[0]):key.startsWith('china_'+id+'_'))Object.assign(look,{nationalKit:id,shirt:base,sleeve:trim,collar:accent});});
+});
+drawNationalKit=function(g,look,x,y,h,s){
+ if(!NATIONAL_EXTRA_KITS[look.nationalKit])return expansionKit(g,look,x,y,h,s);
+ const k=EURO_KITS[look.nationalKit],n=Object.keys(NATIONAL_EXTRA_KITS).indexOf(look.nationalKit);
+ g.save();g.translate(x,y);g.scale(s,h/64);g.fillStyle=k.base;g.fillRect(-32,0,64,64);
+ g.strokeStyle=k.trim;g.lineWidth=5;
+ for(let j=0;j<4;j++){g.beginPath();const yy=17+j*11;
+ if(n%4===0){g.moveTo(-32,yy);g.lineTo(8,yy-12);g.lineTo(32,yy-6);}
+ else if(n%4===1){g.moveTo(-26+j*16,0);g.lineTo(-18+j*12,64);}
+ else if(n%4===2){g.moveTo(-32,yy);g.quadraticCurveTo(0,yy-25,32,yy);}
+ else{g.moveTo(-32,yy);g.lineTo(0,yy+10);g.lineTo(32,yy);}
+ g.stroke();}
+ g.fillStyle=k.accent;g.fillRect(-29,3,58,2);g.fillRect(7,12,14,8);g.fillStyle=k.trim;g.font='bold 5px sans-serif';g.textAlign='center';g.fillText(k.code,14,18);g.restore();
+};
+PATCH_NOTES.unshift(['세계정복 국가별 유니폼','21개 지역 선수의 경기복 색상·무늬를 구분했습니다. 일부 지역은 공식 복제본이 아닌 게임 전용 디자인입니다.']);
