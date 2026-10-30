@@ -76,4 +76,15 @@ drawNationalKit=function(g,look,x,y,h,s){
  g.stroke();}
  g.fillStyle=k.accent;g.fillRect(-29,3,58,2);g.fillRect(7,12,14,8);g.fillStyle=k.trim;g.font='bold 5px sans-serif';g.textAlign='center';g.fillText(k.code,14,18);g.restore();
 };
+const detailedNationalKit=drawNationalKit;
+drawNationalKit=function(g,look,x,y,h,s){
+ detailedNationalKit(g,look,x,y,h,s);const k=EURO_KITS[look.nationalKit];if(!k)return;
+ g.save();g.translate(x,y);g.scale(s,h/64);
+ // Subtle fabric shading preserves the printed panels at match scale.
+ const shade=g.createLinearGradient(-32,0,32,0);shade.addColorStop(0,'#00000030');shade.addColorStop(.3,'#ffffff08');shade.addColorStop(.65,'#ffffff10');shade.addColorStop(1,'#00000035');g.fillStyle=shade;g.fillRect(-32,0,64,64);
+ g.strokeStyle='#ffffff28';g.lineWidth=.6;for(const side of [-1,1]){g.beginPath();g.moveTo(side*23,3);g.quadraticCurveTo(side*18,30,side*23,61);g.stroke();}
+ g.strokeStyle=k.trim;g.lineWidth=3;g.beginPath();g.moveTo(-10,0);g.lineTo(0,8);g.lineTo(10,0);g.stroke();g.strokeStyle=k.accent;g.lineWidth=.7;g.beginPath();g.moveTo(-10,0);g.lineTo(0,8);g.lineTo(10,0);g.stroke();
+ g.fillStyle='#ffffff20';g.fillRect(-28,60,56,1);g.restore();
+};
+Object.values(LOOKS).filter(l=>l.nationalKit==='japan').forEach(l=>{l.shirt='#d656a3';l.sleeve='#ed74aa';l.collar='#29294c';});
 PATCH_NOTES.unshift(['세계정복 국가별 유니폼','21개 지역 선수의 경기복 색상·무늬를 구분했습니다. 일부 지역은 공식 복제본이 아닌 게임 전용 디자인입니다.']);

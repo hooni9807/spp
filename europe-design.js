@@ -15,7 +15,7 @@ function drawNationalKit(g,look,x,y,h,s){
  g.fillStyle=k.trim;
  const poly=(points,color)=>{g.fillStyle=color;g.beginPath();points.forEach(([a,b],i)=>i?g.lineTo(a,b):g.moveTo(a,b));g.closePath();g.fill();};
  switch(look.nationalKit){
- case 'japan':{const belt=g.createLinearGradient(0,8,0,55);belt.addColorStop(0,k.base);belt.addColorStop(.5,k.trim);belt.addColorStop(1,k.base);g.fillStyle=belt;g.fillRect(-32,8,64,50);for(let i=0;i<5;i++)poly([[-32,20+i*6],[32,12+i*6],[32,13+i*6],[-32,21+i*6]],'#f7c8dd55');break;}
+ case 'japan':{const belt=g.createLinearGradient(0,0,0,64);belt.addColorStop(0,'#ed74aa');belt.addColorStop(.32,'#d656a3');belt.addColorStop(.62,'#7155a6');belt.addColorStop(1,'#252c60');g.fillStyle=belt;g.fillRect(-32,0,64,64);for(let i=0;i<18;i++){g.fillStyle=i%2?'#f7c8dd18':'#24264318';g.fillRect(-32,i*3.5,64,1);}poly([[-32,0],[-25,0],[-19,64],[-32,64]],'#29294c');poly([[25,0],[32,0],[32,64],[19,64]],'#29294c');g.fillStyle='#fff';g.fillRect(8,11,12,8);g.fillStyle='#c92948';g.beginPath();g.arc(14,15,2.4,0,Math.PI*2);g.fill();break;}
  case 'germany':poly([[-32,0],[-19,0],[-11,64],[-32,64]],k.trim);for(let i=0;i<7;i++)poly([[-25,26+i*6],[25,17+i*6],[25,20+i*6],[-25,29+i*6]],i%2?k.accent:'#8c1b55');break;
  case 'sweden':poly([[-32,0],[-20,0],[-14,64],[-32,64]],k.trim);poly([[20,0],[32,0],[32,64],[14,64]],k.trim);g.fillStyle=k.accent;g.fillRect(-27,3,54,3);break;
  case 'france':for(let i=0;i<8;i++)poly([[-30,i*9],[30,i*9-10],[30,i*9-8],[-30,i*9+2]],'#25416a');poly([[-32,0],[-20,0],[-15,64],[-24,64]],k.trim);poly([[22,0],[26,0],[20,64],[16,64]],k.accent);break;
