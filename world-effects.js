@@ -20,6 +20,15 @@ const worldParticleShapes={petal:'M0 -8Q12 -6 6 3Q0 12 -6 3Q-12 -6 0 -8',leaf:'M
 for(const [id,kind,move] of [['canada','leaf','spin'],['argentina','star','sweep'],['australia','drop','rise'],['southafrica','spark','drive'],['mexico','petal','dash']]){const c=WORLD_EXPANSION[id];WORLD_SCENES[id]={name:c.theme,color:c.color,kind,move,art:c.shape};}
 PATCH_NOTES.unshift(['세계정복 20개국','캐나다·아르헨티나·호주·남아프리카공화국·멕시코 선수 35명과 국가별 연출을 추가했습니다.']);
 let worldSceneTimer=0;
+function greenlandFrost(){return playing&&!net&&euroActive()&&euroRun.country==='greenland'?Math.min(6,Math.floor(rally/2)):0;}
+const frostStepBody=stepBody;
+stepBody=function(who,x,...args){const frost=greenlandFrost();if(who===me&&frost&&Number.isFinite(who.x))x=who.x+(x-who.x)*(1-frost*.04);return frostStepBody.call(this,who,x,...args);};
+const frostPerson=person;
+person=function(st,hip,hand,angle,look,s,...args){const result=frostPerson.call(this,st,hip,hand,angle,look,s,...args),frost=st===me?greenlandFrost():0;if(frost){ctx.save();ctx.strokeStyle='#c7fff2';ctx.fillStyle='#b4edff';ctx.globalAlpha=.12+frost*.035;ctx.lineWidth=2*s;for(let i=0;i<frost;i++){const x=st.x+(i%2?1:-1)*(8+i%3*3)*s,y=hip+(20-i*9)*s;ctx.beginPath();ctx.moveTo(x,y-10*s);ctx.lineTo(x+6*s,y);ctx.lineTo(x,y+9*s);ctx.lineTo(x-6*s,y);ctx.closePath();ctx.fill();ctx.stroke();}ctx.restore();}return result;};
+let frostLevel=0,thawUntil=0;
+const frostRender=render;
+render=function(...args){const result=frostRender.apply(this,args),active=playing&&!net&&euroActive()&&euroRun.country==='greenland',level=greenlandFrost();if(active&&frostLevel>0&&level===0)thawUntil=performance.now()+600;frostLevel=level;if(!active){thawUntil=0;return result;}ctx.save();try{const glow=ctx.createLinearGradient(0,0,W,0);glow.addColorStop(0,`rgba(105,255,205,${.025+level*.012})`);glow.addColorStop(.5,'rgba(165,150,255,0)');glow.addColorStop(1,`rgba(180,160,255,${.025+level*.012})`);ctx.fillStyle=glow;ctx.fillRect(0,0,W,H*.28);ctx.font='12px sans-serif';ctx.textAlign='left';ctx.fillStyle='#d9fff3';ctx.fillText(`서리 ${level}/6 · 이동 둔화 ${level*4}%`,12,H-14);if(thawUntil>performance.now()&&Number.isFinite(me.x)){const t=1-(thawUntil-performance.now())/600;ctx.globalAlpha=(1-t)*.5;ctx.strokeStyle='#d7ffff';for(let i=0;i<8;i++){const a=i*Math.PI/4,x=me.x+Math.cos(a)*t*65,y=H*.8+Math.sin(a)*t*35;ctx.strokeRect(x,y,4,7);}}}finally{ctx.restore();}return result;};
+PATCH_NOTES.unshift(['그린란드 서리 패시브','랠리 2회마다 서리가 쌓여 이동 둔화가 4%씩 최대 24% 적용됩니다. 오로라가 서서히 밝아지며 랠리 종료 시 해빙됩니다.']);
 WORLD_SCENES.greenland={name:'극광 빙하',color:'#85efd6',kind:'ice',move:'rise',art:WORLD_EXPANSION.greenland.shape};
 function clearWorldScene(){clearTimeout(worldSceneTimer);document.querySelector('.world-skill-scene')?.remove();}
 function showWorldScene(id,athlete=0){
