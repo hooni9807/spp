@@ -538,7 +538,9 @@ const enhanceAiMiss=()=>enhanceActive()&&prog.racketEnhanceEnabled!==false?enhan
 // active yet.  Show the owned level's full future bonus there, not the
 // currently-active in-match value (which is correctly zero outside AI games).
 // 세계정복에서는 라켓 강화·트로피가 AI 리턴률을 깎아도 이 아래로는 내려가지 않는다: 중국 90% · 일본 85% · 유럽 80%.
-const conquestReturnFloor=()=>{try{if(typeof chinaActive==='function'&&chinaActive())return .9;if(typeof euroActive==='function'&&euroActive())return euroRun.country==='japan'?.85:.8;}catch{}return 0;};
+// 나라를 하나 정복할 때마다 하한이 0.5%p씩 내려가, 여러 나라를 정복할수록 중국에 도전하기 쉬워진다.
+const conquestCount=()=>{try{const S=tS();return (S.chinaCup?1:0)+(typeof EURO_CUPS==='object'?Object.keys(EURO_CUPS).filter(id=>S['world_'+id]).length:0);}catch{return 0;}};
+const conquestReturnFloor=()=>{let f=0;try{if(typeof chinaActive==='function'&&chinaActive())f=.9;else if(typeof euroActive==='function'&&euroActive())f=euroRun.country==='japan'?.85:.8;}catch{}return f?Math.max(0,f-.005*conquestCount()):0;};
 const enhanceShownAiMiss=()=>enhanceAiMissAt(enhanceLevel())+trophyMissBonus();
 // +1~10 stays approachable; +11~19 is a commitment and +20~30 is end-game.
 const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=10?10:n<20?120:600;};
