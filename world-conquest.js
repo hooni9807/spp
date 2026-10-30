@@ -42,19 +42,20 @@ const key=()=>`world-china-${typeof googleUser!=='undefined'&&googleUser?.uid||'
 function saved(){try{const v=JSON.parse(localStorage.getItem(key()));return v&&v.live&&v.order?.length===7&&new Set(v.order).size===7&&v.order.every(n=>Number.isInteger(n)&&n>=0&&n<7)&&Number.isInteger(v.round)&&v.round>=0&&v.round<7&&v.my+v.ai===v.round&&v.my<4&&v.ai<4?v:null;}catch{return null;}}
 function persist(){try{if(chinaRun?.live)localStorage.setItem(key(),JSON.stringify({...chinaRun,character:charType}));else localStorage.removeItem(key());}catch{}}
 let flight=null,timer=0,selectedCountry=null;
-let mapZoom=1.35,pinchStart=0;
-function setMapZoom(next){mapZoom=Math.max(1,Math.min(2.6,next));mapCanvas.style.width=`${mapZoom*100}%`;}
+let mapZoom=2.8,pinchStart=0;
+function setMapZoom(next){mapZoom=Math.max(1,Math.min(3.2,next));mapCanvas.style.width=`${mapZoom*100}%`;}
 atlas.addEventListener('wheel',event=>{event.preventDefault();setMapZoom(mapZoom+(event.deltaY<0?.16:-.16));},{passive:false});
 atlas.addEventListener('touchstart',event=>{if(event.touches.length===2)pinchStart=Math.hypot(event.touches[0].clientX-event.touches[1].clientX,event.touches[0].clientY-event.touches[1].clientY);},{passive:true});
 atlas.addEventListener('touchmove',event=>{if(event.touches.length!==2||!pinchStart)return;event.preventDefault();const distance=Math.hypot(event.touches[0].clientX-event.touches[1].clientX,event.touches[0].clientY-event.touches[1].clientY);setMapZoom(mapZoom*distance/pinchStart);pinchStart=distance;},{passive:false});
 atlas.addEventListener('touchend',()=>{pinchStart=0;},{passive:true});
-setMapZoom(1.35);
+setMapZoom(2.8);
 function stop(){clearTimeout(timer);flight?.cancel();flight=null;$('world-plane').hidden=true;$('world-route').setAttribute('visibility','hidden');}
 function render(country='china'){const done=!!tS().chinaCup,record=worldConquestRow?.(),count=record?.count||0;dialog.querySelector('[data-region="china"]').classList.toggle('conquered',done);$('world-progress').textContent=`정복 완료 ${count} / ${WORLD_COUNTRY_TOTAL||8}${conquestCount()?` · 정복 보너스: AI 리턴 하한 -${(conquestCount()*.5).toFixed(1)}%p`:''}`;const names={china:'중국',japan:'일본',europe:'유럽 연합팀',russia:'러시아',...Object.fromEntries(extraRegions.map(([id,name])=>[id,name]))};const s=saved();$('world-detail').innerHTML=country==='china'?`<h3>중국 제패 · ${done?'정복 완료':'도전 가능'}</h3><p>난이도 ${difficulty('china')} · 11점 단식 · 7전 4선승<br>출전 선수: ${LOOKS[charType].nick} · 진행 중 단식은 이어할 때 처음부터 시작합니다.</p><div class="euro-roster">${CHINA_PLAYERS.map(p=>`<figure><img src="${FACES['china_'+p[0]].src}" alt="${p[1]}"><figcaption>${p[1]}<small>${p[2]}</small></figcaption></figure>`).join('')}</div><button id="world-depart">${s?`이어하기 ${s.my}:${s.ai}`:done?'다시 도전':'출발하기'}</button>`:`<h3>${names[country]} · ${difficulty(country)}</h3><p>전용 선수단 준비 중입니다. 현재는 중국에 출전할 수 있습니다.</p>`;if($('world-depart'))$('world-depart').onclick=depart;}
 function arrive(){stop();dialog.close();const s=saved();if(s){chinaRun=s;openChinaCup();}else openChinaCup();}
 function depart(){if(!loginGate()||playing||net)return;stop();const c=$('world-plane').querySelector('canvas');drawFace(c,LOOKS[saved()?.character||charType]);$('world-plane').hidden=false;$('world-route').setAttribute('visibility','visible');$('world-detail').innerHTML='<h3>중국으로 출발합니다</h3><p>선수 탑승 완료 · 목적지 중국 경기장</p><button id="world-skip">건너뛰기</button>';$('world-skip').onclick=arrive;const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?100:4000;flight=$('world-plane').animate([{left:'82%',top:'44%'},{left:'79%',top:'24%',offset:.5},{left:'73%',top:'44%'}],{duration,fill:'forwards',easing:'ease-in-out'});timer=setTimeout(arrive,duration);}
 function selectCountry(id){selectedCountry=id;stop();render(id);dialog.querySelectorAll('[data-region]').forEach(region=>region.classList.toggle('selected',region.dataset.region===id));}
-function open(){stop();selectedCountry=null;setMapZoom(1.35);render();dialog.querySelectorAll('[data-region]').forEach(region=>region.classList.remove('selected'));if(!dialog.open)dialog.showModal();}
+function centerOnKorea(){const koreaX=814/1000;atlas.scrollLeft=Math.max(0,Math.min(atlas.scrollWidth-atlas.clientWidth,mapCanvas.offsetWidth*koreaX-atlas.clientWidth/2));}
+function open(){stop();selectedCountry=null;setMapZoom(2.8);render();dialog.querySelectorAll('[data-region]').forEach(region=>region.classList.remove('selected'));if(!dialog.open)dialog.showModal();requestAnimationFrame(centerOnKorea);}
 button.onclick=open;$('world-close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{stop();selectedCountry=null;});dialog.addEventListener('cancel',stop);
 window.sppWorldContinueChinaReady=()=>!!saved();
 window.sppWorldContinueChina=()=>{const s=saved();if(!s)return open();chinaRun=s;setCharacter(s.character);chinaGame();};
