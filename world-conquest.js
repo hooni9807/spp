@@ -1,6 +1,6 @@
 // World tour hub. Only China has a playable roster at launch.
 (()=>{
-const WORLD_DIFFICULTY={china:'HELL+',japan:'HELL',germany:'매우 어려움',sweden:'매우 어려움',france:'매우 어려움',romania:'매우 어려움',portugal:'매우 어려움',austria:'매우 어려움',korea:'준비 중',taiwan:'HELL+',india:'HELL+',brazil:'HELL+',usa:'HELL+',russia:'HELL+',europe:'준비 중',singapore:'HELL+',nigeria:'HELL+',canada:'HELL+',argentina:'HELL+',australia:'HELL+',southafrica:'HELL+',mexico:'HELL+',greenland:'HELL+'};
+const WORLD_DIFFICULTY={china:'HELL+++',japan:'HELL++',germany:'HELL-',sweden:'HELL-',france:'HELL-',romania:'HELL-',portugal:'HELL-',austria:'HELL-',korea:'준비 중',taiwan:'HELL',india:'HELL',brazil:'HELL',usa:'HELL',russia:'HELL',europe:'준비 중',singapore:'HELL',nigeria:'HELL',canada:'HELL+',argentina:'HELL+',australia:'HELL+',southafrica:'HELL+',mexico:'HELL+',greenland:'HELL+'};
 const difficulty=id=>WORLD_DIFFICULTY[id]||'준비 중';
 chinaButton.remove();
 const button=document.createElement('button');button.id='world-open';button.type='button';button.textContent='세계정복';$('tournament-open').after(button);
