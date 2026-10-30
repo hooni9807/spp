@@ -24,9 +24,14 @@ function clearWorldScene(){clearTimeout(worldSceneTimer);document.querySelector(
 function showWorldScene(id,athlete=0){
  const c=WORLD_SCENES[id],host=document.querySelector('.court-wrap');if(!c||!host)return;clearWorldScene();
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,low=document.documentElement.classList.contains('low-spec'),count=reduced?0:low?6:16;
- const layer=document.createElement('div');layer.className='world-skill-scene';layer.dataset.country=id;layer.dataset.motion=c.move;layer.setAttribute('aria-hidden','true');layer.style.setProperty('--scene-color',c.color);
+ const layer=document.createElement('div');layer.className='world-skill-scene';layer.dataset.country=id;layer.dataset.motion=c.move;layer.dataset.particle=c.kind;layer.setAttribute('aria-hidden','true');layer.style.setProperty('--scene-color',c.color);
  const skill=id==='china'?CHINA_PLAYERS[athlete]?.[2]:EURO_CUPS[id]?.skills[athlete];
  layer.innerHTML=`<svg viewBox="0 0 600 360" preserveAspectRatio="xMidYMid meet"><g class="world-scene-emblem" transform="translate(150 20)"><path d="${c.art}"/><path class="world-scene-slash" d="M${20+athlete*5} 135L280 ${10+athlete*4}"/></g>${Array.from({length:count},(_,j)=>{const x=20+(j*137+athlete*41)%560,y=20+(j*53)%120;return `<g transform="translate(${x} ${y})"><path class="world-scene-particle" style="--drift:${(j%2?1:-1)*(30+j*4)}px;--fall:${150+j%4*32}px;animation-delay:${j%5*40}ms" d="${worldParticleShapes[c.kind]}"/></g>`;}).join('')}</svg><div class="world-scene-caption"><span>${c.name}</span><b>${skill||c.name}</b></div>`;
+ if(id==='brazil'||id==='japan'){
+  const ns='http://www.w3.org/2000/svg',tree=document.createElementNS(ns,'g');tree.setAttribute('transform','translate(300 80)');
+  tree.innerHTML='<path class="world-split-left" d="M-5 0L-24 0L-35 170H-5ZM-20 40Q-85 -10 -115 35Q-65 65 -20 40"/><path class="world-split-right" d="M5 0L24 0L35 170H5ZM20 40Q85 -10 115 35Q65 65 20 40"/>';
+  layer.querySelector('svg').append(tree);
+ }
  host.append(layer);worldSceneTimer=setTimeout(clearWorldScene,reduced?650:1350);
 }
 const worldSceneFire=fireUlt;fireUlt=function(u,x,y,ai=false,...args){const id=ai&&(chinaActive()?'china':euroActive()?euroRun.country:null),i=id==='china'?chinaRun.order[chinaRun.round]:id?euroRun.order[euroRun.round]:0;const result=worldSceneFire(u,x,y,ai,...args);if(id){showWorldScene(id,i);if(foe.ultMove){foe.ultMove.worldScene=id;foe.ultMove.worldAthlete=i;}}return result;};
@@ -40,6 +45,20 @@ const worldSceneStyle=document.createElement('style');worldSceneStyle.textConten
 .world-scene-emblem{transform-box:fill-box;transform-origin:center;animation:worldEmblem 1.2s ease-out both}
 .world-scene-slash{stroke:#fff2cc;stroke-width:4;stroke-dasharray:400;animation:worldSlash .65s ease-out both}
 .world-scene-particle{fill:currentColor;stroke:none;animation:worldParticle 1.2s ease-out both}
+.world-skill-scene[data-particle="flame"] .world-scene-particle{animation-name:worldFlame}
+.world-skill-scene[data-particle="spark"] .world-scene-particle{animation-name:worldLightning}
+.world-skill-scene[data-particle="drop"] .world-scene-particle{animation-name:worldFountain}
+.world-skill-scene[data-particle="lantern"] .world-scene-particle{animation-name:worldFlame;fill:none;stroke:currentColor}
+.world-skill-scene[data-particle="star"] .world-scene-particle{animation-name:worldComet}
+.world-skill-scene[data-particle="ice"] .world-scene-particle{stroke:#fff;stroke-width:.5}
+.world-split-left,.world-split-right{fill:currentColor;fill-opacity:.15;stroke-width:3;transform-origin:0 170px;animation:worldSplitLeft 1.2s ease-out both}
+.world-split-right{animation-name:worldSplitRight}
+@keyframes worldSplitLeft{0%,25%{opacity:.6;transform:rotate(0)}100%{opacity:0;transform:translate(-80px,30px) rotate(-35deg)}}
+@keyframes worldSplitRight{0%,25%{opacity:.6;transform:rotate(0)}100%{opacity:0;transform:translate(80px,30px) rotate(35deg)}}
+@keyframes worldFlame{0%{opacity:0;transform:translate(0,220px) scale(.5)}25%{opacity:.85}100%{opacity:0;transform:translate(var(--drift),-40px) scale(1.8)}}
+@keyframes worldLightning{0%,15%{opacity:0;transform:scaleY(.2)}25%,45%{opacity:.9;transform:scaleY(4)}100%{opacity:0;transform:translate(var(--drift),100px) scaleY(1)}}
+@keyframes worldFountain{0%{opacity:0;transform:translate(0,220px)}35%{opacity:.8;transform:translate(calc(var(--drift)*.5),-10px)}100%{opacity:0;transform:translate(var(--drift),200px)}}
+@keyframes worldComet{0%{opacity:0;transform:translate(-180px,-70px) scale(.3)}20%{opacity:.85}100%{opacity:0;transform:translate(200px,160px) scale(1.5) rotate(180deg)}}
 .world-scene-caption{position:absolute;left:5%;top:7%;display:grid;padding:7px 14px;border-left:3px solid currentColor;background:#0b1732dc;border-radius:0 8px 8px 0;max-width:75%}.world-scene-caption span{font-size:12px}.world-scene-caption b{font-size:clamp(16px,3vw,25px);color:#fff}
 @keyframes worldEmblem{0%{opacity:0;scale:.55}25%{opacity:.9;scale:1}75%{opacity:.6}100%{opacity:0;scale:1.12}}
 @keyframes worldSlash{from{stroke-dashoffset:400;opacity:1}to{stroke-dashoffset:0;opacity:0}}

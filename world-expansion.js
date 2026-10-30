@@ -19,6 +19,14 @@ const distantSquads=[
  ['mexico','멕시코','#eca366','es-MX','¡Excelente!','금잔화 완급',[152,217],['디에고','소피아','에밀리오','발레리아','산티아고','레나타','가엘'],'금잔화 태양 협곡 흑요석 열풍 화산 황혼']
 ];
 for(const [id,name,color,lang,call,theme,xy,names,words] of distantSquads){WORLD_EXPANSION[id]={name,color,lang,hello:lang.startsWith('es')?'¡Hola!':'Hello!',call,theme,xy,names,skills:words.split(' ').map((w,i)=>w+' '+['돌진','나선','쇼트','방벽','돌파','스매시','폭풍'][i]),speed:1.2,spin:1.35,motion:[28,-35,.2],shape:'M20 130L75 35L150 105L225 35L280 130M20 70Q150 0 280 70'};EURO_CUPS[id]=WORLD_EXPANSION[id];const svg=$('world-map').querySelector('svg'),land=svg.querySelector('g'),ns='http://www.w3.org/2000/svg',p=document.createElementNS(ns,'path'),label=document.createElementNS(ns,'text');p.setAttribute('d',`M${xy[0]-17} ${xy[1]-16}h34v32h-34Z`);p.dataset.region=id;p.setAttribute('tabindex','0');p.setAttribute('role','button');p.setAttribute('aria-label',name);p.onclick=()=>euroMap(id);p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();euroMap(id);}};land.append(p);label.setAttribute('x',xy[0]);label.setAttribute('y',xy[1]+30);label.setAttribute('fill','#eff5fa');label.setAttribute('font-size','12');label.setAttribute('text-anchor','middle');label.textContent=name;svg.append(label);}
+const distantTraits={
+ canada:{speed:1.18,spin:1.43,motion:[22,-25,.35],shape:'M150 145V85L80 110L95 75L45 55L100 50L95 15L135 40L150 0L165 40L205 15L200 50L255 55L205 75L220 110L150 85'},
+ argentina:{speed:1.24,spin:1.34,motion:[48,-18,.28],shape:'M150 35A40 40 0 1 0 151 35M150 0V25M150 125V150M75 75H100M200 75H225M95 20L115 40M185 110L205 130M95 130L115 110M185 40L205 20'},
+ australia:{speed:1.29,spin:1.28,motion:[35,-72,.18],shape:'M15 125Q65 35 115 80T215 80T295 40M30 145Q90 80 150 120T290 110M180 10L185 25L200 30L185 35L180 50L175 35L160 30L175 25Z'},
+ southafrica:{speed:1.23,spin:1.39,motion:[30,-46,.26],shape:'M150 140Q40 110 50 40Q120 40 150 140Q180 40 250 40Q260 110 150 140ZM150 140Q85 65 150 5Q215 65 150 140'},
+ mexico:{speed:1.21,spin:1.46,motion:[42,-24,.32],shape:'M150 75C60 30 100 -15 150 35C200 -15 240 30 150 75C240 30 285 100 195 100C240 160 160 175 150 115C140 175 60 160 105 100C15 100 60 30 150 75Z'}
+};
+for(const [id,traits] of Object.entries(distantTraits))Object.assign(WORLD_EXPANSION[id],traits);
 const expansionRoles=['직선 드라이브','교차 회전','빠른 쇼트','커트 수비','깊은 코스','찬스볼 강타','랠리 가속'];
 Object.entries(WORLD_EXPANSION).forEach(([id,c],n)=>{
  WORLD_COUNTRY_NAMES[id]=c.name;if(!WORLD_ACTIVE_COUNTRIES.includes(id))WORLD_ACTIVE_COUNTRIES.push(id);EURO_KITS[id]={base:c.color,trim:['#183254','#144e45','#492b45'][n%3],accent:'#f5f1de',code:id.slice(0,3).toUpperCase()};
