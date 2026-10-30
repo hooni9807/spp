@@ -685,16 +685,16 @@ const RANK_TIERS=[
 {id:'b6',n:'6부',icon:'🏓',c:'#d49a65',min:1100,dif:'b6',ai:'hard',returnRate:.55},
 {id:'b5',n:'5부',icon:'🏓',c:'#c0c7d0',min:1200,dif:'b5',ai:'extreme',returnRate:.65},
 {id:'b4',n:'4부',icon:'🏓',c:'#ffd166',min:1300,dif:'b4',ai:'ultra',returnRate:.75},
-{id:'b3',n:'3부',icon:'🏓',c:'#4fd1c5',min:1400,dif:'b3',ai:'uhard',returnRate:.85},
-{id:'b2',n:'2부',icon:'🏓',c:'#63b3ed',min:1600,dif:'b2',ai:'uext',returnRate:.90},
-{id:'b1',n:'1부',icon:'🏓',c:'#b794f4',min:1800,dif:'b1',ai:'uext',returnRate:.93},
+{id:'b3',n:'3부',icon:'🏓',c:'#4fd1c5',min:1400,dif:'b3',ai:'uhard',returnRate:.80},
+{id:'b2',n:'2부',icon:'🏓',c:'#63b3ed',min:1600,dif:'b2',ai:'uext',returnRate:.85},
+{id:'b1',n:'1부',icon:'🏓',c:'#b794f4',min:1800,dif:'b1',ai:'uext',returnRate:.90},
 {id:'pro',n:'선수부',icon:'👑',c:'#ff8c42',min:2000,dif:'pro',ai:'unight',returnRate:.95}];
-const RANK_RETURN_BOOST=[.2,.3,.4,.5,.6,.7,.8,.9,.95];
+const RANK_RETURN_BOOST=[.2,.3,.4,.5,.6,.7,.8,.9,.95],RANK_ULT_RETURN=[null,null,null,null,null,.10,.15,.20,.25];
 const RANK_START=1000;let rankArmed=false,rankOn=false,rankStarting=false,rankGame=null;
 const rankIdx=m=>{let i=0;RANK_TIERS.forEach((t,k)=>{if(m>=t.min)i=k;});return i;},rankTier=m=>RANK_TIERS[rankIdx(m)];
 function rankName(m){return rankTier(m).n;}
 function rankLocal(){try{return {mmr:RANK_START,w:0,l:0,ws:0,ls:0,peak:RANK_START,...JSON.parse(store.get('arank'))};}catch{return {mmr:RANK_START,w:0,l:0,ws:0,ls:0,peak:RANK_START};}}
-const rawRankReturnRoll=P.returnRoll;P.returnRoll=(ball,tier,chance,bonus=0)=>{const rate=rankOn&&rankGame?.returnRate,norm=rankGame?.returnNorm;if(rate!=null&&norm&&P.normalShot(ball))return Math.max(0,Math.min(rate,chance*rate/norm)-Math.min(.95,Math.max(0,ball.defMiss||0)));return rawRankReturnRoll(ball,tier,chance,bonus);};
+const rawRankReturnRoll=P.returnRoll;P.returnRoll=(ball,tier,chance,bonus=0)=>{const rate=rankOn&&rankGame?.returnRate,norm=rankGame?.returnNorm,ult=rankOn&&rankGame&&ball?.ult?RANK_ULT_RETURN[rankGame.opp]:null;if(ult!=null)return ult;if(rate!=null&&norm&&P.normalShot(ball))return Math.max(0,Math.min(rate,chance*rate/norm)-Math.min(.95,Math.max(0,ball.defMiss||0)));return rawRankReturnRoll(ball,tier,chance,bonus);};
 function rankLabel(){const r=rankLocal(),t=rankTier(r.mmr);const b=$('rank-mode');if(b)b.textContent=`🎖️ 랭크전 ${t.icon} ${t.n} · ${r.mmr}`;}
 function showRankGuide(){let d=$('rank-guide');if(!d){d=document.createElement('dialog');d.id='rank-guide';d.setAttribute('aria-label','랭크전 티어표');d.innerHTML='<button type="button" class="dlg-x" aria-label="닫기">✕</button><h3>🎖️ 랭크전 티어표</h3><p>현재 점수에 따라 상대 AI 부수가 정해집니다.</p><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>티어</th><th>점수</th></tr></thead><tbody></tbody></table><div class="su-row"><button type="button">확인</button></div>';d.querySelector('.dlg-x').onclick=()=>d.close();d.querySelector('.su-row button').onclick=()=>d.close();document.body.append(d);}const r=rankLocal(),body=d.querySelector('tbody');body.innerHTML=RANK_TIERS.map((t,i)=>`<tr${rankTier(r.mmr).id===t.id?' style="color:'+t.c+';font-weight:800"':''}><td style="padding:7px 3px">${t.icon} ${t.n}</td><td>${i?' '+t.min+'점 이상':'1000점 이하'}</td></tr>`).join('');d.showModal();}
 // 랭크전 button: back to the start screen to pick a character, then the start button reads 랭크전 시작
