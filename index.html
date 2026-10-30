@@ -689,7 +689,7 @@ const RANK_TIERS=[
 {id:'b2',n:'2부',icon:'🏓',c:'#63b3ed',min:1600,dif:'b2',ai:'uext',returnRate:.85},
 {id:'b1',n:'1부',icon:'🏓',c:'#b794f4',min:1800,dif:'b1',ai:'uext',returnRate:.90},
 {id:'pro',n:'선수부',icon:'👑',c:'#ff8c42',min:2000,dif:'pro',ai:'unight',returnRate:.95}];
-const RANK_RETURN_BOOST=[.2,.3,.4,.5,.6,.7,.8,.9,.95],RANK_ULT_RETURN=[null,null,null,null,null,.10,.15,.20,.25];
+const RANK_RETURN_BOOST=[.2,.3,.4,.5,.6,.7,.8,.9,.95],RANK_ULT_RETURN=[0,.02,.04,.06,.08,.10,.15,.20,.25];
 const RANK_START=1000;let rankArmed=false,rankOn=false,rankStarting=false,rankGame=null;
 const rankIdx=m=>{let i=0;RANK_TIERS.forEach((t,k)=>{if(m>=t.min)i=k;});return i;},rankTier=m=>RANK_TIERS[rankIdx(m)];
 function rankName(m){return rankTier(m).n;}
