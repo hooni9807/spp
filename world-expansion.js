@@ -10,14 +10,23 @@ const WORLD_EXPANSION={
  nigeria:{name:'나이지리아',color:'#65dba1',lang:'en-NG',hello:'Hello!',call:'Well done!',theme:'리듬 강타',speed:1.1825,spin:1.287,xy:[480,265],names:['치디','아미나','툰데','지나','에메카','톨라','오비'],skills:['녹색 섬광','니제르 물결','리듬 쇼트','에메랄드 반격','독수리 도약','폭풍 강타','대지의 울림'],motion:[32,-40,.3],shape:'M10 30L100 65L150 130L200 65L290 30L230 100L150 145L70 100ZM60 20L150 80L240 20'}
 };
 Object.assign(EURO_CUPS,WORLD_EXPANSION);
+// Additional squads use the same seven-player series and portrait pipeline.
+const distantSquads=[
+ ['canada','캐나다','#ef8585','en-CA','Great shot!','단풍 회전', [170,100],['리암','올리비아','에반','클레어','네이선','마야','로건'],'단풍 돌풍 설원 빙하 북풍 오로라 적풍'],
+ ['argentina','아르헨티나','#8ddfff','es-AR','¡Vamos!','팜파스 교차 스텝',[253,370],['마테오','루시아','티아고','발렌티나','니콜라스','카밀라','브루노'],'팜파스 태양 탱고 은빛 남풍 안데스 새벽'],
+ ['australia','호주','#f4cf61','en-AU','Well done!','황금 도약',[840,360],['올리버','샬럿','잭','아멜리아','핀','그레이스','휴고'],'황금 산호 파도 유칼립투스 도약 남십자 사막'],
+ ['southafrica','남아프리카공화국','#78d8a8','en-ZA','Brilliant!','프로테아 역습',[516,345],['타보','날레디','시포','아얀다','루카','졸라','키아라'],'프로테아 희망봉 초원 번개 산맥 녹빛 여명'],
+ ['mexico','멕시코','#eca366','es-MX','¡Excelente!','금잔화 완급',[152,217],['디에고','소피아','에밀리오','발레리아','산티아고','레나타','가엘'],'금잔화 태양 협곡 흑요석 열풍 화산 황혼']
+];
+for(const [id,name,color,lang,call,theme,xy,names,words] of distantSquads){WORLD_EXPANSION[id]={name,color,lang,hello:lang.startsWith('es')?'¡Hola!':'Hello!',call,theme,xy,names,skills:words.split(' ').map((w,i)=>w+' '+['돌진','나선','쇼트','방벽','돌파','스매시','폭풍'][i]),speed:1.2,spin:1.35,motion:[28,-35,.2],shape:'M20 130L75 35L150 105L225 35L280 130M20 70Q150 0 280 70'};EURO_CUPS[id]=WORLD_EXPANSION[id];const svg=$('world-map').querySelector('svg'),land=svg.querySelector('g'),ns='http://www.w3.org/2000/svg',p=document.createElementNS(ns,'path'),label=document.createElementNS(ns,'text');p.setAttribute('d',`M${xy[0]-17} ${xy[1]-16}h34v32h-34Z`);p.dataset.region=id;p.setAttribute('tabindex','0');p.setAttribute('role','button');p.setAttribute('aria-label',name);p.onclick=()=>euroMap(id);p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();euroMap(id);}};land.append(p);label.setAttribute('x',xy[0]);label.setAttribute('y',xy[1]+30);label.setAttribute('fill','#eff5fa');label.setAttribute('font-size','12');label.setAttribute('text-anchor','middle');label.textContent=name;svg.append(label);}
 const expansionRoles=['직선 드라이브','교차 회전','빠른 쇼트','커트 수비','깊은 코스','찬스볼 강타','랠리 가속'];
 Object.entries(WORLD_EXPANSION).forEach(([id,c],n)=>{
- WORLD_COUNTRY_NAMES[id]=c.name;EURO_KITS[id]={base:c.color,trim:['#183254','#144e45','#492b45'][n%3],accent:'#f5f1de',code:id.slice(0,3).toUpperCase()};
+ WORLD_COUNTRY_NAMES[id]=c.name;if(!WORLD_ACTIVE_COUNTRIES.includes(id))WORLD_ACTIVE_COUNTRIES.push(id);EURO_KITS[id]={base:c.color,trim:['#183254','#144e45','#492b45'][n%3],accent:'#f5f1de',code:id.slice(0,3).toUpperCase()};
  c.passives=expansionRoles.map((role,i)=>`${role} · ${c.skills[i]}`);euroPaths[id]=c.shape;
  c.names.forEach((name,i)=>{const key=`china_${id}_${i}`,p=euroPortrait(id,n+7,i),im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(p.svg);FACES[key]=im;LOOKS[key]={name,nick:name,boss:true,split:true,face:key,faceFit:{h:40,b:22,cx:.5},nationalKit:id,shirt:c.color,sleeve:EURO_KITS[id].trim,collar:'#f5f1de',pants:'#172437',shorts:true,tee:true,skin:p.skin,hair:p.hair,skinShade:'#986f56',stanceK:.9+i*.04,crouchK:.05+i*.015};});
 });
 const expandedShot=P.aiReturn;P.aiReturn=function(kind,x,y,z,speed,aim,spin=1,...args){if(euroActive()&&WORLD_EXPANSION[euroRun.country]){const i=euroRun.order[euroRun.round];if(i===0){kind='drive';aim=.15;}if(i===1){aim=(rally%2?1:-1)*.55;spin*=1.12;}if(i===2){kind='block';speed*=1.08;}if(i===3){kind='cut';spin*=1.16;speed*=.9;}if(i===4)aim=(rally%2?1:-1)*.64;if(i===5&&kind==='smash')speed*=1.12;if(i===6)speed*=1+Math.min(.1,rally*.005);}return expandedShot.call(this,kind,x,y,z,speed,aim,spin,...args);};
 const expansionArt=euroEffectArt;euroEffectArt=function(id,i){const c=WORLD_EXPANSION[id];if(!c)return expansionArt(id,i);return `<svg viewBox="0 0 300 150" aria-hidden="true"><g transform="rotate(${(i-3)*5} 150 75)"><path d="${c.shape}"/>${Array.from({length:i+2},(_,j)=>`<circle cx="${35+j*230/(i+1)}" cy="${30+(j%3)*40}" r="${3+i}"/>`).join('')}</g></svg>`;};
 const expansionKit=drawNationalKit;drawNationalKit=function(g,look,x,y,h,s){expansionKit(g,look,x,y,h,s);const c=WORLD_EXPANSION[look.nationalKit];if(!c)return;g.save();g.translate(x,y);g.scale(s,h/64);g.strokeStyle=EURO_KITS[look.nationalKit].trim;g.lineWidth=3;const n=Object.keys(WORLD_EXPANSION).indexOf(look.nationalKit);for(let j=0;j<3;j++){g.beginPath();g.moveTo(-29,22+j*10);g.lineTo((n%3-1)*18,12+j*10);g.lineTo(29,22+j*10+(n%2)*8);g.stroke();}g.restore();};
-$('world-map').querySelector('footer').textContent='게임용 단순화 지도 · 15개국 · 국가별 7전 4선승';
+$('world-map').querySelector('footer').textContent='게임용 단순화 지도 · 20개국 · 국가별 7전 4선승';
 PATCH_NOTES.unshift(['세계정복 7개국 확장','러시아·대만·인도·브라질·미국·싱가포르·나이지리아에 신규 선수 49명과 국가별 기술·연출을 추가했습니다.']);
