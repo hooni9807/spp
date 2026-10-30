@@ -20,6 +20,7 @@ const worldParticleShapes={petal:'M0 -8Q12 -6 6 3Q0 12 -6 3Q-12 -6 0 -8',leaf:'M
 for(const [id,kind,move] of [['canada','leaf','spin'],['argentina','star','sweep'],['australia','drop','rise'],['southafrica','spark','drive'],['mexico','petal','dash']]){const c=WORLD_EXPANSION[id];WORLD_SCENES[id]={name:c.theme,color:c.color,kind,move,art:c.shape};}
 PATCH_NOTES.unshift(['세계정복 20개국','캐나다·아르헨티나·호주·남아프리카공화국·멕시코 선수 35명과 국가별 연출을 추가했습니다.']);
 let worldSceneTimer=0;
+WORLD_SCENES.greenland={name:'극광 빙하',color:'#85efd6',kind:'ice',move:'rise',art:WORLD_EXPANSION.greenland.shape};
 function clearWorldScene(){clearTimeout(worldSceneTimer);document.querySelector('.world-skill-scene')?.remove();}
 function showWorldScene(id,athlete=0){
  const c=WORLD_SCENES[id],host=document.querySelector('.court-wrap');if(!c||!host)return;clearWorldScene();
@@ -45,6 +46,8 @@ const worldSceneStyle=document.createElement('style');worldSceneStyle.textConten
 .world-scene-emblem{transform-box:fill-box;transform-origin:center;animation:worldEmblem 1.2s ease-out both}
 .world-scene-slash{stroke:#fff2cc;stroke-width:4;stroke-dasharray:400;animation:worldSlash .65s ease-out both}
 .world-scene-particle{fill:currentColor;stroke:none;animation:worldParticle 1.2s ease-out both}
+.world-skill-scene[data-country="greenland"] .world-scene-emblem{stroke-width:4;stroke:#85efd6;animation:worldAurora 1.2s ease-out both}
+@keyframes worldAurora{0%{opacity:0;transform:translateY(25px)}30%{opacity:.85;stroke:#85efd6}65%{stroke:#b6a5ff;transform:translateY(-12px)}100%{opacity:0;stroke:#ddfaff;transform:translateY(-25px)}}
 .world-skill-scene[data-particle="flame"] .world-scene-particle{animation-name:worldFlame}
 .world-skill-scene[data-particle="spark"] .world-scene-particle{animation-name:worldLightning}
 .world-skill-scene[data-particle="drop"] .world-scene-particle{animation-name:worldFountain}

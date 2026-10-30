@@ -28,9 +28,9 @@ const path = require('node:path');
      map:!!document.querySelector('[data-region="'+id+'"]'), active:WORLD_ACTIVE_COUNTRIES.includes(id)})),
     shapes:new Set(distantSquads.map(([id])=>WORLD_EXPANSION[id].shape)).size};
   });
-  assert.equal(result.total,20);
-  assert.equal(result.scenes.length,20);
-  assert.equal(result.shapes,5);
+  assert.equal(result.total,21);
+  assert.equal(result.scenes.length,21);
+  assert.equal(result.shapes,6);
   assert(result.cleared);
   for(const scene of result.scenes){assert.equal(scene.count,1);assert.equal(scene.country,scene.id);assert(!scene.invalid);if(['brazil','japan'].includes(scene.id))assert.equal(scene.split,2);}
   for(const squad of result.squads){assert.equal(squad.faces,7);assert(squad.map);assert(squad.active);}
