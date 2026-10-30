@@ -242,8 +242,8 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['name', 'countries', 'count', 'at'])
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.countries is list && request.resource.data.countries.size() >= 1 && request.resource.data.countries.size() <= 9
-        && request.resource.data.countries.hasOnly(['china', 'japan', 'germany', 'sweden', 'france', 'romania', 'portugal', 'austria', 'korea'])
+        && request.resource.data.countries is list && request.resource.data.countries.size() >= 1 && request.resource.data.countries.size() <= 15
+        && request.resource.data.countries.hasOnly(['china', 'japan', 'germany', 'sweden', 'france', 'romania', 'portugal', 'austria', 'russia', 'taiwan', 'india', 'brazil', 'usa', 'singapore', 'nigeria'])
         && request.resource.data.count is int && request.resource.data.count == request.resource.data.countries.size()
         && request.resource.data.at == request.time;
     }

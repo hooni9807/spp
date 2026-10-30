@@ -1,6 +1,6 @@
 // World tour hub. Only China has a playable roster at launch.
 (()=>{
-const WORLD_DIFFICULTY={china:'HELL',japan:'매우 어려움+',germany:'매우 어려움',sweden:'매우 어려움',france:'매우 어려움',romania:'매우 어려움',portugal:'매우 어려움',austria:'매우 어려움',korea:'준비 중',taiwan:'준비 중',india:'준비 중',brazil:'준비 중',usa:'준비 중',russia:'준비 중',europe:'준비 중',singapore:'준비 중',egypt:'준비 중'};
+const WORLD_DIFFICULTY={china:'HELL',japan:'매우 어려움+',germany:'매우 어려움',sweden:'매우 어려움',france:'매우 어려움',romania:'매우 어려움',portugal:'매우 어려움',austria:'매우 어려움',korea:'준비 중',taiwan:'준비 중',india:'준비 중',brazil:'준비 중',usa:'준비 중',russia:'준비 중',europe:'준비 중',singapore:'준비 중',nigeria:'준비 중'};
 const difficulty=id=>WORLD_DIFFICULTY[id]||'준비 중';
 chinaButton.remove();
 const button=document.createElement('button');button.id='world-open';button.type='button';button.textContent='세계정복';$('tournament-open').after(button);
@@ -23,11 +23,11 @@ const extraRegions=[
  ['brazil','브라질','M224 252L269 248L296 281L282 321L259 343L239 318L231 286L214 272Z',258,291],
  ['usa','미국','M106 137L165 144L216 137L246 156L224 180L190 180L176 201L150 185L122 180Z',173,166],
  ['singapore','싱가포르','M704 298L712 298L714 303L706 304Z',758,313],
- ['egypt','이집트','M502 211L522 211L526 229L511 239L500 229Z',548,252]
+ ['nigeria','나이지리아','M466 250L489 248L495 271L477 280L464 267Z',445,290]
 ];
 const map=dialog.querySelector('.world-atlas>svg'),land=map.querySelector('g'),labels=map.querySelectorAll('g')[1],svgNS='http://www.w3.org/2000/svg';
 // Leader lines keep compact European regions readable without enlarging their borders.
-for(const [id,x,y,tx,ty] of [['germany',488,151,410,127],['sweden',500,100,550,60],['france',463,166,403,159],['romania',522,175,560,182],['portugal',440,187,402,207],['austria',496,170,541,222],['egypt',512,224,548,252]]){const line=document.createElementNS(svgNS,'path');line.setAttribute('d',`M${x} ${y}L${tx} ${ty}`);line.setAttribute('stroke','#9aaebf');line.setAttribute('fill','none');line.setAttribute('pointer-events','none');labels.prepend(line);}
+for(const [id,x,y,tx,ty] of [['germany',488,151,410,127],['sweden',500,100,550,60],['france',463,166,403,159],['romania',522,175,560,182],['portugal',440,187,402,207],['austria',496,170,541,222],['nigeria',480,265,445,290]]){const line=document.createElementNS(svgNS,'path');line.setAttribute('d',`M${x} ${y}L${tx} ${ty}`);line.setAttribute('stroke','#9aaebf');line.setAttribute('fill','none');line.setAttribute('pointer-events','none');labels.prepend(line);}
 const europeLabel=[...labels.querySelectorAll('text')].find(el=>el.textContent==='유럽');if(europeLabel){europeLabel.setAttribute('x','450');europeLabel.setAttribute('y','110');europeLabel.setAttribute('font-size','12');}
 for(const [id,name,d,x,y] of extraRegions){const region=document.createElementNS(svgNS,'path');region.setAttribute('d',d);region.dataset.region=id;region.setAttribute('tabindex','0');region.setAttribute('role','button');region.setAttribute('aria-label',name+' 준비 중');land.append(region);const label=document.createElementNS(svgNS,'text');label.setAttribute('x',x);label.setAttribute('y',y);label.setAttribute('font-size','14');label.textContent=name;labels.append(label);}
 // Korea is small at this world scale, so keep a clear fixed marker and label.
