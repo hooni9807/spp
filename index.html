@@ -2999,7 +2999,7 @@ if(net&&net.dbl&&view!=='fp'){const mf=project(0,MY_FEET_Y-.45-P.DEEP_M*deepS,-.
 person(mate,mf.y-mate.legLen,{x:mate.x+sd*30*ms,y:mf.y-mate.legLen-20*ms},sd*.3,ml,ms,mate.netRk||'shake',sd*(ml.lefty?-1:1)>0?BLACK:RED,sd,mate.swingType||'drive',time-(mate.swingT??-10),null);
 if(ball&&ball.owner==='ai'&&!ball.held&&!dblMine())pill('파트너 차례',mate.x,mf.y-mate.legLen-100*ms,'120,200,255',11);}   // 복식: my human partner
 if(view==='fp'){drawingPrep();me.free={x:W*.3,y:H*.86};racket(paddle.x,paddle.y,angle,racketType,playerSide*fhDir()>0?BLACK:RED,baseScale*1.25,null,true);}
-else{const playerTurn=!(mode==='doubles'&&!net&&doublesCourtActor()==='mate');person(me,myFeet.y-me.legLen,paddle,angle,fitLook(LOOKS[charType]),playerScale,racketType,playerSide*fhDir()>0?BLACK:RED,playerSide,mySwing.type,playerTurn?time-mySwing.t:9,playerTurn?drawingPrep():null);if(mode==='doubles'&&!net)pill('1P',me.x,myFeet.y-me.legLen-124*playerScale,'255,196,83',10);}
+else{const partnerTurn=mode==='doubles'&&!net&&doublesCourtActor()==='mate',player=partnerTurn?{...me,splitT:-10,cheerT:-10,ceremT:-10,shoutT:-10,ultMove:null,taunt:null}:me,target=partnerTurn?{x:me.x+playerSide*30*playerScale,y:myFeet.y-me.legLen-40*playerScale}:paddle;person(player,myFeet.y-me.legLen,target,angle,fitLook(LOOKS[charType]),playerScale,racketType,playerSide*fhDir()>0?BLACK:RED,playerSide,partnerTurn?'idle':mySwing.type,partnerTurn?-1:time-mySwing.t,partnerTurn?null:drawingPrep());if(mode==='doubles'&&!net)pill('1P',me.x,myFeet.y-me.legLen-124*playerScale,'255,196,83',10);}
 drawPlayerUltAllies();drawPlayerUltAction();
 // The cut-in is rendered after the court and players.  Draw the charge burst
 // and the move-name impact text above it as well: otherwise the dark cut-in

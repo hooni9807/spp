@@ -10,6 +10,8 @@ assert.match(html,/copyDoublesHitState\(mateState,mate\)/);
 assert.match(html,/actor==='me'&&lastHit!==before\)mate\.swingT=-10/);
 assert.match(html,/actor:doublesCourtActor\(\)/);
 assert.match(html,/gesture\.actor==='mate'\)\{mate\.swingType=gesture\.stroke;mate\.swingT=time;\}/);
+assert.match(html,/partnerTurn\?'idle':mySwing\.type/);
+assert.match(html,/target=partnerTurn\?\{x:me\.x\+playerSide\*30\*playerScale/);
 assert.match(html,/doublesLink=0/);
 assert.match(html,/doublesLink\+\(perfect\?50:34\)/);
 assert.match(html,/doublesRelay=\{next:who==='mate'\?'me':'mate'/);
