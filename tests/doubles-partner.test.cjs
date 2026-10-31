@@ -4,6 +4,10 @@ for(const hook of ['function openDoublesPartner()','_doublesPartner','let double
 assert.ok(!html.includes('function mateCheck()'),'partner must not auto-return the ball');
 assert.match(html,/partnerTurn=mode==='doubles'&&!net&&doublesCourtActor\(\)==='mate'/);
 assert.match(html,/charType=mateChar/);
+assert.match(html,/const DOUBLES_HIT_STATE=/);
+assert.match(html,/copyDoublesHitState\(mate,me\)/);
+assert.match(html,/copyDoublesHitState\(mateState,mate\)/);
+assert.match(html,/actor==='me'&&lastHit!==before\)mate\.swingT=-10/);
 assert.match(html,/actor:doublesCourtActor\(\)/);
 assert.match(html,/gesture\.actor==='mate'\)\{mate\.swingType=gesture\.stroke;mate\.swingT=time;\}/);
 assert.match(html,/doublesLink=0/);
