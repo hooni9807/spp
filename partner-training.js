@@ -4,6 +4,8 @@ const partnerCost=k=>100+partnerLevel(k)*50;
 const trainingStyle=document.createElement('style');
 trainingStyle.textContent='#partner-training{position:fixed}#partner-training header{display:flex;align-items:center;gap:14px}#partner-training header canvas{width:64px;height:64px;background:#ffffff0a;border-radius:50%}#partner-training h3{padding-right:40px}#partner-training p{font-size:13px;line-height:1.65;color:#b9c8de}#partner-training small{line-height:1.8;color:#c5d7ea}#partner-training .dlg-x{position:absolute;right:12px;top:12px}#partner-training button:focus-visible,[data-training]:focus-visible{outline:3px solid white;outline-offset:3px}[data-training]{width:100%;margin-bottom:14px;cursor:pointer}';
 document.head.append(trainingStyle);
+// Keep the close control inside the dialog's visible scroll area.
+trainingStyle.textContent+='#partner-training .dlg-x{position:sticky;top:0;right:auto;float:right;z-index:5;width:44px;height:44px;margin-bottom:-44px;box-shadow:0 3px 12px #0006}';
 const manualPartnerHit=hit;
 hit=function(...args){if(mode==='doubles'&&!net&&doublesCourtActor()==='mate')return;return manualPartnerHit(...args);};
 const partnerUpdate=update;
