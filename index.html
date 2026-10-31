@@ -512,7 +512,7 @@ prog.unlocked=[...new Set([...START_CHARS,...prog.unlocked])];
 // version marker makes existing profiles earn them once as well, without
 // repeatedly taking a character away on later visits.
 const NEW_CHARACTER_UNLOCKS=['jongryeong','kumho'];
-const NEW_CHARACTER_BADGES=['aribeom','pastor','seohyun','jongryeong','kumho'];
+const NEW_CHARACTER_BADGES=['pyeongtaek'];
 function lockNewCharactersOnce(){prog.q??={};if(prog.q._newCharacterUnlocksV1)return false;prog.q._newCharacterUnlocksV1=1;const before=prog.unlocked.length;prog.unlocked=prog.unlocked.filter(k=>!NEW_CHARACTER_UNLOCKS.includes(k));return prog.unlocked.length!==before;}
 const newCharactersLocked=lockNewCharactersOnce();
 const DOUBLES_ULT_RESET_KEY='_dblUltMovePartnerResetV3';
