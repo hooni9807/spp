@@ -64,3 +64,20 @@ $('world-map').querySelector('footer').textContent='게임용 단순화 지도 �
 const openEuroLineupAll=openEuroLineup;openEuroLineup=function(id){const r=euroRun?.country===id?euroRun:euroSaved(id);if(r){r.preview=r.round;r.lineup??={};for(let i=r.round+1;i<7;i++)delete r.lineup[i];euroRun=r;}openEuroLineupAll(id);const d=$('world-lineup'),round=euroRun.round,start=d.querySelector('.world-lineup-start'),picked=euroRun.lineup?.[round];d.querySelector('h3').textContent=`${EURO_CUPS[id].name} 제패 · ${round+1}번 단식 출전 선택`;d.querySelector('header p').textContent='이번 상대와 내 출전 캐릭터를 선택하세요. 이미 승리한 캐릭터는 다시 사용할 수 없습니다.';d.querySelector('.world-lineup-score b').textContent=`${round+1} / 7 단식`;d.querySelectorAll('[data-world-match]').forEach((b,i)=>b.disabled=i!==round);start.disabled=!picked;start.textContent=picked?`${round+1}번 단식 시작`:'출전 캐릭터를 선택하세요';};
 const worldLineupReadabilityStyle=document.createElement('style');worldLineupReadabilityStyle.textContent=`#world-lineup header{display:block!important;padding-right:72px!important}#world-lineup header h3{display:block!important;max-width:none!important;line-height:1.18!important;letter-spacing:-.035em!important;white-space:normal!important;word-break:keep-all!important;font-size:clamp(23px,6vw,30px)!important}#world-lineup header p{display:block!important;max-width:100%!important;margin-top:8px!important;line-height:1.5!important;word-break:keep-all!important}.world-lineup-score{align-items:center!important}@media(max-width:600px){#world-lineup header{padding-top:18px!important;padding-bottom:15px!important}.world-lineup-matches{margin-bottom:4px}.world-lineup footer{position:sticky;bottom:0;background:#101b32;z-index:2}}`;document.head.append(worldLineupReadabilityStyle);
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-world-char]'))requestAnimationFrame(()=>$('world-lineup')?.querySelector('.world-lineup-start')?.scrollIntoView({behavior:'smooth',block:'center'}));});
+// Isolate the lineup from the game's fixed-height header and horizontal carousel styles.
+const lineupLayout=document.createElement('style');lineupLayout.textContent=`
+#world-lineup{box-sizing:border-box;overflow-x:hidden}
+#world-lineup>header{position:relative!important;height:auto!important;min-height:0!important;max-height:none!important;flex:none!important;overflow:visible!important;padding:22px 64px 20px 20px!important}
+#world-lineup>header h3{position:static!important;font-size:22px!important;line-height:1.4!important;margin:8px 0!important}
+#world-lineup>header small{display:block;font-size:11px;letter-spacing:.08em;overflow-wrap:anywhere}
+#world-lineup>header p{position:static!important;height:auto!important;margin:8px 0 0!important;font-size:13px!important;line-height:1.6!important}
+#world-lineup>section{padding:16px 20px;min-width:0}
+#world-lineup .world-lineup-score{position:static;gap:12px;padding:12px 20px;font-size:15px}
+#world-lineup .world-lineup-pick>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(85px,1fr));overflow:visible;gap:10px}
+#world-lineup .world-lineup-pick button{width:100%;min-width:0;padding:10px 4px;gap:8px}
+#world-lineup .world-lineup-pick span{white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+#world-lineup>footer{display:flex;gap:12px;padding:14px 20px;position:sticky;bottom:0;background:#101b32;border-top:1px solid #526987;z-index:3}
+#world-lineup>footer button{min-height:44px;padding:10px 14px;border-radius:10px;line-height:1.4}
+#world-lineup .world-lineup-start{flex:1}
+#world-lineup .world-lineup-x{z-index:5}
+`;document.head.append(lineupLayout);

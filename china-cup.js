@@ -1,6 +1,6 @@
 // Old saves reserved the current entrant before a result existed. Release only
 // that pending entry; keep characters from already completed singles locked.
-function restoreWorldUsage(r){if(r.usageVersion===2)return;r.used=(r.used||[]).filter(k=>Object.entries(r.lineup||{}).some(([i,c])=>+i<r.round&&c===k));r.usageVersion=2;}
+function restoreWorldUsage(r){r.used=(r.used||[]).filter(k=>Object.entries(r.lineup||{}).some(([i,c])=>+i<r.round&&c===k));r.usageVersion=2;}
 // Seven singles, first to four wins. Opponents stay exclusive to this event.
 const CHINA_PLAYERS=[
  ['longtian','롱톈','천룡강림','#e5ae35',1.408,1.595,'랠리마다 공격 속도 상승'],
