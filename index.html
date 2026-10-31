@@ -1677,7 +1677,7 @@ const E=P.EQUIP;$('eq-total').textContent=`이번 판: 공 속도 ${pct(E.speed-
 function myServe(){if(mode==='cutman'||mode==='infdrive'||survival()||clickPrac())return false;const n=you+cpu;return (n>=20?n%2:Math.floor(n/2)%2)===1;}
 function holdServe(){ball={x:mode==='doubles'?.45:0,y:-.15,z:-.3,vx:0,vy:0,vz:0,spin:0,side:0,bounces:0,owner:'you',held:true,tossed:false};trail=[];toast('내 서브 · 화면을 눌러 공을 토스하세요',2.5);}
 // Free hand (screen) -> world position just behind my end line.
-function ballToHand(){if(!me.free)return;const base=project(0,-.15);ball.x=P.clamp((me.free.x-base.x)/(W*.43*base.scale),-.7,.7);ball.z=P.clamp((base.y-me.free.y)/(H*.33),-.6,.05);}
+function ballToHand(){const hand=mode==='doubles'&&!net&&ball.mateServe?mate.free:me.free;if(!hand)return;const base=project(0,-.15);ball.x=P.clamp((hand.x-base.x)/(W*.43*base.scale),-.7,.7);ball.z=P.clamp((base.y-hand.y)/(H*.33),-.6,.05);}
 function toss(){ball.tossed=true;ball.vz=Math.sqrt(12*(.55-ball.z));// apex .55 above the table wherever the hand is
 ball.tossZ=ball.z;ball.tossT=time;beep(300);}
 // Above the table and falling is the clean contact window (the rules require the ball above the playing surface).
@@ -2984,7 +2984,7 @@ const partnerBall=mode==='doubles'&&!net&&myTurn==='mate'&&ball&&!ball.held&&bal
 if(mode==='doubles'&&!net&&mate.x!=null&&myTurn==='mate'&&ball&&!ball.held&&ball.owner==='ai'&&Math.abs(bodyTarget-mate.x)<W*.22)bodyTarget=mate.x+(bodyTarget>=mate.x?1:-1)*W*.22;const L=LOOKS[charType];me.stanceK=(L.stanceK||1)*(1+Math.abs(me.lean||0)*.6);const oppHit=net?net.opp.hitT:lastAIHit;if(oppHit!==me.seenOpp){me.seenOpp=oppHit;if(oppHit>0)me.splitT=time;}   // split-step as the opponent strikes
 stepBody(me,bodyTarget,rdt,(ball&&ball.owner==='ai'?.55:.25)+(L.crouchK||0),playerScale);
 const angle=P.clamp((paddle.vx-paddle.vy*.3)/2400,-.9,.9)+playerSide*.3;
-me.holding=!!(ball&&ball.held&&ball.owner==='you'&&!ball.tossed);me.tossing=!!(ball&&ball.held&&ball.owner==='you'&&ball.tossed&&time-ball.tossT<.5);
+const mateHolding=mode==='doubles'&&!net&&ball?.mateServe;me.holding=!!(ball&&ball.held&&ball.owner==='you'&&!ball.tossed&&!mateHolding);me.tossing=!!(ball&&ball.held&&ball.owner==='you'&&ball.tossed&&time-ball.tossT<.5&&!mateHolding);mate.holding=!!(mateHolding&&ball.held&&!ball.tossed);mate.tossing=!!(mateHolding&&ball.held&&ball.tossed&&time-ball.tossT<.5);
 const shortIn=!!ball&&ball.owner==='ai'&&!ball.held&&(ball.shortServe||ball.bounces===1&&P.shortLeft(ball)!==null);   // short ball: step in over the table
 me.depth=lerp(me.depth||0,partnerBall?me.depth||0:shortIn?1:P.clamp((H*.82-paddle.y)/(H*.3),-.3,1),Math.min(1,rdt*(shortIn?10:8)));   // finger up the screen = step in toward the table
 me.aura=charge===100&&!net&&ball?pickUlt(ball)?.rgb||null:null;foe.aura=!net&&tierNow()!=='easy'&&aiCharge>=100?'255,170,60':null;   // an equipped special ready: the figure glows
@@ -2994,7 +2994,7 @@ if(act&&ball){mate.waitX=null;const c=project(ball.x,ball.owner==='ai'?contactY(
 const mf=project(0,fy-P.DEEP_M*deepS,-.76),ms=figScale(mf),ml=LOOKS[mateChar]||LOOKS.plain,sd=mate.side||1;mate.legLen=legPx(mf);mate.stanceK=1;stepBody(mate,tx,rdt,act?.55:.3,ms);
 person(mate,mf.y-mate.legLen,tgt||{x:mate.x+sd*30*ms,y:mf.y-mate.legLen-20*ms},sd*.3,ml,ms,'shake',sd*(ml.lefty?-1:1)>0?BLACK:RED,sd,mate.swingType||'drive',time-(mate.swingT??-10),null);
 pill('2P',mate.x,mf.y-mate.legLen-124*ms,'120,200,255',10);
-if(myTurn==='mate'&&ball&&ball.owner==='ai'&&!ball.held)pill('파트너 조종 차례',mate.x,mf.y-mate.legLen-100*ms,'120,200,255',11);}
+if(myTurn==='mate'&&ball&&ball.owner==='ai'&&!ball.held)pill('파트너 AI 차례',mate.x,mf.y-mate.legLen-100*ms,'120,200,255',11);}
 if(net&&net.dbl&&view!=='fp'){const mf=project(0,MY_FEET_Y-.45-P.DEEP_M*deepS,-.76),ms=figScale(mf),ml=LOOKS[mate.netCh]||LOOKS.jersey,sd=mate.side||1;mate.legLen=legPx(mf);mate.stanceK=1;stepBody(mate,project(P.clamp(mate.netX||0,-.9,.9),MY_FEET_Y-.45,-.76).x,rdt,.4,ms);
 person(mate,mf.y-mate.legLen,{x:mate.x+sd*30*ms,y:mf.y-mate.legLen-20*ms},sd*.3,ml,ms,mate.netRk||'shake',sd*(ml.lefty?-1:1)>0?BLACK:RED,sd,mate.swingType||'drive',time-(mate.swingT??-10),null);
 if(ball&&ball.owner==='ai'&&!ball.held&&!dblMine())pill('파트너 차례',mate.x,mf.y-mate.legLen-100*ms,'120,200,255',11);}   // 복식: my human partner
@@ -3266,7 +3266,7 @@ if(!against&&(gesture.dir||Math.hypot(paddle.vx,paddle.vy)>=P.STROKE_SPEED)&&(!g
 if(down&&gesture?.dualTap&&gesture.distance>=(touchInput?18:12))liveStroke();if(down&&playing&&!paused)hit();
 }
 canvas.addEventListener('pointerdown',e=>{
-if(!playing||paused||activePointer!==null||e.button>0)return;e.preventDefault();touchInput=e.pointerType==='touch';if(ball&&ball.held&&!ball.tossed)toss();swingMemory=null;samples=[];move(e);activePointer=e.pointerId;
+if(!playing||paused||activePointer!==null||e.button>0||mode==='doubles'&&!net&&doublesCourtActor()==='mate')return;e.preventDefault();touchInput=e.pointerType==='touch';if(ball&&ball.held&&!ball.tossed)toss();swingMemory=null;samples=[];move(e);activePointer=e.pointerId;
 gesture={x:paddle.x,y:paddle.y,t:performance.now(),distance:0,actor:doublesCourtActor(),live:!!ball&&ball.owner==='ai'&&!['wait','none'].includes(P.timing(ball)),dualTap:!!ball?.dual&&!!ball?.dualHit};setStance(gesture);down=true;canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove',move);
@@ -3276,7 +3276,7 @@ if(gesture?.dualTap){if(gesture.stroke||gesture.distance>=(touchInput?18:12)&&li
 }else if(gesture&&!gesture.held&&gesture.distance<(touchInput?18:12)&&now-gesture.t<(touchInput?260:200)){
 queueTap('short');
 }
-if(gesture&&gesture.stroke&&gesture.actor==='mate'){mate.swingType=gesture.stroke;mate.swingT=time;}else if(gesture&&gesture.stroke&&time-mySwing.t>.65){mySwing.type=gesture.stroke;mySwing.t=time;mySwing.ult=null;}   // drawn but never met the ball: swing in the air
+if(gesture&&gesture.stroke&&gesture.actor!=='mate'&&time-mySwing.t>.65){mySwing.type=gesture.stroke;mySwing.t=time;mySwing.ult=null;}   // drawn but never met the ball: swing in the air
 release();
 });
 // Where the stroke starts decides it: racket below the hit point = drive ready, above = cut ready. An incoming ball is judged
@@ -4225,7 +4225,7 @@ let lastTouchEnd=0;document.addEventListener('touchend',e=>{const now=Date.now()
 function recoverGameLoop(error,phase='simulation'){console.error('게임 루프 오류', {phase,playing,hasBall:!!ball,score:`${you}:${cpu}`,rally},error);/* Drawing is cosmetic. A failed effect/portrait must never erase an active rally. */if(phase==='render'){/* 그리다 멈추면 save/translate/clip이 쌓여 다음 프레임부터 화면이 조각나므로 상태를 원래대로 되돌린다. */for(let i=0;i<64;i++)ctx.restore();ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.shadowBlur=0;{const d=canvas.width/(W||1);ctx.setTransform(d,0,0,d,0,0);}renderFaultUntil=performance.now()+250;return;}if(playing){/* point() clears the ball before finishing its optional effects.  Preserve that confirmed point instead of treating it as a new rally. */const scoreJustCommitted=!ball&&wait>1.45;ball=null;wait=scoreJustCommitted?Math.max(wait,.2):1.2;rally=0;trail=[];fx=[];swingMemory=null;lastTap=null;cdUntil=0;ultHoldUntil=0;release();$('rally').textContent='0';return;}paused=false;cdUntil=0;ultHoldUntil=0;try{reset();lockPage(false);}catch(recoveryError){console.error('게임 복구 화면을 표시하지 못했습니다.',recoveryError);}}
 function frame(t){try{tickVictoryCeremony();if(net&&net.dbl)dblView();if(net?.role==='guest'&&performance.now()-net.clockPingAt>5000)pingNetClock();const elapsed=Math.min((t-last)/1000||0,.1);last=t;for(let left=elapsed;left>1e-6&&playing&&!paused;left-=1/60)(net&&net.role==='guest'?guestUpdate:update)(Math.min(left,1/60));sendNetState(t);if(samples.length&&t-samples.at(-1).t>120){paddle.vx=paddle.vy=0;}$('speed').innerHTML=Math.round(Math.hypot(paddle.vx,paddle.vy))+' <small>px/s</small>';$('meter').style.width=Math.min(100,Math.hypot(paddle.vx,paddle.vy)/18)+'%';}catch(error){recoverGameLoop(error);}try{if(!$('auth-gate').open&&performance.now()>=renderFaultUntil)render();}catch(error){recoverGameLoop(error,'render');}finally{requestAnimationFrame(frame);}}requestAnimationFrame(frame);
 {for(const I of Object.values(CHAR_INFO)){I.tag=noEmoji(I.tag);I.rows=I.rows.map(r=>r.map(noEmoji));}for(const L of Object.values(LOOKS))for(const [k,v] of Object.entries(L))if(Array.isArray(v)&&v.every(x=>typeof x==='string'))L[k]=v.map(noEmoji);document.querySelectorAll('#character option').forEach(o=>o.textContent=noEmoji(o.textContent));}
-</script><script src="prologue-match.js?v=10"></script><script src="prologue.js?v=9" onerror="window.mysPrologueBoot?.fail()"></script><script src="ceremony-media.js?v=synth2"></script><style id="spp-theme">/* ===== SPP 테마: 모바일 스포츠 게임 표준 (기준: eFootball · FIFA Mobile) =====
+</script><script src="partner-training.js"></script><script src="prologue-match.js?v=10"></script><script src="prologue.js?v=9" onerror="window.mysPrologueBoot?.fail()"></script><script src="ceremony-media.js?v=synth2"></script><style id="spp-theme">/* ===== SPP 테마: 모바일 스포츠 게임 표준 (기준: eFootball · FIFA Mobile) =====
    밤 경기장 네이비 바탕 · 행동 색은 시안 하나 · 보상/레벨/티어는 골드 · 상대/위험은 레드
    숫자·점수는 콘덴스드 이탤릭(Barlow Condensed), 한글은 Pretendard. 모서리는 한 번 깎은 챔퍼. */
 :root{--ink:#eef3ff;--muted:#93a4cc;--paper:#070b18;--line:rgba(150,180,255,.14);--orange:#14e0ff;
