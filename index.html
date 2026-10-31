@@ -329,7 +329,7 @@ function returnRoll(b,tier,chance,bonus=0){if(b?.floatFault&&b.floatReturn===tru
 let aiRouteRead={last:null,run:0,switches:0};
 function resetAiRouteRead(){aiRouteRead={last:null,run:0,switches:0};}
 function trackAiRouteRead(b){
-  if(net||!b||b.owner!=='you')return;
+  if(!b||b.owner!=='you')return;
   const t=b.vy>.05?Math.max(0,(1.82-b.y)/b.vy):0,x=b.x+(b.vx||0)*t+.5*(b.side||0)*(b.curveK||0)*t*t;
   const lane=x<-.19?'L':x>.19?'R':'C',same=lane!=='C'&&lane===aiRouteRead.last,switched=lane!=='C'&&['L','R'].includes(aiRouteRead.last)&&lane!==aiRouteRead.last;
   aiRouteRead.run=same?aiRouteRead.run+1:1;
@@ -413,7 +413,7 @@ function step(b,dt){b.vx+=b.side*dt*(b.curveK||.3);b.vz-=(6+b.spin*EQUIP.spin*.5
 // PvP rating: start 1000, win +10 / loss -10, each extra game in a streak adds 1 more (+11, +12 ... / -11, -12 ...).
 function nextRating(o,won){const streak=won?(o.streak>0?o.streak+1:1):(o.streak<0?o.streak-1:-1),delta=won?9+streak:-9+streak;
 return {rating:o.rating+delta,wins:o.wins+(won?1:0),losses:o.losses+(won?0:1),streak,delta};}
-root.PingPhysics={shortLeft,EQUIP,back,retreatAt,incomingRetreat,OFF_T,DEEP_M,DEEP_STEP,spinMiss,normalShot,returnChance,returnRoll,ULT_RETURN_RATE,edgeSave,netCord,HIT_PAST,perfectSpan,STROKE_SPEED,STANCE_PX,CUT_FROM_BELOW,retime,power,popup,nextRating,LEVELS,RETURN_BASE,clamp,classify,timing,aiChance,shot,planServe,miss,incoming,family,judge,aiReturn,aiRhythm,step};if(typeof module!=='undefined')module.exports=root.PingPhysics;
+root.PingPhysics={resetAiRouteRead,trackAiRouteRead,shortLeft,EQUIP,back,retreatAt,incomingRetreat,OFF_T,DEEP_M,DEEP_STEP,spinMiss,normalShot,returnChance,returnRoll,ULT_RETURN_RATE,edgeSave,netCord,HIT_PAST,perfectSpan,STROKE_SPEED,STANCE_PX,CUT_FROM_BELOW,retime,power,popup,nextRating,LEVELS,RETURN_BASE,clamp,classify,timing,aiChance,shot,planServe,miss,incoming,family,judge,aiReturn,aiRhythm,step};if(typeof module!=='undefined')module.exports=root.PingPhysics;
 })(typeof window==='undefined'?globalThis:window);
 </script><script>
 'use strict';
@@ -1803,7 +1803,7 @@ let blindT=-10,ringK=1;   // 리신범 눈가리개: the screen goes 90% dark fo
 const SHORT_CUT_DRIVE_MISS=.3,AJAE_LET=.3,AJAE_MAX=3,ajaeUsed={me:0,foe:0};   // 엣지 우기기 gives at most 3 points per match
 // 금호관장 로빙: a lob is 20% harder to put away, and from the 2nd lob in a rally each further lob adds 2.5% more (2nd 2.5%, 3rd 5% ... capped at +25%)
 const lobStreak={you:0,ai:0},lobK=b=>b&&b.lob?1-.2-Math.min(.25,.025*Math.max(0,(b.lobN||1)-1)):1;
-function point(player,reason){resetAiRouteRead();if(!ball)return;if(!infd()){if(!player&&Math.random()<R_('utNetLuck')){player=true;reason='네트 행운! 🍀 상대 공이 네트에 걸렸어요 (스킬)';}else if((net||aiRn)&&player&&Math.random()<oppR('utNetLuck')){player=false;reason='상대 네트 행운 🍀 (스킬)';}}
+function point(player,reason){P.resetAiRouteRead();if(!ball)return;if(!infd()){if(!player&&Math.random()<R_('utNetLuck')){player=true;reason='네트 행운! 🍀 상대 공이 네트에 걸렸어요 (스킬)';}else if((net||aiRn)&&player&&Math.random()<oppR('utNetLuck')){player=false;reason='상대 네트 행운 🍀 (스킬)';}}
 if(net&&(reason==='아웃'||reason==='테이블 밖으로 나갔어요')){if(ball.owner==='you'&&!player&&Math.random()<R_('utLuck')){player=true;reason='럭키 엣지! 🍀 (스킬 · 행운)';}else if(ball.owner==='ai'&&player&&Math.random()<oppR('utLuck')){player=false;reason='상대 럭키 엣지 🍀 (스킬)';}}if(!net&&aiRn&&(reason==='아웃'||reason==='테이블 밖으로 나갔어요')&&ball.owner==='ai'&&player&&Math.random()<oppR('utLuck')){player=false;reason='AI 럭키 엣지 🍀 (스킬)';}lobStreak.you=lobStreak.ai=0;
 if(!net&&ball.type==='serve'&&!ball.mateServe){const rcv=ball.owner==='ai'&&!player?[me,LOOKS[charType],'']:ball.owner==='you'&&player?[foe,LOOKS[aiChar],'상대 ']:null;
 if(rcv&&rcv[1].ajae&&Math.random()<AJAE_LET){rcv[0].taunt='서브 네트 아니예요? 🤨';rcv[0].tauntT=time;toast(rcv[2]+'아재범: "서브 네트 아니예요?" 🤨 · 우겨서 서브 다시!',2);ball=null;wait=1.65;rally=0;swingMemory=null;updateScore();return;}}if(infd()&&rally>1)reason+=` · ${rally}회 연속 드라이브`;if(ball.unreturn&&ball.owner==='you'){player=true;reason=ball.unreturnWhy||'받을 수 없는 공! 득점';}   // 재끼기 always scores
@@ -3196,7 +3196,7 @@ const inType=ball.type;if(verdict==='ok'&&!shot.miss&&!['gear','gearFloat','err'
 // A floated ball caused by the player's timing/gear mistake gets a fair, fixed AI response: 50% return, 50% net/out.
 ball.floatFault=!!ball.chance&&!special&&(quality==='LATE'||!!flair||floatCut);
 if(special&&mode!=='trio'){const received=mir(ball);fitReturn(received,net?Math.max(.75,received.z):Infinity);Object.assign(ball,mir(received));}
-trackAiRouteRead(ball);if(flair==='jaetgi'){ball.unreturn=true;ball.unreturnWhy='공 재끼기! 상대가 받을 수 없어요 · 쵸레이~';me.taunt='쵸레이~ 🔥';me.tauntT=time;}
+if(!net)P.trackAiRouteRead(ball);if(flair==='jaetgi'){ball.unreturn=true;ball.unreturnWhy='공 재끼기! 상대가 받을 수 없어요 · 쵸레이~';me.taunt='쵸레이~ 🔥';me.tauntT=time;}
 ball.pf=quality==='PERFECT';
 if(flair==='jaetgi');else if(verdict==='ok'&&!special&&!flair&&!shot.chance&&Math.random()<R_('utEdge')){ball.unreturn=true;ball.unreturnWhy='엣지! 🍀 상대가 받을 수 없어요';toast('엣지! 🍀 테이블 모서리에 맞았어요 · 상대가 못 받아요 (스킬)',1.6);}if(!net)deepen(P.family(inType)==='drive'&&P.family(shot.type)==='drive');lastHit=time;lastShot=shot.type;if(special&&net?.role==='guest'){net.sentHit=lastHit;sendHit();}mySwing.type=shot.type;mySwing.t=time;mySwing.ult=ult||null;smashUntil=-1;lastTap=null;
 const sp=motion?Math.hypot(motion.vx,motion.vy):0;me.amp=motion?P.clamp(.55+sp/2000,.55,1.25):tap?.45:1;me.dirX=motion?P.clamp(motion.vx/(sp||1),-1,1):0;swingMemory=null;
