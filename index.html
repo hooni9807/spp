@@ -713,8 +713,10 @@ function rankLocal(){try{return {mmr:RANK_START,w:0,l:0,ws:0,ls:0,peak:RANK_STAR
 const rawRankReturnRoll=P.returnRoll;P.returnRoll=(ball,tier,chance,bonus=0)=>{const rate=rankOn&&rankGame?.returnRate,norm=rankGame?.returnNorm,ult=rankOn&&rankGame&&ball?.ult?RANK_ULT_RETURN[rankGame.opp]:null;if(ult!=null)return ult;if(rate!=null&&norm&&P.normalShot(ball))return Math.max(0,Math.min(rate,chance*rate/norm)-Math.min(.95,Math.max(0,ball.defMiss||0)));return rawRankReturnRoll(ball,tier,chance,bonus);};
 function rankDayDelta(mmr,now=Date.now(),player='self'){
 const day=String(Math.floor((now+9*3600000)/(6*3600000))),key='arank-six-hour:'+player;let days={};try{days=JSON.parse(store.get(key))||{};}catch{}
-const prior=Object.keys(days).filter(d=>Number(d)<Number(day)).sort((a,b)=>Number(a)-Number(b)).at(-1),baseline=prior?days[prior]:null;
-days[day]=mmr;for(const d of Object.keys(days).sort((a,b)=>Number(a)-Number(b)).slice(0,-128))delete days[d];store.set(key,JSON.stringify(days));
+const prior=Object.keys(days).filter(d=>Number(d)<Number(day)).sort((a,b)=>Number(a)-Number(b)).at(-1),previous=prior?days[prior]:null,current=days[day];
+const last=typeof previous==='number'?previous:previous?.last;
+const baseline=current&&typeof current==='object'?current.base:Number.isFinite(last)?last:typeof current==='number'?current:mmr;
+days[day]={base:baseline,last:mmr};for(const d of Object.keys(days).sort((a,b)=>Number(a)-Number(b)).slice(0,-128))delete days[d];store.set(key,JSON.stringify(days));
 return baseline==null?null:mmr-baseline;
 }
 function rankLabel(){const r=rankLocal(),t=rankTier(r.mmr),b=$('rank-mode');if(b)b.textContent=`🎖️ 랭크전 ${t.icon} ${t.n} · ${r.mmr}`;}
@@ -733,7 +735,7 @@ document.querySelectorAll('[data-mode]').forEach(c=>c.classList.toggle('active',
 toast(`🎖️ 랭크전 · 상대 AI ${T.icon} ${T.n}${opp>me?' (한 단계 위!)':opp<me?' (한 단계 아래)':''} · 이기면 +${rankDelta(true,opp,me,r)} / 지면 −${rankDelta(false,opp,me,r)}`,3);}
 function rankDelta(won,opp,me,r){const gap=opp-me;return won?Math.max(5,20+8*gap+2*Math.min(r.ws,5)):Math.max(5,20-8*gap+2*Math.min(r.ls,5));}
 function rankEnd(won){const g=rankGame;rankOn=false;rankGame=null;if(!g)return;difficulty=g.prevDif;aiTier=g.prevTier;rankLabel();if(won===null)return;
-const r=rankLocal(),before=r.mmr,tb=rankIdx(before);if(won){r.ws++;r.ls=0;}else{r.ls++;r.ws=0;}const d=rankDelta(won,g.opp,g.me,{ws:won?r.ws-1:0,ls:won?0:r.ls-1});
+const r=rankLocal(),before=r.mmr,tb=rankIdx(before);rankDayDelta(before,Date.now(),typeof rankUid==='string'&&rankUid?rankUid:'self');if(won){r.ws++;r.ls=0;}else{r.ls++;r.ws=0;}const d=rankDelta(won,g.opp,g.me,{ws:won?r.ws-1:0,ls:won?0:r.ls-1});
 r.mmr=Math.max(0,before+(won?d:-d));lastRankRes={won,d,mmr:r.mmr,icon:rankTier(r.mmr).icon,name:rankName(r.mmr)};resRank=true;r.peak=Math.max(r.peak,r.mmr);won?r.w++:r.l++;store.set('arank',JSON.stringify(r));rankLabel();const ta=rankIdx(r.mmr);
 setTimeout(()=>toast(`🎖️ 랭크전 ${won?'승리':'패배'} ${won?'+':'−'}${d}점 → ${rankTier(r.mmr).icon} ${rankName(r.mmr)} (${r.mmr})`+(ta>tb?` · 🎉 ${RANK_TIERS[ta].n} 승급!`:ta<tb?` · 강등…`:''),3.2),1800);
 if(board==='arank')showBoard('arank');if(googleUser)pvpRemote().then(db=>db&&rankFs.setDoc(rankFs.doc(db,'arank',rankUid),{name:myName(),...myTtl(),mmr:r.mmr,w:r.w,l:r.l,at:rankFs.serverTimestamp()})).then(()=>{if(board==='arank')showBoard('arank');}).catch(()=>{});}
