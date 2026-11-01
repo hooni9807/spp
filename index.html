@@ -2750,7 +2750,6 @@ const want={x:armPose.target.x-Math.sin(ang)*d,y:armPose.target.y+Math.cos(ang)*
 const hand={x:shoulder.x+adx/alen*reach,y:shoulder.y+ady/alen*reach},tgt={x:hand.x+Math.sin(ang)*d,y:hand.y-Math.cos(ang)*d};
 st.ultHand=tgt;
 if(measureOnly)return tgt; // Preview trajectories meet the same clamped racket position as gameplay.
-window.pixelFx?.character(st,x,ground,{vx:st.vx,stroke,since,cheer:cheer>=0,ult:!!st.ultMove,side});
 const bend=Math.sqrt(Math.max(0,(L/2)**2-(reach/2)**2)),px=-ady/alen,py=adx/alen,flip=py<0?-1:1;   // elbow bends downward
 const elbow={x:(shoulder.x+hand.x)/2+px*bend*flip,y:(shoulder.y+hand.y)/2+py*bend*flip};
 const swingSleeve=()=>{line(shoulder,elbow,look.longSleeve?look.sleeve:skin,7*s);line(elbow,hand,look.armSleeve||(look.longSleeve?look.sleeve:skin),7*s);if(look.longSleeve)fitBentCloth(shoulder,elbow,hand,look.sleeve,s,10,7.8);else if(!look.bareArms)fitSleeve(shoulder,{x:lerp(shoulder.x,elbow.x,.48),y:lerp(shoulder.y,elbow.y,.48)},look.sleeve,s,10);ctx.beginPath();ctx.arc(hand.x,hand.y,3.6*s,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();};
