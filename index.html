@@ -632,7 +632,12 @@ const TITLES=[['rookie','신입 부원','처음 시작한 탁구인',()=>true],
 ['minhee','민희쌤 격파','보스 민희쌤 승리',()=>!!tS().minhee],['boss','마왕 슬레이어','보스 탁구 마왕 승리',()=>!!tS().maou],['sejong','9부의 벽 돌파','보스 세종 9부 아줌마 승리',()=>!!tS().sejong],['godyung','사기부수 격파','보스 사기부수 갓융자 승리',()=>!!tS().godyung],
 ['comeback','역전의 명수','5점 이상 지다가 역전승',()=>!!tS().comeback],['shutout','퍼펙트 게임','11 : 0 승리',()=>!!tS().shutout],
 ['online','온라인 강자','온라인 대전 10승',()=>(tS().online||0)>=10],['trio','3인 대전 챔피언','3인 대전 우승',()=>!!tS().trio],['tournament','대회 우승자','대전시대회 우승',()=>!!tS().tournament],['tour5','대회 베테랑','대회 경기 5승',()=>qTotal('tourWin')>=5],['tour3','연속 우승자','대전시대회 3회 우승',()=>qTotal('tourChamp')>=3],
-['worldChina','용문 돌파','세계정복 중국 제패',()=>!!tS().chinaCup],['worldThree','세계 원정대','세계정복 3개국 제패',()=>worldWinCount()>=3],['worldAll','세계의 정복자','현재 출전 가능한 세계정복 8개국 제패',()=>worldWinCount()>=WORLD_ACTIVE_COUNTRIES.length],
+['worldFirst','첫 원정의 승리','세계제패 1개국 제패',()=>worldWinCount()>=1],
+['worldChina','용문 돌파','세계제패 중국 제패',()=>!!tS().chinaCup],['worldThree','세계 원정대','세계제패 3개국 제패',()=>worldWinCount()>=3],
+['worldFive','국경을 넘는 강자','세계제패 5개국 제패 · 어려움',()=>worldWinCount()>=5],
+['worldTen','열 나라의 전설','세계제패 10개국 제패 · 매우 어려움',()=>worldWinCount()>=10],
+['worldFifteen','대륙의 지배자','세계제패 15개국 제패 · 매우 어려움',()=>worldWinCount()>=15],
+['worldAll','세계의 정복자','세계제패 출전 가능 국가 모두 제패 · 매우 어려움',()=>worldWinCount()>=WORLD_ACTIVE_COUNTRIES.length],
 // v3.74: more titles in the styles players chase most in games - level milestones, grind counters (장인 / 학살자), honour titles for the
 // hardest content, streaks, collection, and a few joke titles.
 ['lv5','탁구공 줍는 사람','레벨 5',()=>progLevel()>=5],['lv20','동네 고수','레벨 20',()=>progLevel()>=20],['lv40','구장 에이스','레벨 40',()=>progLevel()>=40],['lv70','살아있는 전설','레벨 70',()=>progLevel()>=70],['lv100','탁구의 신','레벨 100',()=>progLevel()>=100],
@@ -654,7 +659,7 @@ const TITLES=[['rookie','신입 부원','처음 시작한 탁구인',()=>true],
 ['skill30','풀 스킬트리','스킬포인트 30개 모두 사용',()=>runePoints()>=30&&runeSpent()>=30],['fashion','패셔니스타','코디 저장하기',()=>!!tS().fit],['emo100','리액션 장인','감정표현 100번',()=>(tS().emo||0)>=100],
 ['zeroWin','영봉승 사냥꾼','11 : 0 승리 5번',()=>(tS().shutN||0)>=5]];
 const isTournamentTitle=id=>['tournament','tour5','tour3'].includes(id),tournamentTitles=()=>[...TITLES.filter(t=>isTournamentTitle(t[0])),...TOUR_REWARDS.map(r=>[`tour_${r.id}_champ`,`${r.name} 챔피언`,`${r.name} 우승`,()=>trophyIds().includes(r.id)]),['tour_all','전국 제패','모든 지역 대회 우승',()=>trophyCount()>=TOUR_REWARDS.length],['tour10','대회 베테랑','대회 경기 10승',()=>qTotal('tourWin')>=10]],characterTitles=()=>UNLOCKABLE().concat(START_CHARS).filter(characterAvailable).map(k=>[`char_${k}_master`,`${LOOKS[k].nick||LOOKS[k].name} 마스터`,`${LOOKS[k].nick||LOOKS[k].name}으로 경기 10승`,()=>(tS()['c_'+k]||0)>=10]),allTitles=()=>[...TITLES,...tournamentTitles().filter(t=>!isTournamentTitle(t[0])),...characterTitles()];
-const ACHIEVEMENT_COINS={hard:10,ultra:15,uhard:20,uext:30,boss:25,bossAll:50,ultraAll:45,unight10:50,tournament:100,tour_all:120,tour10:25,worldChina:30,worldThree:60,worldAll:150},achievementCoinReward=id=>ACHIEVEMENT_COINS[id]||(id.startsWith('tour_')&&id.endsWith('_champ')?40:id.startsWith('char_')&&id.endsWith('_master')?15:TITLE_FX[id]?60:20);
+const ACHIEVEMENT_COINS={hard:150,ultra:250,uhard:400,uext:600,boss:400,bossAll:1500,ultraAll:1200,unight10:2500,tournament:1000,tour_all:3000,tour10:400,worldFirst:500,worldChina:1000,worldThree:1500,worldFive:2500,worldTen:5000,worldFifteen:8000,worldAll:15000},achievementCoinReward=id=>ACHIEVEMENT_COINS[id]||(id.startsWith('tour_')&&id.endsWith('_champ')?800:id.startsWith('char_')&&id.endsWith('_master')?300:TITLE_FX[id]?1000:200);
 let maxDef=0;const myTtl=()=>TITLE_SET.some(t=>t[0]===prog.q?._t&&t[3]())?{ttl:prog.q._t}:{},withTtl=r=>(titleName(r.ttl)?`〔${titleName(r.ttl)}〕 `:'')+(r.name||''),nameTtl=(el,r,pre='')=>{el.replaceChildren();const tn=titleName(r.ttl);if(tn){const t=document.createElement('small');t.className='ttl';t.textContent=`〔${tn}〕`;el.append(t);}const name=document.createElement('span');name.className='rank-name';name.textContent=pre+(r.name||'');el.append(name);},titleName=id=>id?((TITLE_SET.find(t=>t[0]===id)||allTitles().find(t=>t[0]===id)||[])[1]||''):'';
 /* 해금 알림 (로그라이크 게임의 쪽지식 해금 알림 참고): 찢어진 종이 쪽지가 아래에서 올라와 흔들리고, 차례대로 보여줘요.
    한 번에 4개 이상 쌓이면 "N개 해금 · 한 번에 보기" 쪽지 하나로 묶고, 누르면 목록 창에서 모두 읽어요.
@@ -686,7 +691,7 @@ function showGamblerSecretHint(){const d=$('gambler-secret');if(!d||d.open)retur
 function openUnlockList(all){const d=$('unlock-list');$('ul-items').innerHTML=all.map(([,h,n,ds])=>`<li><small>${h}</small><b>${n}</b><span>${ds}</span></li>`).join('');d.showModal();}
 function titleCheck(){refreshAchFx();const seen=tS().seen||'',got=allTitles().filter(t=>t[3]()).map(t=>t[0]),fresh=got.filter(id=>!seen.split(',').includes(id));if(!fresh.length)return;tS().seen=got.join(',');saveProg();}
 // 칭호 효과: hard-to-get titles give a tiny bonus while equipped (runs through R_ like a 스킬트리 node)
-const TITLE_FX={g1000:{utEdge:.001},lv100:{atkSpin:.004,atkDrive:.004},lv70:{atkSpin:.004},win1000:{atkPress:.002},win300:{defSafe:.003},win100:{defSafe:.002},
+const TITLE_FX={worldFive:{atkDrive:.001},worldTen:{atkSpin:.002},worldFifteen:{defSafe:.002},worldAll:{atkDrive:.003},unight10:{defSpecialRx:.002},g1000:{utEdge:.001},lv100:{atkSpin:.004,atkDrive:.004},lv70:{atkSpin:.004},win1000:{atkPress:.002},win300:{defSafe:.003},win100:{defSafe:.002},
 perf5k:{utPerfect:.004},perf1k:{utPerfect:.003},rally200:{defLongRally:.004},rally100:{defLongRally:.003},streak10:{atkPress:.002},online100:{atkDrive:.004},online30:{atkDrive:.002},
 bossAll:{defSpecialRx:.005},boss10:{defPowerRx:.004},ultraAll:{utDualReach:.005},uext10:{utDual:.004},uext:{utDual:.002},cut2k:{atkCut:.004},block2k:{defBlock:.004},smash2k:{atkSmash:.004},
 fh2k:{atkDrive:.003},bh2k:{atkBh:.003},counter1k:{atkCounter:.004},serve2k:{utServeSpin:.004},comeback8:{utComeback:.004},zeroWin:{atkEarly:.003},dex:{utLuck:.001},g500:{utEdge:.0005},main50:{atkSpin:.003}};
@@ -1347,7 +1352,11 @@ const TITLE_SET=[['tt_seed','탁구 꿈나무','경기 승리 100번',()=>qTotal
 ['tt_att','개근상','출석 100일',()=>attendanceDays()>=100,{utLuck:.03}],['tt_rally','랠리 장인','한 경기 랠리 100번',()=>achDone('rally100'),{defLongRally:.06}],['tt_robot','인간 탁구로봇','한 경기 랠리 200번',()=>achDone('rally200'),{defLongRally:.1,defSafe:.03}],['tt_beat','박자의 신','PERFECT 5000번',()=>achDone('perf5k'),{utPerfect:.08}],
 ['tt_bomb','스매시 폭격기','스매시 2000번',()=>achDone('smash2k'),{atkSmash:.08}],['tt_cut','깎기 장인','커트 2000번',()=>achDone('cut2k'),{atkCut:.08,defCut:.06}],['tt_comeback','역전의 드라마','8점 차 역전승',()=>achDone('comeback8'),{defKey:.08,utComeback:.05}],['tt_hunter','보스 헌터','모든 보스전 승리',()=>achDone('bossAll'),{defSpecialRx:.08,defPowerRx:.05}],
 ['tt_villain','빌런 퇴치단','3인 빌런단체전 승리',()=>!!tS().villain,{atkChance:.06}],['tt_nm','악몽 사냥꾼','울트라 나이트메어 10승',()=>achDone('unight10'),{utDual:.06,atkPress:.03}],['tt_cup','트로피 수집가','대회 우승 3번',()=>trophyCount()>=3,{atkFinisher:.05}],['tt_king','대회의 왕','모든 지역 대회 우승',()=>trophyCount()>=TOUR_REWARDS.length,{atkPress:.05,atkFinisher:.05}],
-['tt_world_scout','세계 원정대','세계정복 3개국 제패',()=>achDone('worldThree'),{atkDrive:.03,defSafe:.02}],['tt_world_king','월드 챔피언','현재 출전 가능한 세계정복 8개국 제패',()=>achDone('worldAll'),{atkPress:.05,defSpecialRx:.04}],
+['tt_world_scout','세계 원정대','세계제패 3개국 제패',()=>achDone('worldThree'),{atkDrive:.03,defSafe:.02}],
+['tt_world_five','국경의 도전자','세계제패 5개국 제패',()=>achDone('worldFive'),{atkBh:.001}],
+['tt_world_ten','열 나라의 전설','세계제패 10개국 제패',()=>achDone('worldTen'),{atkSpin:.002}],
+['tt_world_fifteen','대륙의 지배자','세계제패 15개국 제패',()=>achDone('worldFifteen'),{defSafe:.003}],
+['tt_world_king','월드 챔피언','세계제패 출전 가능 국가 모두 제패',()=>achDone('worldAll'),{atkPress:.05,defSpecialRx:.04}],
 ['tt_net','현피 고수','온라인 대전 100승',()=>achDone('online100'),{atkDrive:.06}],['tt_aug','증강 연구원','증강 탁구 20스테이지 돌파',()=>(tS().stageBest||0)>=20,{atkCharge:.06}],['tt_auggod','증강의 신','증강 탁구 35스테이지 돌파',()=>(tS().stageBest||0)>=35,{atkCharge:.1,utPerfect:.04}],['tt_snow','눈사람','증강 탁구 눈덩이 굴리기 달성',()=>!!tS().augSnow,{defSlow:.05}],
 ['tt_smith','강화 장인','라켓 강화 +30',()=>achDone('enh30'),{atkDrive:.04,atkSmash:.04}],['tt_dex','캐릭터 박사','캐릭터 모두 해금',()=>achDone('dex'),{utLuck:.02,defSafe:.02}],['tt_rich','스핀코인 부자','스핀코인 50,000개 보유',()=>prog.coins>=50000,{utNetLuck:.04}]];
 const fxText=f=>Object.entries(f||{}).map(([k,v])=>{const n=RUNES.find(r=>r[5]===k);if(!n)return '';const u=n[7];return `${n[4]} ${u==='+초'?`+${+v.toFixed(3)}초`:`${u==='-%'?'-':'+'}${+(v*100).toFixed(2)}%`}`;}).filter(Boolean).join(' · ');
