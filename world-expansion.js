@@ -88,3 +88,5 @@ drawNationalKit=function(g,look,x,y,h,s){
 };
 Object.values(LOOKS).filter(l=>l.nationalKit==='japan').forEach(l=>{l.shirt='#d656a3';l.sleeve='#ed74aa';l.collar='#29294c';});
 PATCH_NOTES.unshift(['세계정복 국가별 유니폼','21개 지역 선수의 경기복 색상·무늬를 구분했습니다. 일부 지역은 공식 복제본이 아닌 게임 전용 디자인입니다.']);
+// Remember actual match entry, not map browsing, and restore through the map's own click handlers.
+{const startEurope=euroGame;euroGame=function(...args){if(euroRun?.country){prog.q??={};prog.q._lastWorldCountry=euroRun.country;saveProg();}return startEurope.apply(this,args);};const startChina=chinaGame;chinaGame=function(...args){prog.q??={};prog.q._lastWorldCountry='china';saveProg();return startChina.apply(this,args);};document.addEventListener('click',e=>{if(!e.target.closest?.('#world-open'))return;setTimeout(()=>{const map=$('world-map');if(!map?.open)return;const id=prog.q?._lastWorldCountry||(typeof euroRun!=='undefined'&&euroRun?.country)||Object.keys(EURO_CUPS).find(k=>euroSaved(k));if(!id)return;const region=map.querySelector(`[data-region="${id}"],[data-country="${id}"]`);if(region)region.dispatchEvent(new MouseEvent('click',{bubbles:true}));},0);});}
