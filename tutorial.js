@@ -19,7 +19,7 @@ const css=document.createElement('style');css.textContent=`
 #tut-next{background:#14e0ff;color:#00131c;clip-path:var(--chamfer,none)}
 #tut-next:hover{background:#7df0ff}
 #tut-card button:focus-visible{outline:2px solid #7df0ff;outline-offset:2px}
-#play-coach{position:relative;box-sizing:border-box;width:100%;padding:10px 14px;background:#111a35;color:#eef3ff;border-top:1px solid #54759b66;border-bottom:1px solid #54759b66;pointer-events:none;font-family:'Pretendard Variable',Pretendard,sans-serif;transition:opacity .25s cubic-bezier(.16,1,.3,1)}
+#play-coach{position:fixed;z-index:120;left:50%;top:calc(env(safe-area-inset-top,0px) + 96px);transform:translateX(-50%);width:min(360px,calc(100vw - 32px));padding:12px 14px;background:rgba(17,26,53,.94);color:#eef3ff;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.5);pointer-events:none;font-family:'Pretendard Variable',Pretendard,sans-serif;transition:opacity .25s cubic-bezier(.16,1,.3,1)}
 #play-coach b{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
 #play-coach span{font-size:13.5px;line-height:1.5;color:#c3cfee}
 #play-coach i{float:right;font:700 13px 'Barlow Condensed','Pretendard Variable',sans-serif;font-style:normal;letter-spacing:.06em;color:#14e0ff}
@@ -52,7 +52,7 @@ const PLAY=[
 let playTimer=null;
 window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
  try{setMode('practice');begin();if(paused)pause();}catch{return;}
- const box=document.createElement('div');box.id='play-coach';box.setAttribute('role','status');box.setAttribute('aria-live','polite');const toolbar=document.querySelector('.touch-toolbar');if(toolbar)toolbar.before(box);else document.querySelector('.arena').append(box);
+ const box=document.createElement('div');box.id='play-coach';box.setAttribute('role','status');box.setAttribute('aria-live','polite');document.body.append(box);
  const st={step:0,hits:0,switches:0,side:null,mark:0,swMark:0,owner:null};
  const draw=()=>{const p=PLAY[st.step];box.innerHTML='';const i=document.createElement('i'),b=document.createElement('b'),sp=document.createElement('span');i.textContent=`${st.step+1} / ${PLAY.length}`;b.textContent=p.t;sp.textContent=p.d;box.append(i,b,sp);};
  const stop=()=>{clearInterval(playTimer);playTimer=null;box.remove();};
