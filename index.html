@@ -3312,7 +3312,7 @@ const inType=ball.type;if(verdict==='ok'&&!shot.miss&&!['gear','gearFloat','err'
 // A floated ball caused by the player's timing/gear mistake gets a fair, fixed AI response: 50% return, 50% net/out.
 ball.floatFault=!!ball.chance&&!special&&(quality==='LATE'||!!flair||floatCut||driveShortFloat);
 if(special&&mode!=='trio'){const received=mir(ball);fitReturn(received,net?Math.max(.75,received.z):Infinity);Object.assign(ball,mir(received));}
-if(!net)P.trackAiRouteRead(ball);if(flair==='jaetgi'){ball.unreturn=true;ball.unreturnWhy='공 재끼기! 상대가 받을 수 없어요 · 쵸레이~';me.taunt='쵸레이~ 🔥';me.tauntT=time;}
+if(!net||!net.dbl&&!net.trio)P.trackAiRouteRead(ball);if(flair==='jaetgi'){ball.unreturn=true;ball.unreturnWhy='공 재끼기! 상대가 받을 수 없어요 · 쵸레이~';me.taunt='쵸레이~ 🔥';me.tauntT=time;}
 ball.pf=quality==='PERFECT';if(ball.pf&&verdict==='ok')critFxAt(ball);
 if(flair==='jaetgi');else if(verdict==='ok'&&!special&&!flair&&!shot.chance&&Math.random()<R_('utEdge')){ball.unreturn=true;ball.unreturnWhy='엣지! 🍀 상대가 받을 수 없어요';toast('엣지! 🍀 테이블 모서리에 맞았어요 · 상대가 못 받아요 (스킬)',1.6);}if(!net)deepen(P.family(inType)==='drive'&&P.family(shot.type)==='drive');lastHit=time;lastShot=shot.type;if(special&&net?.role==='guest'){net.sentHit=lastHit;sendHit();}mySwing.type=shot.type;mySwing.t=time;mySwing.ult=ult||null;smashUntil=-1;lastTap=null;
 const sp=motion?Math.hypot(motion.vx,motion.vy):0;me.amp=motion?P.clamp(.55+sp/2000,.55,1.25):tap?.45:1;me.dirX=motion?P.clamp(motion.vx/(sp||1),-1,1):0;swingMemory=null;
