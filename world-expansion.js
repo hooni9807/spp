@@ -93,11 +93,13 @@ let worldPortraitsReady=false;
 const worldPortraitAtlas=new Image();
 worldPortraitAtlas.onload=()=>{
  const cw=worldPortraitAtlas.naturalWidth/7,ch=worldPortraitAtlas.naturalHeight/21;
+ const source=document.createElement('canvas');source.width=worldPortraitAtlas.naturalWidth;source.height=worldPortraitAtlas.naturalHeight;const sg=source.getContext('2d',{willReadFrequently:true});sg.drawImage(worldPortraitAtlas,0,0);const pixels=sg.getImageData(0,0,source.width,source.height).data;
+ const boundary=(column,n)=>{if(n===0)return 0;if(n===21)return source.height;const expected=n*ch,from=Math.max(0,Math.floor(expected-ch*.28)),to=Math.min(source.height-1,Math.ceil(expected+ch*.28));let best=Math.round(expected),score=Infinity;for(let y=from;y<=to;y++){let mass=0;for(let x=Math.ceil(column*cw+cw*.1);x<Math.floor((column+1)*cw-cw*.1);x++)mass+=pixels[(y*source.width+x)*4+3];const weighted=mass+Math.abs(y-expected)*.01;if(weighted<score){score=weighted;best=y;}}return best;};
  WORLD_PORTRAIT_ROWS.forEach((id,row)=>{for(let i=0;i<7;i++){
   const key=id==='china'?'china_'+CHINA_PLAYERS[i][0]:`china_${id}_${i}`;
   if(!LOOKS[key])continue;
   const c=document.createElement('canvas');c.width=192;c.height=192;
-  c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,row*ch,cw,ch,0,0,192,192);
+  const top=boundary(i,row),bottom=boundary(i,row+1);c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,top,cw,Math.max(1,bottom-top),0,0,192,192);
   const im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:4,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=c.toDataURL('image/png');
  }});worldPortraitsReady=true;
 };
