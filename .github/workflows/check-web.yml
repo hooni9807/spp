@@ -1,0 +1,17 @@
+name: Web syntax check
+
+# 웹판(GitHub Pages)은 main 푸시 즉시 배포되므로, 문법 오류가 들어오면 바로 알 수 있게 검사한다.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-syntax.cjs
