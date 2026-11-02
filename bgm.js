@@ -31,6 +31,14 @@ function update(){const w=want();
  if(on){const speaking=!!window.speechSynthesis?.speaking,target=speaking?0:VOL;   // 점수를 부르는 동안은 끄고, 다 부르면 다시
   master.gain.setTargetAtTime(target,ctx.currentTime,speaking?.04:.35);}}
 setInterval(update,120);
+// 내가 득점하면 관중 박수: 짧은 박수 40여 번을 1.6초 동안 흩뿌린다(처음에 몰리고 점점 잦아듦). 배경음악 스위치와 무관, 전체 사운드만 따른다.
+function applause(){if(!soundOn())return;try{init();if(ctx.state==='suspended')ctx.resume().catch(()=>{});}catch{return;}
+ const out=ctx.createGain();out.gain.value=.55;out.connect(ctx.destination);const t0=ctx.currentTime+.02;
+ for(let i=0;i<44;i++){const t=t0+Math.pow(Math.random(),1.8)*1.6,s=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();
+  s.buffer=noise;s.playbackRate.value=.8+Math.random()*.5;bp.type='bandpass';bp.frequency.value=900+Math.random()*1800;bp.Q.value=1.2;
+  const peak=(.18+Math.random()*.22)*(1-(t-t0)/2);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.07+Math.random()*.05);
+  s.connect(bp).connect(g).connect(out);s.start(t);s.stop(t+.15);}}
+if(typeof onPoint==='function')onPoint('post',90,c=>{if(c.player)applause();});
 // 모바일은 사용자 터치가 있어야 소리가 난다: 첫 터치 때 깨워 둔다.
 addEventListener('pointerdown',()=>{if(ctx&&ctx.state==='suspended')ctx.resume().catch(()=>{});},{passive:true});
 
