@@ -92,14 +92,27 @@ const WORLD_PORTRAIT_ROWS=['china','japan','germany','sweden','france','romania'
 let worldPortraitsReady=false;
 const worldPortraitAtlas=new Image();
 worldPortraitAtlas.onload=()=>{
- const cw=worldPortraitAtlas.naturalWidth/7,ch=worldPortraitAtlas.naturalHeight/21;
+ const cw=worldPortraitAtlas.naturalWidth/7;
  const source=document.createElement('canvas');source.width=worldPortraitAtlas.naturalWidth;source.height=worldPortraitAtlas.naturalHeight;const sg=source.getContext('2d',{willReadFrequently:true});sg.drawImage(worldPortraitAtlas,0,0);const pixels=sg.getImageData(0,0,source.width,source.height).data;
- const boundary=(column,n)=>{if(n===0)return 0;if(n===21)return source.height;const expected=n*ch,from=Math.max(0,Math.floor(expected-ch*.28)),to=Math.min(source.height-1,Math.ceil(expected+ch*.28));let best=Math.round(expected),score=Infinity;for(let y=from;y<=to;y++){let mass=0;for(let x=Math.ceil(column*cw+cw*.1);x<Math.floor((column+1)*cw-cw*.1);x++)mass+=pixels[(y*source.width+x)*4+3];const weighted=mass+Math.abs(y-expected)*.01;if(weighted<score){score=weighted;best=y;}}return best;};
+ // The atlas rows are not evenly spaced. Detect each head in order instead
+ // of searching near an estimated grid boundary (which can select a chin).
+ const heads=Array.from({length:7},(_,column)=>{
+  const runs=[];let start=null;
+  for(let y=0;y<=source.height;y++){
+   let mass=0;
+   if(y<source.height)for(let x=Math.floor(column*cw+20);x<Math.floor((column+1)*cw-20);x++)mass+=pixels[(y*source.width+x)*4+3];
+   if(mass>3000&&start===null)start=y;
+   if(mass<=3000&&start!==null){if(y-start>30)runs.push([Math.max(0,start-2),y]);start=null;}
+  }
+  return runs;
+ });
+ if(heads.some(rows=>rows.length!==WORLD_PORTRAIT_ROWS.length)){console.warn('World portrait atlas has unexpected head count');return;}
  WORLD_PORTRAIT_ROWS.forEach((id,row)=>{for(let i=0;i<7;i++){
   const key=id==='china'?'china_'+CHINA_PLAYERS[i][0]:`china_${id}_${i}`;
   if(!LOOKS[key])continue;
   const c=document.createElement('canvas');c.width=192;c.height=192;
-  const top=boundary(i,row),bottom=boundary(i,row+1);c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,top,cw,Math.max(1,bottom-top),0,0,192,192);
+  const [top,bottom]=heads[i][row],height=bottom-top,scale=192/Math.max(cw,height);
+  c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,top,cw,height,(192-cw*scale)/2,(192-height*scale)/2,cw*scale,height*scale);
   const im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:4,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=c.toDataURL('image/png');
  }});worldPortraitsReady=true;
 };
