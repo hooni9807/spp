@@ -6,7 +6,7 @@ const TABS=[
  ['home','⌂','홈'],
  ['mode','▶','모드'],
  ['grow','⬆','성장',['rn-open','enhance-home','racket-skin-open','fit-open','mine-open']],
- ['log','★','기록',['player-info-open','q-open','ach-open','t-open','tr-open','patch-notes-open']],
+ ['log','★','기록',['player-info-open','q-open','ach-open','t-open','tr-open','patch-notes-open','#tutorial']],
  ['social','♥','소셜',['friends-btn','#ranking','attendance-open']]
 ];
 const css=document.createElement('style');css.textContent=`
@@ -24,12 +24,12 @@ body.tabnav #char-pick:not(.open){display:flex;justify-content:center}
 #tabsheet button{padding:14px 10px;border-radius:12px;border:1px solid #ffffff1f;background:#1b2638;color:#e8eef6;font:600 14px inherit;text-align:left}
 #char-more{margin:6px auto 0;display:block}
 body.tabnav #overlay .start-card{padding-bottom:80px}
-body.tabnav #mail-alert,body.tabnav #friends-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}`;
+body.tabnav #mail-alert,body.tabnav #friends-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 76px)}`;
 document.head.append(css);
 const nav=document.createElement('nav');nav.id='tabnav';nav.setAttribute('role','tablist');
 const sheet=document.createElement('div');sheet.id='tabsheet';sheet.hidden=true;
 nav.innerHTML=TABS.map(([k,ic,n])=>`<button type="button" role="tab" data-tab="${k}" aria-selected="${k==='home'}"><b aria-hidden="true">${ic}</b>${n}</button>`).join('');
-const label=t=>t[0]==='#'?'랭킹':($(t)?.textContent.trim().replace(/\s*!$/,'')||'');
+const label=t=>t==='#tutorial'?'튜토리얼 다시 보기':t[0]==='#'?'랭킹':($(t)?.textContent.trim().replace(/\s*!$/,'')||'');
 const select=k=>{nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k));sheet.hidden=true;
  if(k==='mode'){$('mode-open')?.click();return;}
  const t=TABS.find(x=>x[0]===k);if(!t[3])return;
@@ -40,7 +40,7 @@ const select=k=>{nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-
 nav.onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;const k=b.dataset.tab;
  if(k!=='home'&&b.getAttribute('aria-selected')==='true'){select('home');if(k==='mode')$('overlay')?.scrollIntoView({behavior:'smooth',block:'start'});return;}select(k);};
 sheet.onclick=e=>{const go=e.target.closest('[data-go]')?.dataset.go;if(!go)return;sheet.hidden=true;select('home');
- if(go[0]==='#')document.querySelector('.ranking')?.scrollIntoView({behavior:'smooth'});else $(go).click();};
+ if(go==='#tutorial')window.openTutorial?.();else if(go[0]==='#')document.querySelector('.ranking')?.scrollIntoView({behavior:'smooth'});else $(go).click();};
 // 캐릭터는 고른 한 장만 보이고, 변경을 누르면 전체가 펼쳐진다. 고르면 다시 접힌다.
 const pick=$('char-pick'),more=document.createElement('button');more.type='button';more.id='char-more';more.textContent='캐릭터 변경';
 more.onclick=()=>{pick.classList.toggle('open');const on=pick.classList.contains('open');more.textContent=on?'접기':'캐릭터 변경';if(on)pick.scrollIntoView({behavior:'smooth',block:'start'});};
