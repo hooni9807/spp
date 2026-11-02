@@ -41,7 +41,7 @@ const me=()=>({name:(typeof myName==='function'&&myName())||LOOKS?.[charType]?.n
 let st=null;   // {role,conn,go,onLeave,host,guest,ready}
 const paint=(slot,p,tag,on)=>{const el=d.querySelector(`[data-slot="${slot}"]`),cv=el.querySelector('canvas'),g=cv.getContext('2d');g.clearRect(0,0,96,96);
  el.classList.toggle('empty',!p);el.classList.toggle('me',!!p&&st&&slot===(st.role==='host'?'host':'guest'));
- const src=p&&document.querySelector(`#char-pick [data-char="${p.char}"] canvas`);if(src)g.drawImage(src,0,0,96,96);
+ const src=p&&document.querySelector(`#char-pick [data-char="${CSS.escape(p.char)}"] canvas`);if(src)g.drawImage(src,0,0,96,96);
  el.querySelector('b').textContent=p?p.name:'빈 자리';el.querySelector('small').textContent=p?[LOOKS?.[p.char]?.nick,p.lv].filter(Boolean).join(' · '):'참가를 기다리는 중';
  const t=el.querySelector('.tag');t.textContent=tag;t.classList.toggle('on',!!on);};
 const render=()=>{if(!st)return;const host=st.role==='host',main=d.querySelector('[data-act="main"]'),sub=d.querySelector('.sub');

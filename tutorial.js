@@ -59,16 +59,16 @@ window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
  draw();
  playTimer=setInterval(()=>{if(!playing||mode!=='practice'){stop();return;}
   const o=ball?ball.owner:null;
-  if(o==='you'&&st.owner==='ai'&&!ball.serving){st.hits++;const side=ball.x<0?'L':'R';if(st.side&&side!==st.side)st.switches++;st.side=side;}
+  if(o==='you'&&st.owner==='ai'&&!ball.serving){st.hits++;const side=ball.aiRouteLabel?(ball.aiRouteLabel==='왼쪽'?'L':'R'):(ball.x+(ball.vx||0)*.4<0?'L':'R');if(st.side&&side!==st.side)st.switches++;st.side=side;}
   st.owner=o;
   if(PLAY[st.step].need(st)){st.step++;st.mark=st.hits;st.swMark=st.switches;
    if(st.step>=PLAY.length){clearInterval(playTimer);playTimer=null;box.className='done';box.innerHTML='<b>튜토리얼 완료</b><span>이제 AI 대전에서 실력을 보여 주세요. 처음 화면은 ⌂ 버튼.</span>';
-    let first=false;try{first=!localStorage.getItem('spp_play_tutorial_done');localStorage.setItem('spp_play_tutorial_done','1');}catch{}
+    let first=false;try{prog.q??={};first=!prog.q._playTut;prog.q._playTut=1;}catch{}
     if(first&&typeof gainCoins==='function')gainCoins(300,'경기 튜토리얼 완료');setTimeout(()=>box.remove(),5000);}
    else draw();}},80);};
 // 첫 방문: 로그인 · 프롤로그가 끝나고 처음 화면이 보일 때 한 번.
 let seen=false;try{seen=!!localStorage.getItem(KEY);}catch{}
 if(seen)return;
-const wait=setInterval(()=>{const ov=$('overlay');if(!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
+const wait=setInterval(()=>{if(typeof prog!=='undefined'&&prog.xp>0){clearInterval(wait);try{localStorage.setItem(KEY,'1');}catch{}return;}const ov=$('overlay');if(!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
  clearInterval(wait);setTimeout(openTutorial,600);},700);
 })();

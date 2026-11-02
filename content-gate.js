@@ -51,10 +51,10 @@ const openPath=focus=>{const a=aiDone(),t=tourOpen(),done=tourDone(),need=tourNe
 window.openContentPath=openPath;
 
 const mark=(btn,open,label)=>{if(!btn)return;if(open){if(btn.classList.contains('gate-locked')){btn.classList.remove('gate-locked');btn.removeAttribute('aria-disabled');btn.querySelector('.gate-ico')?.remove();btn.querySelector('.gate-why')?.remove();}return;}
- if(!btn.classList.contains('gate-locked')){btn.classList.add('gate-locked');btn.setAttribute('aria-disabled','true');const ico=document.createElement('span');ico.className='gate-ico';ico.innerHTML=LOCK;btn.prepend(ico);}
+ btn.classList.add('gate-locked');btn.setAttribute('aria-disabled','true');if(!btn.querySelector('.gate-ico')){const ico=document.createElement('span');ico.className='gate-ico';ico.innerHTML=LOCK;btn.prepend(ico);}
  let why=btn.querySelector('.gate-why');if(!why){why=document.createElement('small');why.className='gate-why';btn.append(why);}why.textContent=label;};
 let was=null;
-const sync=()=>{const t=tourOpen(),w=worldOpen();
+const sync=()=>{if(typeof playing!=='undefined'&&playing)return;const t=tourOpen(),w=worldOpen();
  mark($('tournament-open'),t,'울트라 1승 시 열림');mark($('world-open'),w,`대회 ${tourNeed()}개 우승 시 열림`);
  if(was&&(t&&!was.t||w&&!was.w)&&typeof toast==='function')toast(w&&!was.w?'세계제패가 열렸어요! 모드에서 도전해 보세요':'대회가 열렸어요! 모드에서 출전해 보세요',3);
  was={t,w};};

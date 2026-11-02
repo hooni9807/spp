@@ -41,7 +41,7 @@ const label=t=>t==='#tutorial'?'튜토리얼 다시 보기':t==='#play-tutorial'
 const select=k=>{nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k));sheet.hidden=true;
  if(k==='mode'){$('mode-open')?.click();return;}
  const t=TABS.find(x=>x[0]===k);if(!t[3])return;
- const items=t[3].filter(id=>id[0]==='#'||$(id));
+ const items=t[3].filter(id=>id[0]==='#'||$(id)&&!$(id).hidden);
  sheet.innerHTML=`<h4>${t[2]}</h4>`+items.map(id=>`<button type="button" data-go="${id}">${label(id)}</button>`).join('');
  sheet.hidden=false;};
 // 같은 탭을 한 번 더 누르면 닫고 홈으로 돌아간다.
@@ -54,7 +54,7 @@ const pick=$('char-pick'),more=document.createElement('button');more.type='butto
 more.onclick=()=>{pick.classList.toggle('open');const on=pick.classList.contains('open');more.textContent=on?'접기':'캐릭터 변경';if(on)pick.scrollIntoView({behavior:'smooth',block:'start'});};
 pick.after(more);pick.addEventListener('click',e=>{if(e.target.closest('[data-char]')&&pick.classList.contains('open'))setTimeout(()=>more.click(),150);});
 // 새 알림(!)은 해당 탭 위 빨간 점으로 옮긴다.
-setInterval(()=>{for(const t of TABS){if(!t[3])continue;const on=t[3].some(id=>$(id)?.querySelector('b:not([hidden])'));const b=nav.querySelector(`[data-tab="${t[0]}"]`);if(on!==!!b.querySelector('i'))on?b.append(document.createElement('i')):b.querySelector('i').remove();}
+setInterval(()=>{if(typeof playing!=='undefined'&&playing){nav.hidden=true;sheet.hidden=true;return;}for(const t of TABS){if(!t[3])continue;const on=t[3].some(id=>$(id)?.querySelector('b:not([hidden])'));const b=nav.querySelector(`[data-tab="${t[0]}"]`);if(on!==!!b.querySelector('i'))on?b.append(document.createElement('i')):b.querySelector('i').remove();}
  nav.hidden=!!$('overlay')&&getComputedStyle($('overlay')).display==='none';if(nav.hidden)sheet.hidden=true;},500);
 document.body.classList.add('tabnav');document.body.append(sheet,nav);
 })();
