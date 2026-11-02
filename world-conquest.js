@@ -81,7 +81,7 @@ let worldPointerAt=0;
 function activateWorldRegion(id){selectCountry(id);}
 dialog.querySelectorAll('[data-region]').forEach(p=>{p.onpointerup=e=>{if(e.pointerType==='touch'&&pinchStart)return;worldPointerAt=performance.now();e.preventDefault();activateWorldRegion(p.dataset.region);};p.onclick=e=>{e.preventDefault();/* Some Android WebViews deliver only click for SVG paths.  Ignore the synthetic click following pointerup, but keep click-only selection usable. */if(performance.now()-worldPointerAt<520)return;activateWorldRegion(p.dataset.region);};p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activateWorldRegion(p.dataset.region);}};});
 const game=chinaGame;chinaGame=function(){const r=game();persist();return r;};
-const home=goHome;goHome=function(...args){if(chinaRun)persist();return home.apply(this,args);};
+onHome('pre',30,()=>{if(chinaRun)persist();});
 onResult('pre',30,c=>{c.chinaWas=chinaActive();});onResult('post',50,c=>{if(c.chinaWas){persist();if(chinaRun?.my===4)open();}});
 // A world-conquest run can be paused safely, or deliberately abandoned.
 // Keep those actions separate so a normal exit never destroys the saved series.

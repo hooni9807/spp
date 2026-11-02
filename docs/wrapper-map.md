@@ -22,12 +22,10 @@
 10. `prologue.js`
 11. `ceremony-media.js`
 
-## 두 번 이상 덧씌워지는 함수 (18개)
+## 두 번 이상 덧씌워지는 함수 (16개)
 
 | 함수 | 덧씌움 수 |
 |---|---|
-| `goHome` | 7 |
-| `P.aiReturn` | 7 |
 | `renderMine` | 6 |
 | `hit` | 5 |
 | `point` | 4 |
@@ -45,46 +43,18 @@
 | `chinaGame` | 2 |
 | `ultBodyOffset` | 2 |
 
-### `goHome`
-
-위에서 아래로 = 안쪽(먼저 감쌈) → 바깥쪽(나중에 감쌈, 호출 시 가장 먼저 실행)
-
-| # | 위치 | 주석 | 코드 시작 부분 |
-|---|---|---|---|
-| 1 | `index.html:1602` | — | `(...args){gameHome(...args);placeGameSettings(false);};…` |
-| 2 | `index.html:3679` | — | `(...args){const value=priorHome.apply(this,args);setTimeout(refresh,0);return value;};new MutationObserver(ref…` |
-| 3 | `index.html:3681` | — | `(...args){const v=saveRun();leaveWithSave(...args);if(v){store.set('save',JSON.stringify(v));showResume(v);}};…` |
-| 4 | `china-cup.js:36` | — | `(...args){const result=chinaHome.apply(this,args);chinaRun=null;document.body.classList.remove('china-cup');re…` |
-| 5 | `world-conquest.js:84` | — | `(...args){if(chinaRun)persist();return home.apply(this,args);};…` |
-| 6 | `europe-cups.js:35` | — | `(...args){euroSave();const r=euroHome.apply(this,args);euroRun=null;return r;};…` |
-| 7 | `world-effects.js:49` | — | `(...args){clearWorldScene();return worldSceneHome.apply(this,args);};…` |
-
-### `P.aiReturn`
-
-위에서 아래로 = 안쪽(먼저 감쌈) → 바깥쪽(나중에 감쌈, 호출 시 가장 먼저 실행)
-
-| # | 위치 | 주석 | 코드 시작 부분 |
-|---|---|---|---|
-| 1 | `index.html:1787` | — | `kind,x,y,z,speed,...rest)=>{if(ball&&P.incoming(ball)==='drive'&&kind==='drive'&&deep>0)speed*=counterSpeedBoo…` |
-| 2 | `index.html:3666` | — | `kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(survival()){const k=1+survivalStage()*.1;speed*=k;spinK*=k;}return…` |
-| 3 | `index.html:3769` | — | `kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(stageOn()){const k=1+stageBoost(stageRun.stage);speed*=k;spinK*=k;…` |
-| 4 | `china-cup.js:39` | — | `(kind,x,y,z,speed,aim,spin=1,...rest){if(chinaActive()){const p=CHINA_PLAYERS[chinaRun.order[chinaRun.round]],…` |
-| 5 | `europe-cups.js:40` | — | `(kind,x,y,z,speed,aim,spin=1,...args){if(euroActive()){const c=EURO_CUPS[euroRun.country],i=euroRun.order[euro…` |
-| 6 | `world-expansion.js:38` | — | `(kind,x,y,z,speed,aim,spin=1,...args){if(euroActive()&&WORLD_EXPANSION[euroRun.country]){const i=euroRun.order…` |
-| 7 | `world-expansion.js:45` | — | `(kind,x,y,z,speed,aim,spin=1,...args){const id=euroActive()?euroRun.country:chinaActive()?'china':null,tune=WO…` |
-
 ### `renderMine`
 
 위에서 아래로 = 안쪽(먼저 감쌈) → 바깥쪽(나중에 감쌈, 호출 시 가장 먼저 실행)
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3450` | — | `)=>{renderMineAll();const d=$('mine');if(!d)return;const crew=d._mineCrew??=[...unlockedCharacters()].sort(()=…` |
-| 2 | `index.html:3458` | — | `)=>{renderMineLesson();const d=$('mine');if(!d)return;const crew=d._mineCrew¦¦[],student=d._lessonStudent??=(M…` |
-| 3 | `index.html:3462` | — | `)=>{renderLessonText();const d=$('mine');if(d)d.querySelector('.mine-upgrade-rate').textContent='성공 확률 ${Math.…` |
-| 4 | `index.html:3463` | — | `)=>{renderTwoTableLesson();const d=$('mine');if(!d)return;const cv=d.querySelector('canvas[data-lesson]'),coac…` |
-| 5 | `index.html:3465` | — | `)=>{renderMineHalfRate();const note=$('mine')?.querySelector('.mine-note');if(note)note.textContent=note.textC…` |
-| 6 | `index.html:3466` | — | `)=>{renderMineWallet();const d=$('mine');if(!d)return;let wallet=d.querySelector('#mine-wallet');if(!wallet){w…` |
+| 1 | `index.html:3458` | — | `)=>{renderMineAll();const d=$('mine');if(!d)return;const crew=d._mineCrew??=[...unlockedCharacters()].sort(()=…` |
+| 2 | `index.html:3466` | — | `)=>{renderMineLesson();const d=$('mine');if(!d)return;const crew=d._mineCrew¦¦[],student=d._lessonStudent??=(M…` |
+| 3 | `index.html:3470` | — | `)=>{renderLessonText();const d=$('mine');if(d)d.querySelector('.mine-upgrade-rate').textContent='성공 확률 ${Math.…` |
+| 4 | `index.html:3471` | — | `)=>{renderTwoTableLesson();const d=$('mine');if(!d)return;const cv=d.querySelector('canvas[data-lesson]'),coac…` |
+| 5 | `index.html:3473` | — | `)=>{renderMineHalfRate();const note=$('mine')?.querySelector('.mine-note');if(note)note.textContent=note.textC…` |
+| 6 | `index.html:3474` | — | `)=>{renderMineWallet();const d=$('mine');if(!d)return;let wallet=d.querySelector('#mine-wallet');if(!wallet){w…` |
 
 ### `hit`
 
@@ -92,10 +62,10 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:1682` | — | `(...args){const actor=myTurn,charged=mode==='doubles'&&!net&&doublesLink===100,before=lastHit,relay=doublesRel…` |
-| 2 | `index.html:1683` | — | `(...args){const before=lastHit,serve=!!ball?.serving,actor=myTurn;harmonyPlayerHit(...args);if(mode==='doubles…` |
-| 3 | `index.html:1685` | — | `(...args){const partnerTurn=mode==='doubles'&&!net&&doublesCourtActor()==='mate';if(!partnerTurn)return player…` |
-| 4 | `index.html:4248` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
+| 1 | `index.html:1685` | — | `(...args){const actor=myTurn,charged=mode==='doubles'&&!net&&doublesLink===100,before=lastHit,relay=doublesRel…` |
+| 2 | `index.html:1686` | — | `(...args){const before=lastHit,serve=!!ball?.serving,actor=myTurn;harmonyPlayerHit(...args);if(mode==='doubles…` |
+| 3 | `index.html:1688` | — | `(...args){const partnerTurn=mode==='doubles'&&!net&&doublesCourtActor()==='mate';if(!partnerTurn)return player…` |
+| 4 | `index.html:4256` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
 | 5 | `partner-training.js:10` | — | `(...args){if(mode==='doubles'&&!net&&doublesCourtActor()==='mate')return;return manualPartnerHit(...args);};…` |
 
 ### `point`
@@ -104,10 +74,10 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:1851` | — | `(...args){ajaeSecretPoint(...args);if(!net&&!playing&&you>cpu&&charType==='ajae'&&ajaeUsed.me>=3)unlockAjaeSec…` |
-| 2 | `index.html:1852` | — | `(...args){const wasDoubles=mode==='doubles'&&!net;doublesHarmonyPoint(...args);if(wasDoubles){doublesLink=0;do…` |
-| 3 | `index.html:1853` | — | `(player,reason){if(!net&&bossDoor()&&ball?.type==='serve'&&ball.owner==='you'&&Math.random()<.1){foe.taunt='손바…` |
-| 4 | `index.html:3665` | — | `(player,reason){if(survival()&&ball){if(player){ball=null;wait=1.25;rally=0;swingMemory=null;updateScore();toa…` |
+| 1 | `index.html:1859` | — | `(...args){ajaeSecretPoint(...args);if(!net&&!playing&&you>cpu&&charType==='ajae'&&ajaeUsed.me>=3)unlockAjaeSec…` |
+| 2 | `index.html:1860` | — | `(...args){const wasDoubles=mode==='doubles'&&!net;doublesHarmonyPoint(...args);if(wasDoubles){doublesLink=0;do…` |
+| 3 | `index.html:1861` | — | `(player,reason){if(!net&&bossDoor()&&ball?.type==='serve'&&ball.owner==='you'&&Math.random()<.1){foe.taunt='손바…` |
+| 4 | `index.html:3673` | — | `(player,reason){if(survival()&&ball){if(player){ball=null;wait=1.25;rally=0;swingMemory=null;updateScore();toa…` |
 
 ### `fireUlt`
 
@@ -126,9 +96,9 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:1760` | 투클릭 연습은 상대 서브부터 시작해, 받는 모든 공에 ①→② 리듬을 적용한다. const practiceServe=serve | `(){practiceServe();if(clickPrac()&&ball?.owner==='ai'&&!ball.unreturn){Object.assign(ball,{dual:true,dualHit:f…` |
-| 2 | `index.html:1769` | — | `(){const variant=aiServeVariant();baseAiServeWithVariants();if(!variant¦¦!ball¦¦ball.owner!=='ai'¦¦!ball.servi…` |
-| 3 | `index.html:1771` | Finalize once, after character effects and serve variants. One fault roll per serve. const | `(){uncheckedAiServe();if(net¦¦!ball¦¦ball.owner!=='ai')return;if(ball.shortServe&&ball.dual){if(clickPrac())ba…` |
+| 1 | `index.html:1763` | 투클릭 연습은 상대 서브부터 시작해, 받는 모든 공에 ①→② 리듬을 적용한다. const practiceServe=serve | `(){practiceServe();if(clickPrac()&&ball?.owner==='ai'&&!ball.unreturn){Object.assign(ball,{dual:true,dualHit:f…` |
+| 2 | `index.html:1772` | — | `(){const variant=aiServeVariant();baseAiServeWithVariants();if(!variant¦¦!ball¦¦ball.owner!=='ai'¦¦!ball.servi…` |
+| 3 | `index.html:1774` | Finalize once, after character effects and serve variants. One fault roll per serve. const | `(){uncheckedAiServe();if(net¦¦!ball¦¦ball.owner!=='ai')return;if(ball.shortServe&&ball.dual){if(clickPrac())ba…` |
 
 ### `rankRecord`
 
@@ -136,7 +106,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3667` | — | `(quit){const rec=baseRankRecord(quit);if(mode==='survival'&&!net){rec.rmode='survival';rec.wins=0;rec.level='생…` |
+| 1 | `index.html:3675` | — | `(quit){const rec=baseRankRecord(quit);if(mode==='survival'&&!net){rec.rmode='survival';rec.wins=0;rec.level='생…` |
 | 2 | `china-cup.js:42` | — | `(...args){const record=chinaRecord(...args);if(chinaRun&&aiChar.startsWith('china_'))record.event=true;return …` |
 | 3 | `europe-cups.js:36` | — | `(...args){const r=euroRecord(...args);if(euroRun)r.event=true;return r;};…` |
 
@@ -146,9 +116,9 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3672` | — | `(k){$('boss-filter').hidden=k!=='boss';return k==='survival'?showSurvivalBoard():baseShowBoard(k);};…` |
-| 2 | `index.html:3791` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
-| 3 | `index.html:3796` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
+| 1 | `index.html:3680` | — | `(k){$('boss-filter').hidden=k!=='boss';return k==='survival'?showSurvivalBoard():baseShowBoard(k);};…` |
+| 2 | `index.html:3799` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
+| 3 | `index.html:3804` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
 
 ### `drawNationalKit`
 
@@ -176,7 +146,7 @@
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
 | 1 | `index.html:1503` | — | `(){renderTournamentBase();if(tournament?.state==='champion'){const reward=TOUR_REWARDS.find(item=>item.id===to…` |
-| 2 | `index.html:3694` | — | `(){baseRenderTournament();if(tourEvent().id!=='pyeongtaek')return;const p=tourPlayer(),event=tourEvent(),entry…` |
+| 2 | `index.html:3702` | — | `(){baseRenderTournament();if(tourEvent().id!=='pyeongtaek')return;const p=tourPlayer(),event=tourEvent(),entry…` |
 
 ### `stepBody`
 
@@ -184,7 +154,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:1679` | — | `(who,x,...args){if(mode==='doubles'&&!net){const actor=doublesCourtActor();if(who===mate)x=actor==='mate'?Math…` |
+| 1 | `index.html:1682` | — | `(who,x,...args){if(mode==='doubles'&&!net){const actor=doublesCourtActor();if(who===mate)x=actor==='mate'?Math…` |
 | 2 | `world-effects.js:25` | — | `(who,x,...args){const frost=greenlandFrost();if(who===me&&frost&&Number.isFinite(who.x))x=who.x+(x-who.x)*(1-f…` |
 
 ### `openDoublesPartner`
@@ -193,7 +163,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3870` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
+| 1 | `index.html:3878` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
 | 2 | `partner-training.js:45` | — | `(...args){trainingPartnerSelect(...args);const d=document.getElementById('doubles-partner');if(!d)return;d.que…` |
 
 ### `showAttendance`
@@ -202,8 +172,8 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:4321` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
-| 2 | `index.html:4322` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
+| 1 | `index.html:4329` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
+| 2 | `index.html:4330` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
 
 ### `perfectCeremony`
 
