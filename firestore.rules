@@ -3,6 +3,16 @@ rules_version = '2';
 // well-formed record; nobody may edit or delete. Guest (anonymous) accounts are not accepted.
 service cloud.firestore {
   match /databases/{database}/documents {
+    // 조작 방지(서버 없이 규칙만으로): 이전 저장 뒤 흐른 분(minutes)에 비례해서만 늘 수 있게 한다.
+    // 정상 플레이는 넉넉히 통과하고, 저장이 한동안 막혀도 시간이 지나면 따라잡는다. 첫 저장(문서 없음)은 제한 없음.
+    // ponytail: 규칙만으로는 상한만 막는다. 경기 결과 자체 검증은 Cloud Functions가 필요하다.
+    function mins() {
+      return resource == null ? 1000000 : (request.time.toMillis() - resource.data.at.toMillis()) / 60000;
+    }
+    function grows(field, base, perMin) {
+      return resource == null || !(field in resource.data)
+        || request.resource.data[field] <= resource.data[field] + base + perMin * mins();
+    }
     function valid(maxValue) {
       let d = request.resource.data;
       return request.auth != null && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
@@ -195,7 +205,7 @@ service cloud.firestore {
         && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
         && request.resource.data.keys().hasOnly(['xp', 'unlocked', 'q', 'runes', 'runeSets', 'at'])
         && request.resource.data.keys().hasAll(['xp', 'unlocked', 'at'])
-        && request.resource.data.xp is int && request.resource.data.xp >= 0
+        && request.resource.data.xp is int && request.resource.data.xp >= 0 && grows('xp', 50000, 10000)
         && request.resource.data.unlocked is list && request.resource.data.unlocked.size() <= 40
         && request.resource.data.at == request.time;
     }
@@ -224,6 +234,7 @@ service cloud.firestore {
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.coins is int && request.resource.data.coins >= 0
         && request.resource.data.racketEnhance is int && request.resource.data.racketEnhance >= 0 && request.resource.data.racketEnhance <= 100
+        && grows('coins', 20000, 5000) && grows('racketEnhance', 1, 1)
         && request.resource.data.at == request.time;
     }
     // Latest daily attendance receipt. Players may read it, but only an admin may
@@ -291,7 +302,7 @@ service cloud.firestore {
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.keys().hasAll(['name', 'xp', 'chars', 'at'])
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.xp is int && request.resource.data.xp >= 0
+        && request.resource.data.xp is int && request.resource.data.xp >= 0 && grows('xp', 50000, 10000)
         && request.resource.data.chars is int && request.resource.data.chars >= 1 && request.resource.data.chars <= 40
         && request.resource.data.at == request.time;
     }
@@ -306,6 +317,7 @@ service cloud.firestore {
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.mmr is int && request.resource.data.mmr >= 0 && request.resource.data.mmr <= 5000
         && request.resource.data.w is int && request.resource.data.w >= 0 && request.resource.data.l is int && request.resource.data.l >= 0
+        && grows('mmr', 100, 60) && grows('w', 2, 2) && grows('l', 2, 2)
         && request.resource.data.at == request.time;
     }
     // ✉️ 쪽지 (offline messages): any signed-in player leaves a note for another uid; only the recipient reads and removes it.
