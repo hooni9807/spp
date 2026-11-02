@@ -42,9 +42,11 @@
     }
   }
   function pump() { if (!ctx || !master) return; while (nextBar < ctx.currentTime + .6) { scheduleBar(nextBar, bar++); nextBar += BAR; } }
+  // 설정창 "세리머니 음악" 스위치(store 'snd-ceremony'). 전체 사운드와 별개로 이 음악만 끈다.
+  const musicOn = () => { try { return store.get('snd-ceremony') !== 'off'; } catch { return true; } };
   function startMusic() {
     stopMusic();
-    if (!active() || !sound || document.hidden) { showStatus(); return; }
+    if (!active() || !sound || !musicOn() || document.hidden) { showStatus(); return; }
     try { ctx ??= new (window.AudioContext || window.webkitAudioContext)(); } catch { showStatus(); return; }
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     master = ctx.createGain(); master.gain.value = .55; master.connect(ctx.destination);
@@ -58,9 +60,10 @@
   function showStatus() {
     const blocked = master && ctx && ctx.state !== 'running';
     status.textContent = !sound ? '사운드 OFF · 음악 켜기를 누르면 약 올리는 비트가 나와요 😜'
+      : !musicOn() ? '세리머니 음악 OFF · 음악 켜기를 누르면 다시 나와요'
       : blocked ? '음악 재생을 눌러 주세요' : '메롱~ 약 올리는 승리 비트 ♪ 😜';
-    button.textContent = !sound ? '음악 켜기 ♪' : '음악 재생 ♪';
-    button.hidden = !!sound && !blocked;
+    button.textContent = !sound || !musicOn() ? '음악 켜기 ♪' : '음악 재생 ♪';
+    button.hidden = !!sound && musicOn() && !blocked;
   }
   function start() {
     clearTimeout(startTimer); stopMusic();
@@ -70,7 +73,7 @@
   }
   function stop() { clearTimeout(startTimer); stopMusic(); panel.hidden = true; }
 
-  button.onclick = () => { if (!active()) return; setSound(true); startMusic(); };
+  button.onclick = () => { if (!active()) return; setSound(true); try { store.set('snd-ceremony', 'on'); } catch {} startMusic(); };
   window.addEventListener('victoryceremony', event => { if (event.detail.phase === 'start') start(); else stop(); });
   window.addEventListener('spin-sound', () => { if (!active()) return; if (sound) startMusic(); else { stopMusic(); showStatus(); } });
   document.addEventListener('visibilitychange', () => { if (!active()) return; if (document.hidden) stopMusic(); else startMusic(); });

@@ -21,6 +21,8 @@
 9. `prologue-match.js`
 10. `prologue.js`
 11. `ceremony-media.js`
+12. `menu-tabs.js`
+13. `tutorial.js`
 
 ## 두 번 이상 덧씌워지는 함수 (15개)
 
@@ -160,8 +162,8 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:4332` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
-| 2 | `index.html:4333` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
+| 1 | `index.html:4334` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
+| 2 | `index.html:4335` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
 
 ### `perfectCeremony`
 

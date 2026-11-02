@@ -50,17 +50,18 @@ if(typeof window.beep==='function'){const b0=window.beep;window.beep=function(f=
 if(typeof window.sfx==='function'){const s0=window.sfx;window.sfx=function(n,...r){if((n==='hit'||n==='bounce')&&!pref('snd-ball'))return true;return s0.call(this,n,...r);};}
 const css=document.createElement('style');css.textContent=`
 #game-settings label.snd-row{display:flex;align-items:center;gap:12px}
+#game-settings label:not(.snd-row){display:flex;flex-direction:row-reverse;justify-content:space-between;align-items:center;gap:12px}   /* 설정창 모든 항목을 같은 스위치로: 오른쪽 = 켜짐 */
 #game-settings label.snd-row span{flex:1}
 #game-settings label.snd-row small{display:block;margin:4px 0 0;color:#9b8dbd;font-size:11px}
-#game-settings .snd-sw{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:46px;height:26px;margin:0;border-radius:999px;background:#33244e;position:relative;cursor:pointer;transition:background .2s cubic-bezier(.16,1,.3,1)}
-#game-settings .snd-sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#ece6ff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .2s cubic-bezier(.16,1,.3,1)}
-#game-settings .snd-sw:checked{background:#ff345d}
-#game-settings .snd-sw:checked::after{transform:translateX(20px)}
-#game-settings .snd-sw:focus-visible{outline:2px solid #ff345d;outline-offset:3px}
-#game-settings .snd-sw:disabled{opacity:.45;cursor:not-allowed}
-@media(prefers-reduced-motion:reduce){#game-settings .snd-sw,#game-settings .snd-sw::after{transition:none}}`;
+#game-settings input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:46px;height:26px;margin:0;border-radius:999px;background:#33244e;position:relative;cursor:pointer;transition:background .2s cubic-bezier(.16,1,.3,1)}
+#game-settings input[type=checkbox]::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#ece6ff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .2s cubic-bezier(.16,1,.3,1)}
+#game-settings input[type=checkbox]:checked{background:#ff345d}
+#game-settings input[type=checkbox]:checked::after{transform:translateX(20px)}
+#game-settings input[type=checkbox]:focus-visible{outline:2px solid #ff345d;outline-offset:3px}
+#game-settings input[type=checkbox]:disabled{opacity:.45;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){#game-settings input[type=checkbox],#game-settings input[type=checkbox]::after{transition:none}}`;
 document.head.append(css);
-const ROWS=[['bgm','pref-bgm','배경음악','경기 중 흐르는 비트 · 점수를 부를 땐 잠시 멈춤'],['snd-ball','pref-snd-ball','공 소리','라켓에 맞는 소리 · 탁구대에 튀는 소리'],['snd-fx','pref-snd-fx','효과음','득점 박수 · 알림음 같은 특수 효과']];
+const ROWS=[['bgm','pref-bgm','배경음악','경기 중 흐르는 비트 · 점수를 부를 땐 잠시 멈춤'],['snd-ball','pref-snd-ball','공 소리','라켓에 맞는 소리 · 탁구대에 튀는 소리'],['snd-fx','pref-snd-fx','효과음','득점 박수 · 알림음 같은 특수 효과'],['snd-ceremony','pref-snd-ceremony','세리머니 음악','우승 · 승리 세리머니 때 나오는 비트']];
 const attach=()=>{const dlg=document.getElementById('game-settings'),snd=dlg?.querySelector('#pref-sound,[data-gp="sound"]');if(!snd||!dlg){setTimeout(attach,300);return;}
  if(document.getElementById('pref-bgm'))return;
  let after=[...dlg.querySelectorAll('label')].pop()||snd.closest('label');const sws=[];
