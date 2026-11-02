@@ -633,7 +633,7 @@ function questMatchEnd(won){doublesUltWin(won);titleMatch(won);if(won){qMatch.wi
 const qTot=(k,q)=>{const L=questCurve(k);let n=q.n||0;for(let i=0;i<(q.t|0);i++)n+=L[Math.min(i,L.length-1)]*(i>=L.length?2**(i-L.length+1):1);return n;},qTotal=k=>{const q=qOf(k),L=questCurve(k);let n=q.n;for(let i=0;i<q.t;i++)n+=L[Math.min(i,L.length-1)]*(i>=L.length?2**(i-L.length+1):1);return n;},tS=()=>{prog.q??={};return prog.q._s??={};};
 function tournamentProgressRow(withTimestamp=false){const won=new Set(trophyIds().filter(id=>TOURNAMENT_RANK_EVENTS.some(e=>e.id===id)));if(tS().villain)won.add('villain');const cleared=won.size,best=Math.min(6,Math.max(cleared?6:0,+(prog.q?._tourBest)||0)),row={name:myName(),cleared,wins:qTotal('tourWin'),best},ttl=myTtl().ttl;if(ttl)row.ttl=ttl;if(withTimestamp)row.at=rankFs.serverTimestamp();return row;}
 const TITLES=[['rookie','신입 부원','처음 시작한 탁구인',()=>true],
-['lv10','탁구 입문자','레벨 5',()=>progLevel()>=5],['lv30','스킬트리 마스터','레벨 15',()=>progLevel()>=15],['lv50','탁구장 터줏대감','레벨 25',()=>progLevel()>=25],
+['lv10','탁구 입문자','레벨 10',()=>progLevel()>=10],['lv30','스킬트리 마스터','레벨 30',()=>progLevel()>=30],['lv50','탁구장 터줏대감','레벨 50',()=>progLevel()>=50],
 ['dex','캐릭터 도감 완성','캐릭터 모두 해금',()=>characterCount()>=characterTotal()],
 ['win100','백전노장','경기 승리 100번',()=>qTotal('win')>=100],['perf1k','퍼펙트 장인','PERFECT 1000번',()=>qTotal('perfect')>=1000],
 ['smash','스매싱 머신','스매싱 500번',()=>qTotal('smash')>=500],['counter','맞드라이브 장인','맞드라이브 300번',()=>qTotal('counter')>=300],['serve','서브의 신','서브 500번',()=>qTotal('serve')>=500],
@@ -650,7 +650,7 @@ const TITLES=[['rookie','신입 부원','처음 시작한 탁구인',()=>true],
 ['worldAll','세계의 정복자','세계제패 출전 가능 국가 모두 제패 · 매우 어려움',()=>worldWinCount()>=WORLD_ACTIVE_COUNTRIES.length],
 // v3.74: more titles in the styles players chase most in games - level milestones, grind counters (장인 / 학살자), honour titles for the
 // hardest content, streaks, collection, and a few joke titles.
-['lv5','탁구공 줍는 사람','레벨 3',()=>progLevel()>=3],['lv20','동네 고수','레벨 10',()=>progLevel()>=10],['lv40','구장 에이스','레벨 20',()=>progLevel()>=20],['lv70','살아있는 전설','레벨 35',()=>progLevel()>=35],['lv100','탁구의 신','레벨 50',()=>progLevel()>=50],
+['lv5','탁구공 줍는 사람','레벨 5',()=>progLevel()>=5],['lv20','동네 고수','레벨 20',()=>progLevel()>=20],['lv40','구장 에이스','레벨 40',()=>progLevel()>=40],['lv70','살아있는 전설','레벨 70',()=>progLevel()>=70],['lv100','탁구의 신','레벨 100',()=>progLevel()>=100],
 ['enh5','강화 입문자','라켓 강화 +5',()=>enhanceLevel()>=5],['enh10','스핀 대장장이','라켓 강화 +10',()=>enhanceLevel()>=10],['enh15','강화의 도전자','라켓 강화 +15',()=>enhanceLevel()>=15],['enh20','파괴와 창조','라켓 강화 +20',()=>enhanceLevel()>=20],['enh30','백강 신화','라켓 강화 +30',()=>enhanceLevel()>=30],
 ['g10','열정 신입','경기 10판 완주',()=>(tS().games||0)>=10],['g100','출석왕','경기 100판 완주',()=>(tS().games||0)>=100],['g500','탁구장 지박령','경기 500판 완주',()=>(tS().games||0)>=500],['g1000','고인물','경기 1000판 완주',()=>(tS().games||0)>=1000],
 ['win10','첫 승의 기쁨','경기 승리 10번',()=>qTotal('win')>=10],['win30','승리 중독자','경기 승리 30번',()=>qTotal('win')>=30],['win300','천하무적','경기 승리 300번',()=>qTotal('win')>=300],['win1000','승리의 화신','경기 승리 1000번',()=>qTotal('win')>=1000],
