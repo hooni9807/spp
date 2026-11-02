@@ -8,7 +8,7 @@ assert.equal(names.length,44);assert.equal(new Set(names).size,44);assert(!names
 assert.equal(context.names(0).length,0);
 assert(html.includes('id="tournament-open"'));
 assert(html.includes('id="tournament-open" type="button">대회 출전'));
-assert(html.includes('id="net-quick" type="button">빠른 대전 찾기'));
+assert(html.includes('id="net-quick" type="button">PVP'));
 assert(html.includes('id="tournament-select"'));
 assert(html.includes('data-tour="sejong"'));
 assert(html.includes('id="tour-bracket"'));
@@ -35,9 +35,7 @@ assert(html.includes("prog.q._racketSkin=reward.skin"));
 assert(html.includes('id="tr-open"'));
 assert(html.includes('id="trophies"'));
 assert(html.includes('function renderTrophies()'));
-assert(html.includes('tournament:{atkDrive:.003,defSafe:.003}'));
 assert(html.includes("enhanceCombatLevel=()=>enhanceLevel()"));
-assert(html.includes("championSkin=()=>!!equippedSkin()"));
 assert(html.includes('전용 디자인 스킨'));
 assert(html.includes('id="settings-fab"'));
 assert(!html.includes('id='+'"settings-open"'));

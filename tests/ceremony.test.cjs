@@ -36,7 +36,7 @@ function createClient(initialClock = 10000) {
     const classes = new Set(key === 'overlay' ? [] : []);
     const attributes = new Map();
     const node = {
-      id: key, tagName: 'DIV', style: {}, dataset: {}, hidden: false, disabled: false,
+      id: key, tagName: 'DIV', style: { setProperty() {}, removeProperty() {} }, dataset: {}, hidden: false, disabled: false,
       value: '', textContent: '', innerHTML: '', width: 900, height: 465,
       firstChild: { textContent: '' }, children: [], options: [], selectedOptions: [{ text: 'test' }],
       classList: {
@@ -53,6 +53,7 @@ function createClient(initialClock = 10000) {
       getBoundingClientRect() { return { x: 0, y: 0, left: 0, top: 0, width: 900, height: 465 }; },
       addEventListener() {}, removeEventListener() {}, setPointerCapture() {}, releasePointerCapture() {},
       scrollIntoView() {}, focus() {}, blur() {}, remove() {},
+      cloneNode() { return element(`${key}-clone-${nodes.size}`); }, before() {}, after() {}, prepend() {}, insertAdjacentHTML() {}, insertAdjacentElement() {}, replaceChildren() {}, closest() { return null; }, matches() { return false; },
       showModal() { this.open = true; }, close() { this.open = false; },
       append(...items) { this.children.push(...items); }, appendChild(item) { this.children.push(item); },
       querySelector(selector) { return element(`${key} ${selector}`); }, querySelectorAll() { return []; },
@@ -71,17 +72,17 @@ function createClient(initialClock = 10000) {
     console, URL, URLSearchParams, Math, JSON, Date, Promise, Map, Set,
     performance: { now: () => now },
     document: {
-      body: element('body'), head: element('head'), hidden: false,
+      body: element('body'), head: element('head'), documentElement: element('html'), hidden: false,
       activeElement: element('active'),
-      getElementById: element, querySelector: element, querySelectorAll: () => [],
-      createElement: name => element(`created-${name}-${nodes.size}`), addEventListener: addListener,
+      getElementById: element, querySelector: element, querySelectorAll: sel => sel === '.rally span' ? [element('rally-now'), element('rally-high')] : [],
+      createElement: name => element(`created-${name}-${nodes.size}`), createTextNode: text => ({ textContent: text }), addEventListener: addListener,
     },
     localStorage: storage, sessionStorage: storage,
     location: { hostname: 'localhost', href: 'http://localhost/', origin: 'http://localhost', pathname: '/', search: '' },
     history: { replaceState() {} }, navigator: { userAgent: 'Node regression harness', maxTouchPoints: 0 },
     Image: class { complete = false; naturalWidth = 0; },
     Path2D: class { constructor() { return canvasContext; } },
-    ResizeObserver: class { observe() {} },
+    ResizeObserver: class { observe() {} }, MutationObserver: class { observe() {} disconnect() {} },
     CustomEvent: class { constructor(type, options) { this.type = type; Object.assign(this, options); } },
     requestAnimationFrame() { return 1; }, cancelAnimationFrame() {},
     setTimeout(fn, delay = 0) { const id = ++nextTimer; timers.set(id, { fn, due: now + delay }); return id; },
@@ -411,20 +412,20 @@ test('dance renderer handles every character and stage with finite coordinates a
   }
 });
 
-test('temporarily disabled sleepy character stays player-locked but can appear as an offline AI', () => {
+test('temporarily disabled character stays player-locked and is replaced in online packets', () => {
+  // Sleepy was re-enabled as Jekyll & Hyde; pastor is a currently disabled character.
   const client = createClient();
-  assert.equal(client.value("characterAvailable('sleepy')"), false);
-  assert.equal(client.value("AI_CHARS.includes('sleepy')"), true);
-  client.run("setCharacter('sleepy')");
+  assert.equal(client.value("characterAvailable('pastor')"), false);
+  client.run("setCharacter('pastor')");
   assert.equal(client.value('charType'), 'jersey');
   client.open('guest');
-  client.run("takeOpp({ch:'sleepy',nick:'상대',x:0,side:1,rk:'shake',shot:'drive',h:0})");
+  client.run("takeOpp({ch:'pastor',nick:'상대',x:0,side:1,rk:'shake',shot:'drive',h:0})");
   assert.equal(client.value('net.opp.ch'), 'jersey');
-  client.run("enterVictoryCeremony({id:'temporary',winnerChar:'sleepy',loserChar:'sleepy',winnerLocal:true,duration:12,phase:'playing',localStartedAt:performance.now()})");
+  client.run("enterVictoryCeremony({id:'temporary',winnerChar:'pastor',loserChar:'pastor',winnerLocal:true,duration:12,phase:'playing',localStartedAt:performance.now()})");
   assert.deepEqual(client.value('[victoryCeremony.winnerChar,victoryCeremony.loserChar]'), ['jersey', 'jersey']);
 });
 
-test('only infinite drive hides the point score', () => {
+test('regular modes show the point score (infinite drive is disabled)', () => {
   const client = createClient();
   for (const mode of ['practice', 'match', 'doubles', 'boss', 'cutman', 'twoclick']) {
     client.context.testMode = mode;
@@ -433,10 +434,6 @@ test('only infinite drive hides the point score', () => {
     assert.equal(client.nodes.get('cpu').hidden, false, `${mode} should show the opponent score`);
     assert.equal(client.nodes.get('.score i').hidden, false, `${mode} should show the score separator`);
   }
-  client.run("setMode('infdrive')");
-  assert.equal(client.nodes.get('you').hidden, true);
-  assert.equal(client.nodes.get('cpu').hidden, true);
-  assert.equal(client.nodes.get('.score i').hidden, true);
 });
 
 test('two-click timing has one short fixed beat', () => {

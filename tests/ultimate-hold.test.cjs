@@ -8,7 +8,7 @@ test('ultimate cut-in never pauses live physics', () => {
   let now = 1000, updates = 0;
   const ctx = { performance: { now: () => now }, P: { clamp: (n, min, max) => Math.min(max, Math.max(min, n)) },
     tickVictoryCeremony() {}, pingNetClock() {}, update() { updates++; }, guestUpdate() { updates++; },
-    render() {}, requestAnimationFrame() {}, $: () => ({ style: {}, open: true }),
+    render() {}, requestAnimationFrame() {}, sendNetState() {}, recoverGameLoop(e) { throw e; }, renderFaultUntil: 0, $: () => ({ style: {}, open: true }),
     net: null, last: 1000, playing: true, paused: false, samples: [], paddle: {vx:0, vy:0}, Math };
   const hold = html.slice(html.indexOf('const ULT_HOLD_MS='), html.indexOf('function ultSceneDuration('));
   const frame = html.match(/function frame\(t\)\{[\s\S]*?finally\{requestAnimationFrame\(frame\);\}\}/)[0];

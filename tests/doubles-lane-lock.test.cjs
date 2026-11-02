@@ -6,5 +6,6 @@ assert.match(html,/const doublesCourtActor=\(\)=>mode==='doubles'&&!net/);
 assert.match(html,/actor==='mate'\?Math\.max\(x,W\*\.57\):Math\.min\(x,W\*\.43\)/);
 assert.match(html,/pill\('1P',me\.x/);
 assert.match(html,/pill\('2P',mate\.x/);
-assert.match(html,/mySwing\.t=-10;mySwing\.ult=null/);
+// Partner hits now swap full hit state and restore mine afterwards (4d622fe).
+assert.match(html,/copyDoublesHitState\(ownState,me\);copyDoublesHitState\(mateState,mate\)/);
 console.log('Doubles keeps the non-hitting teammate in its waiting lane');

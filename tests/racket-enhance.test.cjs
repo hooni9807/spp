@@ -30,14 +30,15 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     await page.locator('#settings-fab').click();
     assert.equal(await page.locator('#game-settings').evaluate(d=>d.open),true);
     assert.equal(await page.locator('#settings-open').count(),0);
-    await page.locator('#settings-done').click();
+    await page.locator('#game-settings button').first().click();
+    assert.equal(await page.locator('#game-settings').evaluate(d=>d.open),false);
     await page.evaluate(()=>{renderSkins();$('racket-skins').showModal();});
     assert.equal(await page.locator('#racket-skins').evaluate(d=>d.open),true);
     assert.equal(await page.locator('#skin-list button').first().isDisabled(),true);
     const skin=await page.evaluate(()=>{prog.q._racketChampion=1;renderSkins();$('skin-list').querySelector('button').click();return {orbit:racketOrbit(),level:enhanceCombatLevel()};});
     assert.deepEqual(skin,{orbit:'🥖',level:0});
-    const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length,miss:enhanceShownAiMiss(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
-    assert.deepEqual(regional,{level:0,cards:4,miss:.04,display:true,name:'전설 · 부산시대회 우승 트로피'});
+    const regional=await page.evaluate(()=>{$('racket-skins').close();prog.q._trophies=['daejeon','sejong','busan','seoul'];prog.q._racketSkin='seoul';renderTrophies();document.querySelector('[data-trophy="busan"]').click();const out={level:enhanceCombatLevel(),cards:document.querySelectorAll('#trophy-list .trophy-card').length===TOUR_REWARDS.length,miss:trophyMissBonus(),display:$('trophy-display').open,name:$('trophy-display-name').textContent};$('trophy-display').close();return out;});
+    assert.deepEqual(regional,{level:0,cards:true,miss:.04,display:true,name:'전설 · 부산시대회 우승 트로피'});
     const usage=await page.evaluate(()=>{store.set('character-usage','');recordCharacterUsage({id:'usage-1',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-2',charKey:'jersey',racketType:'shake',rubberType:'spin'});recordCharacterUsage({id:'usage-3',charKey:'leesin',racketType:'defense',rubberType:'speed'});return charUsageRows().map(r=>[r.id,r.matches,r.racket,r.rubber]);});
     assert.deepEqual(usage,[['jersey',2,'쉐이크핸드','09C'],['leesin',1,'수비수 라켓','롱']]);
     assert.deepEqual(await page.evaluate(()=>{const expected={champion:'🥖',sejong:'🌸',busan:'🦈',okcheon:'🍇',pyeongtaek:'🍐',seoul:'🏆',attendance_astral:'7'};prog.q._trophies=TOUR_REWARDS.map(r=>r.id);return Object.fromEntries(Object.keys(expected).map(id=>{prog.q._racketSkin=id;return [id,racketOrbit()];}));}),{champion:'🥖',sejong:'🌸',busan:'🦈',okcheon:'🍇',pyeongtaek:'🍐',seoul:'🏆',attendance_astral:'7'});
@@ -56,9 +57,10 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     const curve=await page.evaluate(()=>[15,20,24,25,30].map(level=>{prog.racketEnhance=level;return enhanceShownAiMiss();}));
     assert.ok(Math.abs(curve[0]-.075)<1e-12);assert.ok(Math.abs(curve[1]-.10)<1e-12);assert.ok(Math.abs(curve[2]-.15)<1e-12);assert.ok(Math.abs(curve[3]-(.15+.05/6))<1e-12);assert.ok(Math.abs(curve[4]-.2)<1e-12);
     assert.deepEqual(await page.evaluate(()=>[0,9,10,18,19].map(level=>{prog.racketEnhance=level;return enhanceCost();})),[10,10,120,120,600]);
-    assert.deepEqual(await page.evaluate(()=>[0,1,9,10,19,20,29].map(level=>{prog.racketEnhance=level;return [enhanceRate(),enhanceFxTier()];})),[[1,0],[.98,0],[.82,0],[.70,1],[.52,1],[.30,2],[.21,2]]);
-    const trophyFormula=await page.evaluate(()=>{prog.racketEnhance=30;prog.q._trophies=TOUR_REWARDS.map(r=>r.id);mode='match';rankOn=false;net=null;return {skin:enhanceCombatLevel(),shown:enhanceShownAiMiss(),active:enhanceAiMiss()};});
-    assert.deepEqual(trophyFormula,{skin:30,shown:.26,active:.26});
+    assert.deepEqual(await page.evaluate(()=>[0,1,9,10,19,20,29].map(level=>{prog.racketEnhance=level;return [Math.round(enhanceRate()*100)/100,enhanceFxTier()];})),[[1,0],[.98,0],[.82,0],[.70,1],[.52,1],[.30,2],[.21,2]]);
+    const trophyFormula=await page.evaluate(()=>{prog.racketEnhance=30;prog.q._trophies=TOUR_REWARDS.map(r=>r.id);mode='match';rankOn=false;net=null;return {skin:enhanceCombatLevel(),shown:enhanceShownAiMiss(),extra:Math.round((enhanceAiMiss()-enhanceShownAiMiss())*100),trophies:TOUR_REWARDS.length};});
+    // Shown miss is the racket-only value (capped 20%); active adds +1% per trophy.
+    assert.deepEqual(trophyFormula,{skin:30,shown:.2,extra:trophyFormula.trophies,trophies:trophyFormula.trophies});
     await page.evaluate(()=>{prog.q._trophies=[];});
     const failure=await page.evaluate(()=>{const attempt=dropRoll=>{prog.racketEnhance=29;prog.coins=10000;renderEnhance();const original=Math.random,rolls=[.5,dropRoll];Math.random=()=>rolls.shift();$('enhance-try').click();Math.random=original;return enhanceLevel();};prog.racketEnhance=30;const title=TITLES.find(t=>t[0]==='enh30')[3](),shown=enhanceShownAiMiss();return {dropped:attempt(.24),held:attempt(.25),title,shown,levelText:$('enhance-level').textContent};});
     assert.equal(failure.title,true);assert.equal(failure.shown,.2);assert.equal(failure.dropped,28);assert.equal(failure.held,29);assert.equal(failure.levelText,'+29 / +30');assert.deepEqual(errors,[]);

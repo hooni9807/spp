@@ -9,7 +9,8 @@ assert.match(html,/copyDoublesHitState\(mate,me\)/);
 assert.match(html,/copyDoublesHitState\(mateState,mate\)/);
 assert.match(html,/actor==='me'&&lastHit!==before\)mate\.swingT=-10/);
 assert.match(html,/actor:doublesCourtActor\(\)/);
-assert.match(html,/gesture\.actor==='mate'\)\{mate\.swingType=gesture\.stroke;mate\.swingT=time;\}/);
+// A whiffed gesture on the partner's turn no longer animates the partner (AI partner restored, 0639522).
+assert.match(html,/gesture\.stroke\&\&gesture\.actor!=='mate'\&\&time-mySwing\.t>\.65/);
 assert.match(html,/partnerTurn\?'idle':mySwing\.type/);
 assert.match(html,/target=partnerTurn\?\{x:me\.x\+playerSide\*30\*playerScale/);
 assert.match(html,/doublesLink=0/);

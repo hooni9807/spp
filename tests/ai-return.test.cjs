@@ -8,6 +8,8 @@ const context = { module: { exports: {} }, Math };
 context.globalThis = context;
 vm.runInNewContext(physics[2], context);
 context.P = context.module.exports;
+// Page globals the physics module reads (non-AI-match defaults).
+Object.assign(context, { charType: '', mode: 'free', net: null, rankOn: false, aiChar: '', conquestReturnFloor: () => false });
 vm.runInNewContext(html.slice(html.indexOf('function fitReturn(b,'), html.indexOf('function endInfDrive')), context);
 context.clickPrac = () => false;
 context.tierNow = () => 'ultra';
@@ -205,6 +207,17 @@ test('ultimate returns use the requested tier rates regardless of AI difficulty'
     assert.equal(context.P.returnRoll({type:'drive',ult:'tier-test',ultTier:+tier},'uext',.99),rate);
     assert.equal(context.P.returnRoll({type:'drive',ult:'tier-test',ultTier:+tier},'easy',.1),rate);
   }
+});
+
+test('AI-match ultimate returns follow the per-difficulty table', () => {
+  const table = vm.runInNewContext('(' + html.match(/const ULT_RETURN_BY_TIER=(\{[^;]*\});/)[1] + ')'), prevTier = context.tierNow;
+  context.mode = 'match';
+  try {
+    for (const tier of ['easy', 'uext', 'unight']) {
+      context.tierNow = () => tier;
+      for (let t = 1; t <= 4; t++) assert.equal(context.P.returnRoll({type:'drive',ult:'x',ultTier:t},tier,.5), table[tier][t-1], `${tier} T${t}`);
+    }
+  } finally { context.mode = 'free'; context.tierNow = prevTier; }
 });
 
 test('every marginal out ball can become an edge and net cords have a five percent pass', () => {
