@@ -19,6 +19,7 @@ jobs:
   # 브라우저 테스트(tests/*.cjs): 실패하면 어떤 테스트가 깨졌는지 이름을 모아 보여 준다.
   tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       CHROME_PATH: /usr/bin/google-chrome
     steps:
@@ -32,7 +33,7 @@ jobs:
         run: |
           fail=0
           for t in tests/*.cjs; do
-            node "$t" > /tmp/out.txt 2>&1 || { fail=$((fail+1)); echo "::error file=$t::$(tail -c 400 /tmp/out.txt | tr '\n' ' ')"; }
+            timeout 120 node "$t" > /tmp/out.txt 2>&1 || { fail=$((fail+1)); echo "::error file=$t::$(tail -c 400 /tmp/out.txt | tr '\n' ' ')"; }
           done
           echo "failed: $fail"
           [ "$fail" -eq 0 ]
