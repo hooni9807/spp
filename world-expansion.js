@@ -87,6 +87,22 @@ drawNationalKit=function(g,look,x,y,h,s){
  g.fillStyle='#ffffff20';g.fillRect(-28,60,56,1);g.restore();
 };
 Object.values(LOOKS).filter(l=>l.nationalKit==='japan').forEach(l=>{l.shirt='#d656a3';l.sleeve='#ed74aa';l.collar='#29294c';});
+// Generated fictional head atlas: fixed seven columns, one squad per row.
+const WORLD_PORTRAIT_ROWS=['china','japan','germany','sweden','france','romania','portugal','austria','russia','taiwan','india','brazil','usa','singapore','nigeria','greenland','canada','argentina','australia','southafrica','mexico'];
+let worldPortraitsReady=false;
+const worldPortraitAtlas=new Image();
+worldPortraitAtlas.onload=()=>{
+ const cw=worldPortraitAtlas.naturalWidth/7,ch=worldPortraitAtlas.naturalHeight/21;
+ WORLD_PORTRAIT_ROWS.forEach((id,row)=>{for(let i=0;i<7;i++){
+  const key=id==='china'?'china_'+CHINA_PLAYERS[i][0]:`china_${id}_${i}`;
+  if(!LOOKS[key])continue;
+  const c=document.createElement('canvas');c.width=192;c.height=192;
+  c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,row*ch,cw,ch,0,0,192,192);
+  const im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:4,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=c.toDataURL('image/png');
+ }});worldPortraitsReady=true;
+};
+worldPortraitAtlas.src='assets/world/portraits.png';
+PATCH_NOTES.unshift(['세계정복 선수 얼굴 교체','21개 지역 선수 147명의 얼굴을 반실사 캐리커처로 교체했습니다.']);
 PATCH_NOTES.unshift(['세계정복 국가별 유니폼','21개 지역 선수의 경기복 색상·무늬를 구분했습니다. 일부 지역은 공식 복제본이 아닌 게임 전용 디자인입니다.']);
 // Remember actual match entry, not map browsing, and restore through the map's own click handlers.
 {for(const c of Object.values(EURO_CUPS)){c.speed*=1.05;c.spin*=1.04;}const map=euroMap;euroMap=function(id){map(id);if(!worldEntryAllowed(id,false)){const b=$('euro-depart');if(b)b.textContent=`다른 나라 ${worldEntryRequirement(id)}개국 제패 후 도전 가능`;}};}
