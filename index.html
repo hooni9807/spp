@@ -297,7 +297,7 @@ COURSE_GAIN=1.4;   // course = sideways / vertical travel of the stroke; x1.4 ->
 // The PERFECT stretch (.52 m at a normal 3 m/s ball) shrinks with the ball's speed, down to 45% - fast balls are harder to time.
 // table + ball of this game (set by the page): speed scales flight time, spin the spin felt, len the PERFECT window
 const EQUIP={speed:1,spin:1,len:1};
-function perfectSpan(b){const percivalRisk=charType==='percival'?.45:1;return .52*EQUIP.len*clamp(FAST_REF/Math.max(Math.abs(b.vy||0),.1),.45,1)*(1-.3*(b.deep||0))*(b.easy?1.6:1)*percivalRisk;}
+function perfectSpan(b){const percivalRisk=charType==='percival'?.45:1;return .52*EQUIP.len*clamp(FAST_REF/Math.max(Math.abs(b.vy||0),.1),.45,1)*(1-.3*(b.deep||0))*(b.easy?1.6:1)*percivalRisk*(1-(b.swayCut||0));}
 // In a drive-vs-drive rally the ball carries further (b.deep, 0..1): the whole window moves up to DEEP_M back from the table.
 // A ball that would bounce a second time on my half before reaching the hit window (short ball, backspin serve) is taken
 // over the table: from the top of its first bounce until just before the second one. A second bounce = server's point.
@@ -1793,6 +1793,13 @@ const aiShotHooks={pre:[],post:[]},onAiShot=(when,order,fn)=>{aiShotHooks[when].
 {const core=P.aiReturn;P.aiReturn=function(kind,x,y,z,speed,aim,spin=1,...rest){const a={kind,x,y,z,speed,aim,spin};for(const h of aiShotHooks.pre)h.fn(a);let shot=core.call(this,a.kind,a.x,a.y,a.z,a.speed,a.aim,a.spin,...rest);for(const h of aiShotHooks.post)shot=h.fn(a,shot)??shot;return shot;};}
 onAiShot('pre',70,a=>{if(ball&&P.incoming(ball)==='drive'&&a.kind==='drive'&&deep>0)a.speed*=counterSpeedBoost()/(1+.35*deep);if(bossDoor()&&ball){const incoming=P.incoming(ball),back=(ball.x<0?1:-1)*(aiLefty?-1:1)<0;a.kind=ball.chance||ball.hi?'smash':back&&incoming==='drive'?'cut':back&&incoming==='cut'?'drive':a.kind;}});   /* 612 롱은 백핸드 면만: 드라이브→커트, 커트→회전 */
 onAiShot('post',10,(a,shot)=>bossDoor()&&a.kind==='smash'?P.power(shot,shot.y,shot.z,1.3):shot);
+// AI 좌우 흔들기(AI 대전만 · 랭크전 · 대회 · 세계제패 · 증강 탁구 제외): 난이도가 높을수록 직전과 반대 코너로 자주 보내고,
+// 반대쪽으로 크게 온 공은 내 PERFECT 판정 폭이 줄어든다(나이트메어 -10%). 같은 쪽으로 오면 감소 없음.
+const AI_SWAY={easy:[0,.02],hard:[.1,.04],extreme:[.15,.05],ultra:[.25,.07],uhard:[.3,.08],uext:[.35,.09],unight:[.4,.1]};
+let aiSwayLast=0;
+const aiSwayOn=()=>mode==='match'&&!net&&!rankOn&&!stageOn()&&tournament?.state!=='playing'&&!(typeof chinaActive==='function'&&chinaActive())&&!(typeof euroActive==='function'&&euroActive())&&!villainRun?.live;
+onAiShot('pre',85,a=>{if(!aiSwayOn()||!Number.isFinite(a.aim))return;const [p]=AI_SWAY[aiTier]||[0,0];if(aiSwayLast&&Math.random()<p)a.aim=-aiSwayLast*(.36+Math.random()*.12);});
+onAiShot('post',20,(a,shot)=>{const side=Math.abs(a.aim)>.25?Math.sign(a.aim):0;if(!aiSwayOn()){aiSwayLast=side;return shot;}const cut=side&&aiSwayLast&&side!==aiSwayLast?(AI_SWAY[aiTier]||[0,0])[1]:0;if(side)aiSwayLast=side;return {...shot,swayCut:cut};});
 function deepen(counter){const was=deep;deep=counter?Math.min(1,deep+P.DEEP_STEP*(.75+deep)):Math.max(0,deep-2*P.DEEP_STEP);if(ball){ball.deep=deep;if(counter&&ball.owner==='you')Object.assign(ball,P.power(ball,ball.y,ball.z,counterSpeedBoost()));}if(!was&&deep)toast('맞드라이브! 🔥 둘 다 한 걸음 물러나요',1.4);else if(deep>was&&deep>=1&&was<1)toast('🔥 끝까지 물러난 맞드라이브 랠리!',1.2);}
 const TAUNTS=['흠.. 그정돈가?','냐옹냐옹~','풉키 풉키!'];
 // 보스전: the boss plays above 선수부 and casts one of three skills on some returns. From my 6th point on it is enraged
