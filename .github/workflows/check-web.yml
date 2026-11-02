@@ -20,6 +20,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]   # 테스트를 4묶음으로 나눠 동시에 돌린다
     env:
       CHROME_PATH: /usr/bin/google-chrome
     steps:
@@ -33,7 +37,9 @@ jobs:
       - name: Run tests
         run: |
           fail=0
+          i=0
           for t in tests/*.cjs; do
+            i=$((i+1)); [ $((i % 4)) -eq ${{ matrix.shard }} ] || continue
             timeout 120 node "$t" > /tmp/out.txt 2>&1 || { fail=$((fail+1)); echo "::error file=$t::$(tail -c 400 /tmp/out.txt | tr '\n' ' ')"; }
           done
           echo "failed: $fail"
