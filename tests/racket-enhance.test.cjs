@@ -13,14 +13,14 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
     await page.reload();
     await page.waitForFunction(()=>document.getElementById('prologue-loading').hidden);
     await page.evaluate(()=>document.getElementById('auth-gate').close());
-    await page.locator('#tournament-open').click();
+    await page.evaluate(()=>{tS().ultra=1;contentGate.sync();});await page.locator('#tournament-open').click();
     assert.equal(await page.locator('#tournament-select').evaluate(d=>d.open),true);
     await page.locator('[data-tour="sejong"]').click();
     await page.waitForFunction(()=>document.getElementById('tournament').open);
     assert.match(await page.locator('#tour-title').textContent(),/세종시대회/);
     assert.match(await page.locator('#tour-status').textContent(),/익스트림 · 상대 핸디 4점/);
     await page.locator('#tour-close').click();
-    await page.locator('#tournament-open').click();
+    await page.evaluate(()=>{tS().ultra=1;contentGate.sync();});await page.locator('#tournament-open').click();
     page.once('dialog', dialog=>dialog.accept());
     await page.locator('[data-tour="seoul"]').click();
     await page.waitForFunction(()=>document.getElementById('tournament').open);
