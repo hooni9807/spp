@@ -22,7 +22,15 @@ body.tabnav #char-pick:not(.open){display:flex;justify-content:center}
 #tabsheet[hidden]{display:none}
 #tabsheet h4{grid-column:1/-1;margin:0 0 4px;color:#e8eef6}
 #tabsheet button{padding:14px 10px;border-radius:12px;border:1px solid #ffffff1f;background:#1b2638;color:#e8eef6;font:600 14px inherit;text-align:left}
-#char-more{margin:6px auto 0;display:block}
+/* 접힌 상태의 내 선수: 가로로 긴 카드 대신 금테 원형 초상 메달 */
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"]{flex-direction:column;align-items:center;gap:6px;width:auto;min-width:0;padding:4px 18px 2px;background:none!important;border:0!important;box-shadow:none!important;font:800 18px/1.2 'Pretendard Variable',Pretendard,sans-serif;letter-spacing:-.02em;color:#eef3ff}
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"] canvas{width:104px!important;height:104px!important;border-radius:50%;background:radial-gradient(circle at 50% 35%,#18244a,#0b1226 72%);box-shadow:0 0 0 3px #0b1226,0 0 0 5px #ffc94a,0 10px 24px rgba(0,0,0,.5)!important;margin-bottom:6px}
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"] .char-difficulty{font:700 12px 'Barlow Condensed','Pretendard Variable',sans-serif!important;letter-spacing:.06em;padding:3px 10px!important;border-radius:999px!important}
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"]::after{display:none}
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"]{outline:0!important}
+html body.tabnav #char-pick:not(.open)>[aria-checked="true"]:focus-visible canvas{box-shadow:0 0 0 3px #0b1226,0 0 0 5px #14e0ff,0 10px 24px rgba(0,0,0,.5)!important}
+html body #char-more{margin:10px auto 0;display:block;width:auto!important;min-height:40px;padding:0 18px;border-radius:999px;border:1px solid rgba(150,180,255,.24);background:#111a35;color:#eef3ff;font:700 14px inherit}
+#char-more:hover{background:#18244a}
 body.tabnav #overlay .start-card{padding-bottom:80px}
 body.tabnav #mail-alert,body.tabnav #friends-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 76px)}`;
 document.head.append(css);
