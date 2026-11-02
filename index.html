@@ -2484,10 +2484,12 @@ function fitFabric(kind){
 }
 function fitTailoring(look,ux,top,th,s){
  if(look.fat)return;   /* 냄섭: 넓은 몸통은 한 가지 색 */
- const metal=['armor','vet_giant'].includes(look.pat?.k),knit=['studio_club','studio_cloud','pocket'].includes(look.pat?.k);
+ const material=look.pat?.k||'',metal=['armor','vet_giant'].includes(material),knit=['studio_club','studio_cloud','pocket'].includes(material),gloss=/leather|silk|pixel|alpine|armor/.test(material);
  ctx.save();fitBodyPath(look,ux,top,th,s);ctx.clip();ctx.translate(ux,top);ctx.scale(s,th/64);
  if(!metal){ctx.fillStyle=ctx.createPattern(fitFabric(knit?'knit':'woven'),'repeat');ctx.fillRect(-20,0,40,64);}
- ctx.fillStyle=LG(-18,0,18,0,metal?['#080d1838','#ffffff24','#ffffff00','#090d1840']:['#11142b38','#ffffff0c','#ffffff00','#14112732']);ctx.fillRect(-20,0,40,64);
+ ctx.fillStyle=LG(-18,0,18,0,metal?['#080d1858','#ffffff58','#ffffff08','#090d1860']:gloss?['#11142b50','#ffffff48','#ffffff04','#14112750']:['#11142b38','#ffffff18','#ffffff00','#14112732']);ctx.fillRect(-20,0,40,64);
+ ctx.fillStyle=LG(0,0,0,64,['#ffffff20','#ffffff00','#00000000','#080b1828']);ctx.fillRect(-20,0,40,64);
+ if(gloss){ctx.strokeStyle='#ffffff50';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-10,9);ctx.bezierCurveTo(-15,22,-6,34,-11,43);ctx.stroke();}
  // Shoulder light and underarm folds communicate volume without obscuring the print.
  ctx.strokeStyle=metal?'#ffffff80':'#ffffff42';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(-15,9);ctx.quadraticCurveTo(-13,3,-9,2);ctx.moveTo(9,2);ctx.quadraticCurveTo(13,3,15,9);ctx.stroke();
  if(!metal)for(const k of [-1,1]){
@@ -2504,7 +2506,8 @@ function fitSleeve(a,b,color,s,width=9){
  const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);if(len<.01)return;
  ctx.save();ctx.translate(a.x,a.y);ctx.rotate(Math.atan2(dy,dx)-Math.PI/2);const r=width*s*.5;
  ctx.beginPath();ctx.moveTo(-r,0);ctx.quadraticCurveTo(-r*1.08,len*.35,-r*.8,len);ctx.lineTo(r*.8,len);ctx.quadraticCurveTo(r*1.08,len*.35,r,0);ctx.closePath();
- ctx.fillStyle=LG(-r,0,r,0,[tint(color,-.22),tint(color,.12),color,tint(color,-.25)]);ctx.fill();ctx.lineWidth=.5*s;ctx.strokeStyle='#11142545';ctx.stroke();
+ ctx.fillStyle=LG(-r,0,r,0,[tint(color,-.32),tint(color,.2),color,tint(color,-.32)]);ctx.fill();ctx.lineWidth=.65*s;ctx.strokeStyle='#11142555';ctx.stroke();
+ ctx.save();ctx.clip();ctx.strokeStyle='#00000025';ctx.lineWidth=.8*s;ctx.beginPath();ctx.moveTo(-r,len*.68);ctx.quadraticCurveTo(0,len*.58,r*.45,len*.7);ctx.stroke();ctx.restore();
  ctx.strokeStyle='#ffffff40';ctx.lineWidth=.65*s;ctx.beginPath();ctx.moveTo(-r*.7,len-1.8*s);ctx.lineTo(r*.7,len-1.8*s);ctx.stroke();ctx.restore();
 }
 // One continuous garment across a joint: no false cuff at the elbow or knee.
@@ -2518,7 +2521,7 @@ function fitBentCloth(a,b,c,color,s,width=9,endWidth=7.8){
  ctx.save();ctx.beginPath();ctx.moveTo(A.x,A.y);
  ctx.lineTo(lerp(A.x,B.x,.8),lerp(A.y,B.y,.8));ctx.quadraticCurveTo(B.x,B.y,lerp(B.x,C.x,.2),lerp(B.y,C.y,.2));ctx.lineTo(C.x,C.y);ctx.lineTo(D.x,D.y);
  ctx.lineTo(lerp(D.x,E.x,.8),lerp(D.y,E.y,.8));ctx.quadraticCurveTo(E.x,E.y,lerp(E.x,F.x,.2),lerp(E.y,F.y,.2));ctx.lineTo(F.x,F.y);ctx.closePath();
- ctx.fillStyle=LG(b.x-mid.x*r,b.y-mid.y*r,b.x+mid.x*r,b.y+mid.y*r,[tint(color,-.24),color,tint(color,.13),tint(color,-.2)]);ctx.fill();ctx.strokeStyle='#11142535';ctx.lineWidth=.6*s;ctx.lineJoin='round';ctx.stroke();ctx.clip();
+ ctx.fillStyle=LG(b.x-mid.x*r,b.y-mid.y*r,b.x+mid.x*r,b.y+mid.y*r,[tint(color,-.34),color,tint(color,.2),tint(color,-.3)]);ctx.fill();ctx.strokeStyle='#11142545';ctx.lineWidth=.7*s;ctx.lineJoin='round';ctx.stroke();ctx.clip();
  const bend=Math.abs(n0.x*n1.y-n0.y*n1.x);
  ctx.strokeStyle='#13102535';ctx.lineWidth=(.45+bend*.6)*s;
  for(const offset of [-1.8,1.8]){ctx.beginPath();ctx.moveTo(b.x-mid.x*r*.65+n1.x*offset*s,b.y-mid.y*r*.65+n1.y*offset*s);ctx.quadraticCurveTo(b.x,b.y+offset*s,b.x+mid.x*r*.5,b.y+mid.y*r*.5+offset*s);ctx.stroke();}
@@ -2670,7 +2673,7 @@ function fitSkirt(look,cx,hy,leg,s,ground=hy+leg,limbs=[],waistX=cx){
  // Spread each contact over adjacent folds instead of making a sharp knee-shaped notch.
  for(let i=left.length-2;i>=0;i--){left[i].x=Math.min(left[i].x,left[i+1].x+3*s);right[i].x=Math.max(right[i].x,right[i+1].x-3*s);}
  ctx.save();ctx.globalAlpha=1;ctx.beginPath();ctx.moveTo(left[0].x,y0);for(const p of right)ctx.lineTo(p.x,p.y);for(const p of left.slice().reverse())ctx.lineTo(p.x,p.y);ctx.closePath();
- ctx.lineJoin='round';ctx.fillStyle=LG(cx-w1,0,cx+w1,0,[tint(c,-.22),c,tint(c,.12),c,tint(c,-.22)]);ctx.fill();ctx.lineWidth=.8*s;ctx.strokeStyle=FOL;ctx.stroke();ctx.clip();
+ ctx.lineJoin='round';ctx.fillStyle=LG(cx-w1,0,cx+w1,0,[tint(c,-.35),c,tint(c,.22),c,tint(c,-.35)]);ctx.fill();ctx.lineWidth=.8*s;ctx.strokeStyle=FOL;ctx.stroke();ctx.clip();
  const lo=Math.min(...left.map(p=>p.x)),hi=Math.max(...right.map(p=>p.x));
  if(look.skirt==='plaid'){ctx.fillStyle='#1b1b2f66';for(let x=lo;x<hi;x+=7*s)ctx.fillRect(x,y0,2.4*s,y1-y0);for(let y=y0;y<y1;y+=7*s)ctx.fillRect(lo,y,hi-lo,2.4*s);}
  ctx.fillStyle=ctx.createPattern(fitFabric('woven'),'repeat');ctx.fillRect(lo,y0,hi-lo,y1-y0);
