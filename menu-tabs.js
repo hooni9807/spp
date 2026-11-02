@@ -1,6 +1,6 @@
-// 하단 탭 메뉴 시안: ?nav=tabs 로 열 때만 켜진다. 기존 버튼은 그대로 두고 탭 시트에서 대신 눌러 준다(기능 중복 없음).
+// 하단 탭 메뉴(기본). ?nav=old 로 열면 예전 화면. 기존 버튼은 그대로 두고 탭 시트에서 대신 눌러 준다(기능 중복 없음).
 (()=>{
-if(!/[?&]nav=tabs/.test(location.search))return;
+if(/[?&]nav=old/.test(location.search))return;
 const $=id=>document.getElementById(id);
 const TABS=[
  ['home','⌂','홈'],
