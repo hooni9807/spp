@@ -47,7 +47,7 @@ function showWorldScene(id,athlete=0){
 const worldSceneFire=fireUlt;fireUlt=function(u,x,y,ai=false,...args){const id=ai&&(chinaActive()?'china':euroActive()?euroRun.country:null),i=id==='china'?chinaRun.order[chinaRun.round]:id?euroRun.order[euroRun.round]:0;const result=worldSceneFire(u,x,y,ai,...args);if(id){showWorldScene(id,i);if(foe.ultMove){foe.ultMove.worldScene=id;foe.ultMove.worldAthlete=i;}}return result;};
 const worldSceneBody=ultBodyOffset;ultBodyOffset=function(st,side,s){const m=st.ultMove,c=WORLD_SCENES[m?.worldScene];if(!c||matchMedia('(prefers-reduced-motion: reduce)').matches||m.owner&&ball?.owner!==m.owner)return worldSceneBody(st,side,s);const t=(performance.now()/1000-m.t-ultFinalStart(m.u))/ULT_ACTION_SEC;if(t<0||t>1)return{x:0,y:0};const a=Math.sin(Math.PI*t),v=1+(m.worldAthlete||0)*.04;const moves={rise:[-16*a,-58*a],dash:[-66*Math.sin(Math.PI*Math.min(1,t*2)), -10*a],spin:[28*Math.sin(t*Math.PI*2)*a,-18*a],sweep:[38*Math.sin(t*Math.PI*2)*a,-12*a],drive:[-30*a,-8*a]};const [x,y]=moves[c.move];return{x:side*x*s*v,y:y*s*v};};
 const worldSceneHome=goHome;goHome=function(...args){clearWorldScene();return worldSceneHome.apply(this,args);};
-const worldSceneResult=showResult;showResult=function(...args){clearWorldScene();return worldSceneResult.apply(this,args);};
+onResult('pre',10,()=>clearWorldScene());
 addEventListener('pagehide',clearWorldScene);
 const worldSceneStyle=document.createElement('style');worldSceneStyle.textContent=`
 .world-skill-scene{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden;color:var(--scene-color)}

@@ -22,13 +22,12 @@
 10. `prologue.js`
 11. `ceremony-media.js`
 
-## 두 번 이상 덧씌워지는 함수 (19개)
+## 두 번 이상 덧씌워지는 함수 (18개)
 
 | 함수 | 덧씌움 수 |
 |---|---|
 | `goHome` | 7 |
 | `P.aiReturn` | 7 |
-| `showResult` | 7 |
 | `renderMine` | 6 |
 | `hit` | 5 |
 | `point` | 4 |
@@ -68,25 +67,11 @@
 |---|---|---|---|
 | 1 | `index.html:1787` | — | `kind,x,y,z,speed,...rest)=>{if(ball&&P.incoming(ball)==='drive'&&kind==='drive'&&deep>0)speed*=counterSpeedBoo…` |
 | 2 | `index.html:3666` | — | `kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(survival()){const k=1+survivalStage()*.1;speed*=k;spinK*=k;}return…` |
-| 3 | `index.html:3765` | — | `kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(stageOn()){const k=1+stageBoost(stageRun.stage);speed*=k;spinK*=k;…` |
+| 3 | `index.html:3769` | — | `kind,x,y,z,speed,aimX,spinK=1,...rest)=>{if(stageOn()){const k=1+stageBoost(stageRun.stage);speed*=k;spinK*=k;…` |
 | 4 | `china-cup.js:39` | — | `(kind,x,y,z,speed,aim,spin=1,...rest){if(chinaActive()){const p=CHINA_PLAYERS[chinaRun.order[chinaRun.round]],…` |
 | 5 | `europe-cups.js:40` | — | `(kind,x,y,z,speed,aim,spin=1,...args){if(euroActive()){const c=EURO_CUPS[euroRun.country],i=euroRun.order[euro…` |
 | 6 | `world-expansion.js:38` | — | `(kind,x,y,z,speed,aim,spin=1,...args){if(euroActive()&&WORLD_EXPANSION[euroRun.country]){const i=euroRun.order…` |
 | 7 | `world-expansion.js:45` | — | `(kind,x,y,z,speed,aim,spin=1,...args){const id=euroActive()?euroRun.country:chinaActive()?'china':null,tune=WO…` |
-
-### `showResult`
-
-위에서 아래로 = 안쪽(먼저 감쌈) → 바깥쪽(나중에 감쌈, 호출 시 가장 먼저 실행)
-
-| # | 위치 | 주석 | 코드 시작 부분 |
-|---|---|---|---|
-| 1 | `index.html:3698` | — | `(won){baseShowResult(won);if(tourEvent().id==='pyeongtaek'&&tournament?.state==='lost')$('result').querySelect…` |
-| 2 | `index.html:3707` | — | `(won){const v=villainRun;if(v?.live&&mode==='match'&&VILLAINS.includes(aiChar)){v.g++;won?v.my++:v.ai++;if(v.m…` |
-| 3 | `index.html:3780` | — | `(won){const r=stageRun,on=stageOn();if(on){if(won){r.cleared++;augProgress('clear');if(stageAt(r.stage).end)r.…` |
-| 4 | `china-cup.js:43` | — | `(won){const active=chinaActive(),r=chinaRun;if(active&&r.last!==matchId){r.last=matchId;if(won&&!r.used.includ…` |
-| 5 | `world-conquest.js:85` | — | `(won){const was=chinaActive(),r=result(won);if(was){persist();if(chinaRun?.my===4)open();}return r;};…` |
-| 6 | `europe-cups.js:37` | — | `(won){const on=euroActive(),r=euroRun;if(on&&r.last!==matchId){r.last=matchId;if(won&&!r.used.includes(r.chara…` |
-| 7 | `world-effects.js:50` | — | `(...args){clearWorldScene();return worldSceneResult.apply(this,args);};…` |
 
 ### `renderMine`
 
@@ -110,7 +95,7 @@
 | 1 | `index.html:1682` | — | `(...args){const actor=myTurn,charged=mode==='doubles'&&!net&&doublesLink===100,before=lastHit,relay=doublesRel…` |
 | 2 | `index.html:1683` | — | `(...args){const before=lastHit,serve=!!ball?.serving,actor=myTurn;harmonyPlayerHit(...args);if(mode==='doubles…` |
 | 3 | `index.html:1685` | — | `(...args){const partnerTurn=mode==='doubles'&&!net&&doublesCourtActor()==='mate';if(!partnerTurn)return player…` |
-| 4 | `index.html:4243` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
+| 4 | `index.html:4248` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
 | 5 | `partner-training.js:10` | — | `(...args){if(mode==='doubles'&&!net&&doublesCourtActor()==='mate')return;return manualPartnerHit(...args);};…` |
 
 ### `point`
@@ -130,7 +115,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `china-cup.js:52` | — | `(u,x,y,ai=false,...rest){const result=chinaFire(u,x,y,ai,...rest);if(ai&&chinaActive()){const p=CHINA_PLAYERS[…` |
+| 1 | `china-cup.js:53` | — | `(u,x,y,ai=false,...rest){const result=chinaFire(u,x,y,ai,...rest);if(ai&&chinaActive()){const p=CHINA_PLAYERS[…` |
 | 2 | `europe-cups.js:42` | — | `(u,x,y,ai=false,...args){const on=ai&&euroActive(),c=on&&EURO_CUPS[euroRun.country],i=on&&euroRun.order[euroRu…` |
 | 3 | `europe-design.js:52` | — | `(u,x,y,ai=false,...args){const on=ai&&euroActive(),id=on&&euroRun.country,i=on&&euroRun.order[euroRun.round],r…` |
 | 4 | `world-effects.js:47` | — | `(u,x,y,ai=false,...args){const id=ai&&(chinaActive()?'china':euroActive()?euroRun.country:null),i=id==='china'…` |
@@ -162,8 +147,8 @@
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
 | 1 | `index.html:3672` | — | `(k){$('boss-filter').hidden=k!=='boss';return k==='survival'?showSurvivalBoard():baseShowBoard(k);};…` |
-| 2 | `index.html:3786` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
-| 3 | `index.html:3791` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
+| 2 | `index.html:3791` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
+| 3 | `index.html:3796` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
 
 ### `drawNationalKit`
 
@@ -208,7 +193,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3865` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
+| 1 | `index.html:3870` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
 | 2 | `partner-training.js:45` | — | `(...args){trainingPartnerSelect(...args);const d=document.getElementById('doubles-partner');if(!d)return;d.que…` |
 
 ### `showAttendance`
@@ -217,8 +202,8 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:4316` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
-| 2 | `index.html:4317` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
+| 1 | `index.html:4321` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
+| 2 | `index.html:4322` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
 
 ### `perfectCeremony`
 

@@ -3,9 +3,11 @@ const china=fs.readFileSync('china-cup.js','utf8'),europe=fs.readFileSync('europ
 const context={showResult(){},chinaActive:()=>true,euroActive:()=>true,matchId:'one',aiChar:'china_test',EURO_CUPS:{japan:{name:'Japan'}},euroSave(){},saveProg(){},tS:()=>({}),$:()=>({querySelector:()=>({})})};
 vm.createContext(context);
 vm.runInContext(china.split('\n').find(l=>l.startsWith('function restoreWorldUsage')),context);
-for(const [source,key,prefix] of [[china,'chinaRun','const chinaResult='],[europe,'euroRun','const euroResult=']]){
- context.showResult=()=>{};
- vm.runInContext(source.split('\n').find(l=>l.startsWith(prefix)),context);
+for(const [source,key] of [[china,'chinaRun'],[europe,'euroRun']]){
+ // 결과 처리는 onResult 훅으로 등록된다: 등록된 pre/post 훅을 차례로 부르는 showResult를 흉내 낸다.
+ const hooks={pre:[],post:[]};context.onResult=(when,order,fn)=>hooks[when].push(fn);
+ context.showResult=won=>{const c={won};hooks.pre.forEach(f=>f(c));hooks.post.forEach(f=>f(c));};
+ for(const l of source.split('\n').filter(l=>l.startsWith('onResult(')))vm.runInContext(l,context);
  context[key]={used:[],character:'jersey',my:0,ai:0,round:0,live:true,country:'japan'};
  context.matchId='loss';context.showResult(false);
  assert.equal(context[key].used.length,0,'Loss must leave character available');
