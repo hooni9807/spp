@@ -23,7 +23,8 @@ body.tabnav #char-pick:not(.open){display:flex;justify-content:center}
 #tabsheet h4{grid-column:1/-1;margin:0 0 4px;color:#e8eef6}
 #tabsheet button{padding:14px 10px;border-radius:12px;border:1px solid #ffffff1f;background:#1b2638;color:#e8eef6;font:600 14px inherit;text-align:left}
 #char-more{margin:6px auto 0;display:block}
-body.tabnav #overlay .start-card{padding-bottom:80px}`;
+body.tabnav #overlay .start-card{padding-bottom:80px}
+body.tabnav #mail-alert,body.tabnav #friends-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}`;
 document.head.append(css);
 const nav=document.createElement('nav');nav.id='tabnav';nav.setAttribute('role','tablist');
 const sheet=document.createElement('div');sheet.id='tabsheet';sheet.hidden=true;

@@ -7,7 +7,7 @@ const http=require('http'),fs=require('fs'),path=require('path'),assert=require(
   try{
     const page=await browser.newPage({viewport:{width:1100,height:900}}),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(`http://127.0.0.1:${server.address().port}`);
+    await page.goto(`http://127.0.0.1:${server.address().port}/?nav=old`);
     await page.waitForFunction(()=>document.getElementById('prologue-loading').hidden);
     await page.evaluate(()=>{document.getElementById('auth-gate').close();localStorage.setItem('spinlab.progress',JSON.stringify({xp:0,unlocked:['jersey','pastor','aribeom'],coins:10000,racketEnhance:0}));});
     await page.reload();
