@@ -1793,13 +1793,27 @@ const aiShotHooks={pre:[],post:[]},onAiShot=(when,order,fn)=>{aiShotHooks[when].
 {const core=P.aiReturn;P.aiReturn=function(kind,x,y,z,speed,aim,spin=1,...rest){const a={kind,x,y,z,speed,aim,spin};for(const h of aiShotHooks.pre)h.fn(a);let shot=core.call(this,a.kind,a.x,a.y,a.z,a.speed,a.aim,a.spin,...rest);for(const h of aiShotHooks.post)shot=h.fn(a,shot)??shot;return shot;};}
 onAiShot('pre',70,a=>{if(ball&&P.incoming(ball)==='drive'&&a.kind==='drive'&&deep>0)a.speed*=counterSpeedBoost()/(1+.35*deep);if(bossDoor()&&ball){const incoming=P.incoming(ball),back=(ball.x<0?1:-1)*(aiLefty?-1:1)<0;a.kind=ball.chance||ball.hi?'smash':back&&incoming==='drive'?'cut':back&&incoming==='cut'?'drive':a.kind;}});   /* 612 롱은 백핸드 면만: 드라이브→커트, 커트→회전 */
 onAiShot('post',10,(a,shot)=>bossDoor()&&a.kind==='smash'?P.power(shot,shot.y,shot.z,1.3):shot);
-// AI 좌우 흔들기(AI 대전만 · 랭크전 · 대회 · 세계제패 · 증강 탁구 제외): 난이도가 높을수록 직전과 반대 코너로 자주 보내고,
-// 반대쪽으로 크게 온 공은 내 PERFECT 판정 폭이 줄어든다(나이트메어 -10%). 같은 쪽으로 오면 감소 없음.
+// AI 좌우 흔들기(AI 대전만 · 랭크전 · 대회 · 세계제패 · 증강 탁구 · 이벤트 매치 제외)
+// 1) 흔들 확률 = 난이도 기본값 × 내가 보낸 공의 영향(내 공이 어려울수록 AI가 코스를 노리기 어렵다)
+//    공 종류: 스매싱 ×0.35 · 드라이브 ×0.8 · 커트 ×0.9 · 블록/쇼트 ×1.15 · 찬스볼(뜬공) ×1.6
+//    속도: 빠를수록 낮음(×0.6~1.2) · 회전: 강할수록 낮음(×0.7~1.1) · 코스: 내가 코너로 찌르면 ×0.75, 가운데면 ×1.25
+//    AI 리턴 종류: 블록·커트로 받으면 코스 조절이 쉬워 ×1.1, 스매싱은 ×0.7. 최대 75%.
+// 2) 흔들기 패턴: 연속 흔들기를 이어 가려는 경향(이미 2번 흔들었으면 ×1.2), 3번 뒤에는 한 번 숨 고르기(×0.5).
+// 3) 판정 폭 감소: 반대쪽으로 크게 온 공마다 1중첩, 같은 쪽 · 가운데 공이 오면 초기화. 최대 3중첩(나이트메어 -10%씩 최대 -30%).
 const AI_SWAY={easy:[0,.02],hard:[.1,.04],extreme:[.15,.05],ultra:[.25,.07],uhard:[.3,.08],uext:[.35,.09],unight:[.4,.1]};
-let aiSwayLast=0;
+let aiSwayLast=0,aiSwayStack=0;
 const aiSwayOn=()=>mode==='match'&&!net&&!rankOn&&!stageOn()&&tournament?.state!=='playing'&&!(typeof chinaActive==='function'&&chinaActive())&&!(typeof euroActive==='function'&&euroActive())&&!villainRun?.live;
-onAiShot('pre',85,a=>{if(!aiSwayOn()||!Number.isFinite(a.aim))return;const [p]=AI_SWAY[aiTier]||[0,0];if(aiSwayLast&&Math.random()<p)a.aim=-aiSwayLast*(.36+Math.random()*.12);});
-onAiShot('post',20,(a,shot)=>{const side=Math.abs(a.aim)>.25?Math.sign(a.aim):0;if(!aiSwayOn()){aiSwayLast=side;return shot;}const cut=side&&aiSwayLast&&side!==aiSwayLast?(AI_SWAY[aiTier]||[0,0])[1]:0;if(side)aiSwayLast=side;return {...shot,swayCut:cut};});
+function aiSwayChance(a,b){const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v)),base=(AI_SWAY[aiTier]||[0,0])[0];if(!base||!b)return 0;
+ const t=b.type||'',kindK=b.chance||b.hi?1.6:t==='smash'?.35:t==='drive'?.8:t==='cut'?.9:t==='block'||t==='short'?1.15:1;
+ const speedK=clamp(1.2-.18*(Math.abs(b.vy||0)-2),.6,1.2),spinK=clamp(1.1-.25*Math.abs(b.spin||0),.7,1.1);
+ const courseK=b.aiRouteLabel?(Math.abs(b.x||0)>.25?.75:1.25):1,aiK=a.kind==='block'||a.kind==='cut'?1.1:a.kind==='smash'?.7:1;
+ const flowK=aiSwayStack>=3?.5:aiSwayStack>=2?1.2:1;
+ return Math.min(.75,base*kindK*speedK*spinK*courseK*aiK*flowK);}
+onAiShot('pre',85,a=>{if(!aiSwayOn()||!Number.isFinite(a.aim)||!aiSwayLast)return;if(Math.random()<aiSwayChance(a,ball))a.aim=-aiSwayLast*(.36+Math.random()*.12);});
+onAiShot('post',20,(a,shot)=>{const side=Math.abs(a.aim)>.25?Math.sign(a.aim):0;
+ if(!aiSwayOn()){aiSwayLast=side;aiSwayStack=0;return {...shot,swayCut:0};}
+ aiSwayStack=side&&aiSwayLast&&side!==aiSwayLast?Math.min(3,aiSwayStack+1):0;if(side)aiSwayLast=side;
+ return {...shot,swayCut:aiSwayStack*(AI_SWAY[aiTier]||[0,0])[1]};});
 function deepen(counter){const was=deep;deep=counter?Math.min(1,deep+P.DEEP_STEP*(.75+deep)):Math.max(0,deep-2*P.DEEP_STEP);if(ball){ball.deep=deep;if(counter&&ball.owner==='you')Object.assign(ball,P.power(ball,ball.y,ball.z,counterSpeedBoost()));}if(!was&&deep)toast('맞드라이브! 🔥 둘 다 한 걸음 물러나요',1.4);else if(deep>was&&deep>=1&&was<1)toast('🔥 끝까지 물러난 맞드라이브 랠리!',1.2);}
 const TAUNTS=['흠.. 그정돈가?','냐옹냐옹~','풉키 풉키!'];
 // 보스전: the boss plays above 선수부 and casts one of three skills on some returns. From my 6th point on it is enraged
