@@ -169,7 +169,9 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['code', 'name', 'rating', 'at'])
         && request.resource.data.code is string && request.resource.data.code.matches('^[A-Z0-9]{4}$')
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.rating is int
+        && request.resource.data.rating is int && request.resource.data.rating >= 0 && request.resource.data.rating <= 10000
+        && (!('kind' in request.resource.data) || request.resource.data.kind is string && request.resource.data.kind.size() <= 12)
+        && (!('n' in request.resource.data) || request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 8)
         && request.resource.data.at == request.time;
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
@@ -262,7 +264,7 @@ service cloud.firestore {
         && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
         && request.resource.data.keys().hasOnly(['stats', 'at'])
         && request.resource.data.keys().hasAll(['stats', 'at'])
-        && request.resource.data.stats is map
+        && request.resource.data.stats is map && request.resource.data.stats.size() <= 80   // 캐릭터 수 + _match. 큰 쓰레기 맵으로 공개 문서를 부풀리지 못하게
         && request.resource.data.at == request.time;
     }
     match /tournament_progress/{uid} {
