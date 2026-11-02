@@ -22,13 +22,12 @@
 10. `prologue.js`
 11. `ceremony-media.js`
 
-## 두 번 이상 덧씌워지는 함수 (16개)
+## 두 번 이상 덧씌워지는 함수 (15개)
 
 | 함수 | 덧씌움 수 |
 |---|---|
 | `renderMine` | 6 |
 | `hit` | 5 |
-| `point` | 4 |
 | `fireUlt` | 4 |
 | `serve` | 3 |
 | `rankRecord` | 3 |
@@ -49,12 +48,12 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3458` | — | `)=>{renderMineAll();const d=$('mine');if(!d)return;const crew=d._mineCrew??=[...unlockedCharacters()].sort(()=…` |
-| 2 | `index.html:3466` | — | `)=>{renderMineLesson();const d=$('mine');if(!d)return;const crew=d._mineCrew¦¦[],student=d._lessonStudent??=(M…` |
-| 3 | `index.html:3470` | — | `)=>{renderLessonText();const d=$('mine');if(d)d.querySelector('.mine-upgrade-rate').textContent='성공 확률 ${Math.…` |
-| 4 | `index.html:3471` | — | `)=>{renderTwoTableLesson();const d=$('mine');if(!d)return;const cv=d.querySelector('canvas[data-lesson]'),coac…` |
-| 5 | `index.html:3473` | — | `)=>{renderMineHalfRate();const note=$('mine')?.querySelector('.mine-note');if(note)note.textContent=note.textC…` |
-| 6 | `index.html:3474` | — | `)=>{renderMineWallet();const d=$('mine');if(!d)return;let wallet=d.querySelector('#mine-wallet');if(!wallet){w…` |
+| 1 | `index.html:3461` | — | `)=>{renderMineAll();const d=$('mine');if(!d)return;const crew=d._mineCrew??=[...unlockedCharacters()].sort(()=…` |
+| 2 | `index.html:3469` | — | `)=>{renderMineLesson();const d=$('mine');if(!d)return;const crew=d._mineCrew¦¦[],student=d._lessonStudent??=(M…` |
+| 3 | `index.html:3473` | — | `)=>{renderLessonText();const d=$('mine');if(d)d.querySelector('.mine-upgrade-rate').textContent='성공 확률 ${Math.…` |
+| 4 | `index.html:3474` | — | `)=>{renderTwoTableLesson();const d=$('mine');if(!d)return;const cv=d.querySelector('canvas[data-lesson]'),coac…` |
+| 5 | `index.html:3476` | — | `)=>{renderMineHalfRate();const note=$('mine')?.querySelector('.mine-note');if(note)note.textContent=note.textC…` |
+| 6 | `index.html:3477` | — | `)=>{renderMineWallet();const d=$('mine');if(!d)return;let wallet=d.querySelector('#mine-wallet');if(!wallet){w…` |
 
 ### `hit`
 
@@ -65,19 +64,8 @@
 | 1 | `index.html:1685` | — | `(...args){const actor=myTurn,charged=mode==='doubles'&&!net&&doublesLink===100,before=lastHit,relay=doublesRel…` |
 | 2 | `index.html:1686` | — | `(...args){const before=lastHit,serve=!!ball?.serving,actor=myTurn;harmonyPlayerHit(...args);if(mode==='doubles…` |
 | 3 | `index.html:1688` | — | `(...args){const partnerTurn=mode==='doubles'&&!net&&doublesCourtActor()==='mate';if(!partnerTurn)return player…` |
-| 4 | `index.html:4256` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
+| 4 | `index.html:4259` | — | `(...args){const before=ball,owner=ball?.owner,held=ball?.held;const result=hitWithFeedback(...args);if(ball&&b…` |
 | 5 | `partner-training.js:10` | — | `(...args){if(mode==='doubles'&&!net&&doublesCourtActor()==='mate')return;return manualPartnerHit(...args);};…` |
-
-### `point`
-
-위에서 아래로 = 안쪽(먼저 감쌈) → 바깥쪽(나중에 감쌈, 호출 시 가장 먼저 실행)
-
-| # | 위치 | 주석 | 코드 시작 부분 |
-|---|---|---|---|
-| 1 | `index.html:1859` | — | `(...args){ajaeSecretPoint(...args);if(!net&&!playing&&you>cpu&&charType==='ajae'&&ajaeUsed.me>=3)unlockAjaeSec…` |
-| 2 | `index.html:1860` | — | `(...args){const wasDoubles=mode==='doubles'&&!net;doublesHarmonyPoint(...args);if(wasDoubles){doublesLink=0;do…` |
-| 3 | `index.html:1861` | — | `(player,reason){if(!net&&bossDoor()&&ball?.type==='serve'&&ball.owner==='you'&&Math.random()<.1){foe.taunt='손바…` |
-| 4 | `index.html:3673` | — | `(player,reason){if(survival()&&ball){if(player){ball=null;wait=1.25;rally=0;swingMemory=null;updateScore();toa…` |
 
 ### `fireUlt`
 
@@ -106,7 +94,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3675` | — | `(quit){const rec=baseRankRecord(quit);if(mode==='survival'&&!net){rec.rmode='survival';rec.wins=0;rec.level='생…` |
+| 1 | `index.html:3678` | — | `(quit){const rec=baseRankRecord(quit);if(mode==='survival'&&!net){rec.rmode='survival';rec.wins=0;rec.level='생…` |
 | 2 | `china-cup.js:42` | — | `(...args){const record=chinaRecord(...args);if(chinaRun&&aiChar.startsWith('china_'))record.event=true;return …` |
 | 3 | `europe-cups.js:36` | — | `(...args){const r=euroRecord(...args);if(euroRun)r.event=true;return r;};…` |
 
@@ -116,9 +104,9 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3680` | — | `(k){$('boss-filter').hidden=k!=='boss';return k==='survival'?showSurvivalBoard():baseShowBoard(k);};…` |
-| 2 | `index.html:3799` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
-| 3 | `index.html:3804` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
+| 1 | `index.html:3683` | — | `(k){$('boss-filter').hidden=k!=='boss';return k==='survival'?showSurvivalBoard():baseShowBoard(k);};…` |
+| 2 | `index.html:3802` | — | `(k){if(k==='stage'){$('boss-filter').hidden=true;const best=tS().stageBest¦¦0;try{const L=JSON.parse(store.get…` |
+| 3 | `index.html:3807` | Retired modes cannot be opened through stale links or an older saved UI state. const enabl | `(k){return k==='inf'¦¦k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};…` |
 
 ### `drawNationalKit`
 
@@ -146,7 +134,7 @@
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
 | 1 | `index.html:1503` | — | `(){renderTournamentBase();if(tournament?.state==='champion'){const reward=TOUR_REWARDS.find(item=>item.id===to…` |
-| 2 | `index.html:3702` | — | `(){baseRenderTournament();if(tourEvent().id!=='pyeongtaek')return;const p=tourPlayer(),event=tourEvent(),entry…` |
+| 2 | `index.html:3705` | — | `(){baseRenderTournament();if(tourEvent().id!=='pyeongtaek')return;const p=tourPlayer(),event=tourEvent(),entry…` |
 
 ### `stepBody`
 
@@ -163,7 +151,7 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:3878` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
+| 1 | `index.html:3881` | — | `(){baseDoublesPick();const d=$('doubles-partner'),owned=[...new Set(UNLOCKABLE().concat(START_CHARS).filter(k=…` |
 | 2 | `partner-training.js:45` | — | `(...args){trainingPartnerSelect(...args);const d=document.getElementById('doubles-partner');if(!d)return;d.que…` |
 
 ### `showAttendance`
@@ -172,8 +160,8 @@
 
 | # | 위치 | 주석 | 코드 시작 부분 |
 |---|---|---|---|
-| 1 | `index.html:4329` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
-| 2 | `index.html:4330` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
+| 1 | `index.html:4332` | — | `(force=false){if(!force){baseAttendanceVisual();$('attendance')?.querySelector('.attendance-art')?.remove();re…` |
+| 2 | `index.html:4333` | — | `(force=false){const q=prog.q??={},today=attendanceDate();if(!force&&q.attendanceDate===today)return;if(!q.atte…` |
 
 ### `perfectCeremony`
 
