@@ -32,7 +32,7 @@ function update(){const w=want();
   master.gain.setTargetAtTime(target,ctx.currentTime,speaking?.04:.35);}}
 setInterval(update,120);
 // 내가 득점하면 관중 박수: 짧은 박수 40여 번을 1.6초 동안 흩뿌린다(처음에 몰리고 점점 잦아듦). 배경음악 스위치와 무관, 전체 사운드만 따른다.
-function applause(){if(!soundOn())return;try{init();if(ctx.state==='suspended')ctx.resume().catch(()=>{});}catch{return;}
+function applause(){if(!soundOn()||!pref('snd-fx'))return;try{init();if(ctx.state==='suspended')ctx.resume().catch(()=>{});}catch{return;}
  const out=ctx.createGain();out.gain.value=.55;out.connect(ctx.destination);const t0=ctx.currentTime+.02;
  for(let i=0;i<44;i++){const t=t0+Math.pow(Math.random(),1.8)*1.6,s=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();
   s.buffer=noise;s.playbackRate.value=.8+Math.random()*.5;bp.type='bandpass';bp.frequency.value=900+Math.random()*1800;bp.Q.value=1.2;
@@ -42,26 +42,32 @@ if(typeof onPoint==='function')onPoint('post',90,c=>{if(c.player)applause();});
 // 모바일은 사용자 터치가 있어야 소리가 난다: 첫 터치 때 깨워 둔다.
 addEventListener('pointerdown',()=>{if(ctx&&ctx.state==='suspended')ctx.resume().catch(()=>{});},{passive:true});
 
-// 설정창 스위치: "사운드" 줄 아래에 붙인다.
+// 소리 종류별 켜기/끄기(설정창 스위치 3개): 배경음악 'bgm' · 공 소리 'snd-ball'(타구 · 바운드) · 효과음 'snd-fx'(박수 · 알림음 등).
+// 전체 "사운드"가 꺼져 있으면 셋 다 꺼진다. 공 소리는 beep 270/390/490/760/950과 sfx hit/bounce.
+const pref=k=>{try{return store.get(k)!=='off';}catch{return true;}};
+const BALL_F=new Set([270,390,490,760,950,951]);
+if(typeof window.beep==='function'){const b0=window.beep;window.beep=function(f=420,...r){if(!pref(BALL_F.has(f)?'snd-ball':'snd-fx'))return;return b0.call(this,f,...r);};}
+if(typeof window.sfx==='function'){const s0=window.sfx;window.sfx=function(n,...r){if((n==='hit'||n==='bounce')&&!pref('snd-ball'))return true;return s0.call(this,n,...r);};}
 const css=document.createElement('style');css.textContent=`
-#game-settings label.bgm-row{display:flex;align-items:center;gap:12px}
-#game-settings label.bgm-row span{flex:1}
-#game-settings label.bgm-row small{margin-left:0}
-#pref-bgm{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:46px;height:26px;margin:0;border-radius:999px;background:#33244e;position:relative;cursor:pointer;transition:background .2s cubic-bezier(.16,1,.3,1)}
-#pref-bgm::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#ece6ff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .2s cubic-bezier(.16,1,.3,1)}
-#pref-bgm:checked{background:#ff345d}
-#pref-bgm:checked::after{transform:translateX(20px)}
-#pref-bgm:focus-visible{outline:2px solid #ff345d;outline-offset:3px}
-#pref-bgm:disabled{opacity:.45;cursor:not-allowed}
-@media(prefers-reduced-motion:reduce){#pref-bgm,#pref-bgm::after{transition:none}}`;
+#game-settings label.snd-row{display:flex;align-items:center;gap:12px}
+#game-settings label.snd-row span{flex:1}
+#game-settings label.snd-row small{display:block;margin:4px 0 0;color:#9b8dbd;font-size:11px}
+#game-settings .snd-sw{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:46px;height:26px;margin:0;border-radius:999px;background:#33244e;position:relative;cursor:pointer;transition:background .2s cubic-bezier(.16,1,.3,1)}
+#game-settings .snd-sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#ece6ff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .2s cubic-bezier(.16,1,.3,1)}
+#game-settings .snd-sw:checked{background:#ff345d}
+#game-settings .snd-sw:checked::after{transform:translateX(20px)}
+#game-settings .snd-sw:focus-visible{outline:2px solid #ff345d;outline-offset:3px}
+#game-settings .snd-sw:disabled{opacity:.45;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){#game-settings .snd-sw,#game-settings .snd-sw::after{transition:none}}`;
 document.head.append(css);
+const ROWS=[['bgm','pref-bgm','배경음악','경기 중 흐르는 비트 · 점수를 부를 땐 잠시 멈춤'],['snd-ball','pref-snd-ball','공 소리','라켓에 맞는 소리 · 탁구대에 튀는 소리'],['snd-fx','pref-snd-fx','효과음','득점 박수 · 알림음 같은 특수 효과']];
 const attach=()=>{const dlg=document.getElementById('game-settings'),snd=dlg?.querySelector('#pref-sound,[data-gp="sound"]');if(!snd||!dlg){setTimeout(attach,300);return;}
  if(document.getElementById('pref-bgm'))return;
- const row=document.createElement('label');row.className='bgm-row';
- row.innerHTML='<span>배경음악 <small>경기 중 흐르는 비트 · 점수를 부를 땐 잠시 멈춤</small></span><input id="pref-bgm" type="checkbox" role="switch">';
- const rows=dlg.querySelectorAll('label');(rows[rows.length-1]||snd.closest('label')).after(row);const sw=row.querySelector('input');
- const sync=()=>{sw.checked=enabled();sw.disabled=!snd.checked;};
- sw.addEventListener('change',()=>{try{store.set('bgm',sw.checked?'on':'off');}catch{}update();});
+ let after=[...dlg.querySelectorAll('label')].pop()||snd.closest('label');const sws=[];
+ for(const [key,id,title,sub] of ROWS){const row=document.createElement('label'),txt=document.createElement('span'),sm=document.createElement('small'),sw=document.createElement('input');
+  row.className='snd-row';txt.textContent=title;sm.textContent=sub;txt.append(sm);sw.type='checkbox';sw.id=id;sw.className='snd-sw';sw.setAttribute('role','switch');row.append(txt,sw);after.after(row);after=row;
+  sw.addEventListener('change',()=>{try{store.set(key,sw.checked?'on':'off');}catch{}update();});sws.push([key,sw]);}
+ const sync=()=>{for(const [key,sw] of sws){sw.checked=pref(key);sw.disabled=!snd.checked;}};
  snd.addEventListener('change',sync);document.getElementById('settings-fab')?.addEventListener('click',()=>setTimeout(sync,0));sync();};
 attach();
 })();
