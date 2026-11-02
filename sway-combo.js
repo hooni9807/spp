@@ -15,16 +15,16 @@ const css=document.createElement('style');css.textContent=`
 document.head.append(css);
 const mk=cls=>{const e=document.createElement('div');e.className='sway-combo '+cls;e.setAttribute('aria-hidden','true');document.body.append(e);return e;};
 const meEl=mk('me'),aiEl=mk('ai');
-const shown={me:-1,ai:-1};let mine=0,prevOwner=null;
+const shown={me:-1,ai:-1};let mine=0,theirs=0,prevOwner=null;
 const set=(el,key,n)=>{if(n===shown[key])return;shown[key]=n;el.classList.toggle('on',n>0);el.classList.toggle('max',n>=4);
  if(n>0){el.textContent='COMBO';const b=document.createElement('b');b.textContent=n>=4?'MAX':'×'+n;el.append(b);el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}};
 const court=()=>document.getElementById('court');
 function frame(){requestAnimationFrame(frame);
- const live=typeof playing!=='undefined'&&playing&&!(typeof net!=='undefined'&&net)&&!(typeof paused!=='undefined'&&paused);
- if(!live){set(meEl,'me',0);set(aiEl,'ai',0);mine=0;return;}
+ const pvp=typeof net!=='undefined'&&net&&!net.dbl&&!net.trio,live=typeof playing!=='undefined'&&playing&&!(typeof net!=='undefined'&&net&&!pvp)&&!(typeof paused!=='undefined'&&paused);
+ if(!live){set(meEl,'me',0);set(aiEl,'ai',0);mine=theirs=0;return;}
  // 내 공: 공 주인이 나로 바뀌는 순간(내가 친 순간) 그 공에 붙은 흔들기 중첩을 읽는다. 공 객체는 재사용되므로 주인 변화로 판단.
- const owner=ball?ball.owner:null;if(owner==='you'&&prevOwner!=='you')mine=Math.min(4,Math.round((+ball.aiMovePenalty||0)/.0375));prevOwner=owner;
- const ai=typeof aiSwayOn==='function'&&aiSwayOn()&&typeof aiSwayStack==='number'?aiSwayStack:0;
+ const owner=ball?ball.owner:null;if(pvp&&owner==='ai'&&prevOwner!=='ai')theirs=Math.min(4,ball.pvpSway|0);if(owner==='you'&&prevOwner!=='you')mine=Math.min(4,Math.round((+ball.aiMovePenalty||0)/.0375));prevOwner=owner;
+ const ai=pvp?theirs:typeof aiSwayOn==='function'&&aiSwayOn()&&typeof aiSwayStack==='number'?aiSwayStack:0;
  set(meEl,'me',mine);set(aiEl,'ai',ai);
  const c=court();if(!c)return;const r=c.getBoundingClientRect(),k=r.width/(typeof W==='number'&&W||r.width);
  if(mine>0){meEl.style.left=r.left+r.width/2+'px';meEl.style.top=r.bottom-22+'px';}
