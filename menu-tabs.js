@@ -36,12 +36,14 @@ const select=k=>{nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-
  const items=t[3].filter(id=>id[0]==='#'||$(id));
  sheet.innerHTML=`<h4>${t[2]}</h4>`+items.map(id=>`<button type="button" data-go="${id}">${label(id)}</button>`).join('');
  sheet.hidden=false;};
-nav.onclick=e=>{const b=e.target.closest('[data-tab]');if(b)select(b.dataset.tab);};
+// 같은 탭을 한 번 더 누르면 닫고 홈으로 돌아간다.
+nav.onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;const k=b.dataset.tab;
+ if(k!=='home'&&b.getAttribute('aria-selected')==='true'){select('home');if(k==='mode')$('overlay')?.scrollIntoView({behavior:'smooth',block:'start'});return;}select(k);};
 sheet.onclick=e=>{const go=e.target.closest('[data-go]')?.dataset.go;if(!go)return;sheet.hidden=true;select('home');
  if(go[0]==='#')document.querySelector('.ranking')?.scrollIntoView({behavior:'smooth'});else $(go).click();};
 // 캐릭터는 고른 한 장만 보이고, 변경을 누르면 전체가 펼쳐진다. 고르면 다시 접힌다.
 const pick=$('char-pick'),more=document.createElement('button');more.type='button';more.id='char-more';more.textContent='캐릭터 변경';
-more.onclick=()=>{pick.classList.toggle('open');more.textContent=pick.classList.contains('open')?'접기':'캐릭터 변경';};
+more.onclick=()=>{pick.classList.toggle('open');const on=pick.classList.contains('open');more.textContent=on?'접기':'캐릭터 변경';if(on)pick.scrollIntoView({behavior:'smooth',block:'start'});};
 pick.after(more);pick.addEventListener('click',e=>{if(e.target.closest('[data-char]')&&pick.classList.contains('open'))setTimeout(()=>more.click(),150);});
 // 새 알림(!)은 해당 탭 위 빨간 점으로 옮긴다.
 setInterval(()=>{for(const t of TABS){if(!t[3])continue;const on=t[3].some(id=>$(id)?.querySelector('b:not([hidden])'));const b=nav.querySelector(`[data-tab="${t[0]}"]`);if(on!==!!b.querySelector('i'))on?b.append(document.createElement('i')):b.querySelector('i').remove();}
