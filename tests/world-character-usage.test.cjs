@@ -9,11 +9,12 @@ for(const [source,key] of [[china,'chinaRun'],[europe,'euroRun']]){
  context.showResult=won=>{const c={won};hooks.pre.forEach(f=>f(c));hooks.post.forEach(f=>f(c));};
  for(const l of source.split('\n').filter(l=>l.startsWith('onResult(')))vm.runInContext(l,context);
  context[key]={used:[],character:'jersey',my:0,ai:0,round:0,live:true,country:'japan'};
+ // 한 단식에 한 캐릭터: 이기든 지든 끝난 단식의 캐릭터는 남은 단식에서 다시 쓸 수 없다.
  context.matchId='loss';context.showResult(false);
- assert.equal(context[key].used.length,0,'Loss must leave character available');
- context.matchId='win';context.showResult(true);
- assert.deepEqual(Array.from(context[key].used),['jersey']);
- context.showResult(true);assert.equal(context[key].used.length,1,'Duplicate result must not consume twice');
+ assert.deepEqual(Array.from(context[key].used),['jersey'],'Loss must also consume the character');
+ context.showResult(false);assert.equal(context[key].used.length,1,'Duplicate result must not consume twice');
+ context[key].character='leesin';context.matchId='win';context.showResult(true);
+ assert.deepEqual(Array.from(context[key].used),['jersey','leesin']);
 }
 const legacy={round:1,lineup:{0:'jersey',1:'leesin'},used:['jersey','leesin']};
 context.restoreWorldUsage(legacy);
@@ -21,4 +22,4 @@ assert.deepEqual(Array.from(legacy.used),['jersey'],'Resume must release unfinis
 context.restoreWorldUsage(legacy);assert.equal(legacy.used.length,1);
 assert(!china.includes('used:[...used,character]'));
 assert(!europe.includes('euroRun.used.push(euroRun.character)'));
-console.log('World conquest: win-only usage, loss reuse, duplicate result and legacy interrupted entry passed');
+console.log('World conquest: one character per finished match (win or loss), duplicate result and legacy interrupted entry passed');
