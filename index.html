@@ -3969,7 +3969,7 @@ const mb=document.createElement('button');mb.type='button';mb.dataset.stage='1';
 const bb=document.createElement('button');bb.type='button';bb.dataset.board='stage';bb.setAttribute('role','tab');bb.textContent='스테이지 돌파';document.querySelector('.rank-tabs').append(bb);
 }
 // Retired modes cannot be opened through stale links or an older saved UI state.
-const enabledRankingBoard=showBoard;showBoard=function(k){return k==='inf'||k==='survival'?enabledRankingBoard('pvp'):enabledRankingBoard(k);};
+const enabledRankingBoard=showBoard;showBoard=function(k){if(k==='inf'||k==='survival')k='pvp';board=k;document.querySelectorAll('.rank-tabs button').forEach(b=>{const selected=b.dataset.board===k;b.classList.toggle('active',selected);b.setAttribute('aria-selected',String(selected));});return enabledRankingBoard(k);};
 // 시너지 (롤토체스 특성처럼): 증강마다 시너지 1개. 같은 시너지를 3개 / 5개 모으면 보너스가 켜진다.
 const SYN={'정밀 탁구부':{ids:'deft rhythm double light help jewel crit mercy',fx:[{utPerfect:.1},{utPerfect:.25}],txt:['PERFECT 범위 +10%','PERFECT 범위 +25%']},
 '드라이브 연합':{ids:'blunt excite smash echo finish inferno dual overload hextech',fx:[{atkDrive:.05,atkBh:.05},{atkDrive:.12,atkBh:.12}],txt:['포·백 드라이브 +5%','포·백 드라이브 +12%']},
