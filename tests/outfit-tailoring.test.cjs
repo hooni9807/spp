@@ -11,6 +11,18 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),http=require('n
   const results=await page.evaluate(()=>{
    sound=false;playing=false;const before=JSON.stringify({myFit,prog}),missing=[],v=document.createElement('canvas');
    const tops=FIT_TOPS.filter(x=>x[2]),bots=FIT_BOTS.filter(x=>x[2]);
+   const savedStats=prog.q?._s;
+   try{prog.q??={};prog.q._s={};
+    for(const [id,,,,,req] of COMEDY_FITS){
+     if(!req.world||fitOk(req))missing.push('locked world:'+id);
+     const key=req.world==='china'?'chinaCup':'world_'+req.world;
+     prog.q._s[key]=1;
+     if(!fitOk(req)||!fitReqText(req).includes('클리어'))missing.push('world clear:'+id);
+     if(fitClean({top:id,bot:id,head:id},true).top!==id)missing.push('world equip:'+id);
+     delete prog.q._s[key];
+     if(fitClean({top:id,bot:id,head:id},true).top!=='def')missing.push('world lock:'+id);
+    }
+   }finally{if(savedStats===undefined)delete prog.q._s;else prog.q._s=savedStats;}
    for(const [id,,,,,req] of COMEDY_FITS){
     const set=FIT_COLLECTIONS.find(x=>x.id===id);
     if(!set||JSON.stringify(set.req)!==JSON.stringify(req))missing.push('collection gate:'+id);
@@ -42,6 +54,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),http=require('n
   assert(results.shorts[2]>results.shorts[0],'Long shorts must cover skin');
   assert(results.sock[1]>180&&results.sock[2]>180,'Socks must cover skin');
   if(process.env.OUTFIT_PREVIEW)await page.locator('#outfit-proof').screenshot({path:process.env.OUTFIT_PREVIEW});
+  await page.evaluate(()=>{tS().world_usa=1;store.set('progress',JSON.stringify(prog));localStorage.setItem('fit',JSON.stringify({top:'gag_ufo',bot:'gag_ufo',head:'gag_ufo'}));});
+  await page.reload();await page.waitForFunction(()=>typeof COMEDY_FITS!=='undefined');
+  assert.equal(await page.evaluate(()=>myFit.top),'gag_ufo','Unlocked costume must survive reload');
   console.log(results);
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
