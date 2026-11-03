@@ -1,11 +1,11 @@
-// 만취범 취기 게이지: 내 서브마다 한 잔(취기 +1, 최대 5). 캐릭터 옆 세로 게이지 · 마시는 모션 · 잔마다 화면 흔들림.
+// 만취범 취기 게이지: 내 서브마다 한 잔(취기 +1, 최대 7). 캐릭터 옆 세로 게이지 · 마시는 모션 · 잔마다 화면 흔들림.
 // 효과(속도 · 회전 · 뜬 공 · 원샷 스매시)와 화면 일렁임은 index.html이 window.drunkStack을 읽어 적용한다. 경기 시작 때 0.
 (()=>{
-const MAX=5;window.drunkStack=0;
+const MAX=7;window.drunkStack=0;
 const css=document.createElement('style');css.textContent=`
 #drunk-gauge{position:fixed;z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px;transform:translate(-50%,-100%);opacity:0;transition:opacity .2s cubic-bezier(.16,1,.3,1);font:800 11px/1 'Barlow Condensed','Pretendard Variable',sans-serif;letter-spacing:.06em;color:#ffd27a}
 #drunk-gauge.on{opacity:1}
-#drunk-gauge .bar{width:12px;height:76px;padding:2px;border-radius:999px;background:rgba(5,9,26,.72);box-shadow:0 0 0 1px rgba(255,190,80,.4);display:flex;flex-direction:column-reverse;gap:2px}
+#drunk-gauge .bar{width:12px;height:96px;padding:2px;border-radius:999px;background:rgba(5,9,26,.72);box-shadow:0 0 0 1px rgba(255,190,80,.4);display:flex;flex-direction:column-reverse;gap:2px}
 #drunk-gauge .bar i{flex:1;border-radius:3px;background:#2a2238;transition:background .25s cubic-bezier(.16,1,.3,1)}
 #drunk-gauge .bar i.f{background:#ffb020}
 #drunk-gauge.max .bar i.f{background:#ff5a36;animation:drunkGlow 1s ease-in-out infinite alternate}
