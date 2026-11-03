@@ -3450,6 +3450,8 @@ if(roll<.05){shot=P.power(shot,ball.y,ball.z,1.5);flair='jaetgi';}else if(roll<.
 // 짧은 공 → 짧은 커트: a short drag (same length rule as the short cut serve) on a ball that would bounce twice on my side goes
 // back as a low two-bounce short cut; a longer drag stays the normal long cut. A drive against it misses 30% of the time.
 if(verdict==='ok'&&!special&&!flair&&!shot.chance&&P.family(shot.type)==='cut'&&motion&&Math.abs(motion.drop||0)<SHORT_CUT_PX()&&ball.bounces===1&&P.shortLeft(ball)!==null){const s2=shortCutShot(shot,ball.y,ball.z);if(s2){shot=s2;flair='shortCut';}}
+// 롱 러버의 회전 반전과 실제 커트 모션은 별도로 유지한다.
+let defenderChopMotion=false;
 // 송스타
 if(LOOKS[charType].defender&&verdict==='ok'&&!special&&!flair&&!shot.chance&&Math.random()<defenderFatigue(LOOKS[charType])){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='defFatigue';toast(`긴 랠리에 지쳤어요… 수비 실수 (${Math.round(defenderFatigue(LOOKS[charType])*100)}%)`,1.2);}
 {const L=LOOKS[charType];if(L.defender&&verdict==='ok'&&!special&&!flair&&!shot.chance){const fh=playerSide*fhDir()>0,f=P.family(shot.type);
@@ -3459,7 +3461,7 @@ let chopFh=fh&&(inc==='drive'||Math.random()<.5);   /* 포핸드로 온 드라�
 if(chopFh&&inc==='drive'){const rate=Math.max(.55,.95-.1*(me.chopN||0));me.chopN=(me.chopN||0)+1;   /* 깎기 성공률 95%에서 쓸 때마다 −10%p (최저 55%), 실패하면 떠서 상대 찬스 스매시 */
  if(Math.random()>=rate){chopFh=false;shot={...P.popup(shot,ball.y,ball.z),chance:true,floatFault:true,floatReturn:true,chopFail:true};flair='chopFail';toast(`깎기가 읽혔어요… 공이 떴어요! 찬스 스매시 주의 (성공률 ${Math.round(rate*100)}%)`,1.6);}}
 if(chopFh){playerSide=-playerSide;bhFakeUntil=time+.6;if(!flair)flair='bhFake';if(inc==='drive')toast('이게 수비수지!',1.2);else{shot={...P.power(shot,ball.y,ball.z,1.15),defMiss:Math.max(shot.defMiss||0,.06)};toast('송스타 돌아서서 백핸드 커트! 받기 어려운 공',1.2);}}   /* 포핸드 쪽 커트 50%: 백핸드 커트 모션 · 낮고 빠른 공 · 상대 실수 +6% */
-if(!fh||chopFh){me.cutRun=(me.cutRun||0)+1;const run=Math.min(.1,.02*(me.cutRun-1));   /* 백핸드 커트 랠리가 이어질수록 상대 실수 +2%씩 (최대 +10%) */if(ball.type==='serve'&&(ball.spin||0)<0)shot={...shot,spin:Math.max(.6,Math.abs(shot.spin)),type:'loop'};
+if(!fh||chopFh){defenderChopMotion=true;me.cutRun=(me.cutRun||0)+1;const run=Math.min(.1,.02*(me.cutRun-1));   /* 백핸드 커트 랠리가 이어질수록 상대 실수 +2%씩 (최대 +10%) */if(ball.type==='serve'&&(ball.spin||0)<0)shot={...shot,spin:Math.max(.6,Math.abs(shot.spin)),type:'loop'};
 else if(inc==='cut')shot={...shot,spin:.35,type:'loop'};   // rally cut on the backhand long: unwinds into a weak topspin
 if(quality==='PERFECT')shot={...P.power(shot,ball.y,ball.z,1.15),defMiss:.05+run};else if(quality==='GREAT')shot={...shot,defMiss:.025+run};else if(run)shot={...shot,defMiss:run};if(run>=.04)toast(`백핸드 커트 ${me.cutRun}연속 · 상대 실수 +${Math.round(run*100)}%`,1);}}}}
 // 날먹세's serve (AI or 1:1 opponent): my return floats up 30%, goes into the net 5%, out 5%
@@ -3487,7 +3489,7 @@ ball.floatFault=!!ball.chance&&!special&&(quality==='LATE'||!!flair||floatCut||d
 if(special&&mode!=='trio'){const received=mir(ball);fitReturn(received,net?Math.max(.75,received.z):Infinity);Object.assign(ball,mir(received));}
 if(!net||!net.dbl&&!net.trio)P.trackAiRouteRead(ball);if(flair==='jaetgi'){ball.unreturn=true;ball.unreturnWhy='공 재끼기! 상대가 받을 수 없어요 · 쵸레이~';me.taunt='쵸레이~ 🔥';me.tauntT=time;}
 ball.pf=quality==='PERFECT';if(ball.pf&&verdict==='ok')critFxAt(ball);
-if(flair==='jaetgi');else if(verdict==='ok'&&!special&&!flair&&!shot.chance&&Math.random()<R_('utEdge')){ball.unreturn=true;ball.unreturnWhy='엣지! 🍀 상대가 받을 수 없어요';toast('엣지! 🍀 테이블 모서리에 맞았어요 · 상대가 못 받아요 (스킬)',1.6);}if(!net)deepen(P.family(inType)==='drive'&&P.family(shot.type)==='drive');lastHit=time;lastShot=shot.type;if(special&&net?.role==='guest'){net.sentHit=lastHit;sendHit();}mySwing.type=shot.type;mySwing.t=time;mySwing.ult=ult||null;smashUntil=-1;lastTap=null;
+if(flair==='jaetgi');else if(verdict==='ok'&&!special&&!flair&&!shot.chance&&Math.random()<R_('utEdge')){ball.unreturn=true;ball.unreturnWhy='엣지! 🍀 상대가 받을 수 없어요';toast('엣지! 🍀 테이블 모서리에 맞았어요 · 상대가 못 받아요 (스킬)',1.6);}if(!net)deepen(P.family(inType)==='drive'&&P.family(shot.type)==='drive');lastHit=time;lastShot=defenderChopMotion?'chop':shot.type;if(special&&net?.role==='guest'){net.sentHit=lastHit;sendHit();}mySwing.type=lastShot;mySwing.t=time;mySwing.ult=ult||null;smashUntil=-1;lastTap=null;
 const sp=motion?Math.hypot(motion.vx,motion.vy):0;me.amp=motion?P.clamp(.55+sp/2000,.55,1.25):tap?.45:1;me.dirX=motion?P.clamp(motion.vx/(sp||1),-1,1):0;swingMemory=null;
 if(quality==='PERFECT'&&verdict==='ok'){me.shoutT=time;if(LOOKS[charType].gamble&&!special&&!flair&&!shot.chance&&!ball.gamble&&me.gStack<3){gambleChance(me);me.gStack++;toast(`🎰 판돈 적중! 다음 대박 ${Math.round(gambleChance(me)*100)}% (${me.gStack}/3)`,1.2);}if(R_('utSteal'))aiCharge=Math.max(0,aiCharge-R_('utSteal')*100);if(!['gear','gearFloat','err','timing','spin','drunkMiss','fhFloat','bhFloat','gFloat','adamFake','overhit','tgNet','tgOut','tgFloat','spec'].includes(flair))perfectCeremony(me,LOOKS[charType]);
 if(LOOKS[charType].jaetgi&&flair!=='jaetgi'&&!special){const ty=shot.type,sh=ty==='smash'?'민희쌤 스매싱!':ty==='short'||ty==='block'?'민희쌤 쇼트!':P.family(ty)==='drive'?(playerSide*fhDir()<0?'민희쌤 백드라이브!':'민희쌤 드라이브!'):null;if(sh){me.taunt=sh;me.tauntT=time;}}}   // 민희쌤 PERFECT call-outs
