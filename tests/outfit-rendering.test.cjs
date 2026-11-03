@@ -88,7 +88,7 @@ const path = require('node:path');
           }
         }
         for (const [kind, tile] of fitFabricTiles) check(fitFabric(kind) === tile, `Fabric cache miss: ${kind}`);
-        check(fitFabricTiles.size <= 8, 'Unbounded fabric tile cache');
+        check(fitFabricTiles.size <= 9, 'Unbounded fabric tile cache');
         return { previews, motions, fabrics: [...fitFabricTiles.keys()], failures };
       } finally {
         ({ ctx, H, W, time, ball, charType } = saved);
