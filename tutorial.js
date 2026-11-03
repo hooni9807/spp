@@ -69,6 +69,6 @@ window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
 // 첫 방문: 로그인 · 프롤로그가 끝나고 처음 화면이 보일 때 한 번.
 let seen=false;try{seen=!!localStorage.getItem(KEY);}catch{}
 if(seen)return;
-const wait=setInterval(()=>{if(typeof prog!=='undefined'&&prog.xp>0){clearInterval(wait);try{localStorage.setItem(KEY,'1');}catch{}return;}const ov=$('overlay');if(!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
- clearInterval(wait);setTimeout(openTutorial,600);},700);
+const wait=setInterval(()=>{if(typeof prog!=='undefined'&&prog.xp>0){clearInterval(wait);try{localStorage.setItem(KEY,'1');}catch{}return;}const ov=$('overlay');if(typeof playing!=='undefined'&&playing||!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
+ clearInterval(wait);setTimeout(()=>{if(!(typeof playing!=='undefined'&&playing))openTutorial();},600);},700);
 })();
