@@ -57,3 +57,18 @@ const chinaFire=fireUlt;fireUlt=function(u,x,y,ai=false,...rest){const result=ch
 {const t=setInterval(()=>{try{if(typeof tS!=='function'||typeof playing==='undefined'||playing)return;const S=tS();if(!S.chinaCup||S.chinaCup2){if(S.chinaCup2||Date.now()-t0>60000)clearInterval(t);return;}
  if(localStorage.getItem('china-reset-notice'))return clearInterval(t);localStorage.setItem('china-reset-notice','1');clearInterval(t);
  toast('중국이 더 강해졌어요! 세계제패 중국은 다시 제패해야 정복으로 인정돼요',4.5);}catch{}},2000),t0=Date.now();}
+
+// 옛 중국 제패로 받은 세계제패 업적 회수: 조건이 더는 맞지 않는 세계제패 업적(용문 돌파 · 첫 원정의 승리 · N개국 제패)을
+// 받은 목록 · 칭호에서 빼고, 받았던 코인을 돌려받는다(0 아래로는 안 내려감). 코인은 업적마다 한 번만(rv_ 표시는 기기 간 동기화).
+// 다른 기기의 옛 기록이 다시 올라와도 매번 조건으로 다시 정리하므로 되살아나지 않는다.
+const WORLD_ACH=['worldFirst','worldChina','worldThree','worldFive','worldTen','worldFifteen','worldAll'];
+function revokeOldChinaAchievements(){try{const S=tS(),titles=typeof allTitles==='function'?allTitles():[];if(!titles.length)return;let coins=0,names=[];
+ for(const id of WORLD_ACH){const t=titles.find(x=>x[0]===id);if(!t||t[3]())continue;
+  const claimed=(S.achClaim||'').split(',').filter(Boolean),had=claimed.includes(id),unl=(S.unl||'').split(',').filter(Boolean),hadTitle=unl.includes('title:'+id);
+  if(!had&&!hadTitle)continue;
+  S.achClaim=claimed.filter(x=>x!==id).join(',');S.unl=unl.filter(x=>x!=='title:'+id).join(',');if(prog.q?._t===id)delete prog.q._t;
+  if(had&&!S['rv_'+id]){S['rv_'+id]=1;coins+=achievementCoinReward(id);names.push(t[1]);}}
+ if(!names.length&&!coins)return;prog.coins=Math.max(0,(prog.coins||0)-coins);if(typeof refreshAchFx==='function')refreshAchFx();saveProg();
+ toast(`중국 재도전으로 세계제패 업적 회수: ${names.join(' · ')}${coins?` · -${coins.toLocaleString()} 코인`:''}`,4.5);}catch{}}
+// 로그인 후 클라우드 기록이 합쳐질 시간을 두고(20초 뒤부터) 확인한다.
+setTimeout(()=>setInterval(()=>{if(typeof tS!=='function'||typeof playing==='undefined'||playing||!prog?.q)return;revokeOldChinaAchievements();},5000),20000);
