@@ -62,4 +62,23 @@ const sync=()=>{if(typeof playing!=='undefined'&&playing)return;const t=tourOpen
 document.addEventListener('click',e=>{const b=e.target.closest('#tournament-open,#world-open');if(!b||!b.classList.contains('gate-locked'))return;
  e.preventDefault();e.stopImmediatePropagation();openPath(b.id==='world-open'?'world':'tour');},true);
 window.contentGate.sync=sync;setInterval(sync,1500);setTimeout(sync,300);
+
+// 도전 무대: 보스전과 대회 출전을 한 버튼으로 묶는다. 원래 버튼은 숨겨 두고 대신 눌러 준다(잠금 · 기존 동작 그대로).
+{const css=document.createElement('style');css.textContent=`html body .segmented .arena-sub{display:none!important}
+#arena-pick{width:min(400px,calc(100vw - 32px));padding:22px 18px 18px;border:0;border-radius:16px;background:#0b1226;color:#eef3ff;box-shadow:0 30px 80px rgba(0,0,0,.6);font-family:'Pretendard Variable',Pretendard,sans-serif}
+#arena-pick::backdrop{background:rgba(5,9,26,.82)}
+#arena-pick h3{margin:0 0 4px;font-size:21px;font-weight:800;letter-spacing:-.02em}
+#arena-pick>p{margin:0 0 16px;font-size:13.5px;color:#93a4cc}
+#arena-pick .opt{display:block;width:100%;text-align:left;margin:0 0 10px;padding:14px 16px;border:1px solid #2a3a6a;border-radius:14px;background:#111a35;color:#eef3ff;font:inherit;cursor:pointer}
+#arena-pick .opt:hover{background:#18244a}
+#arena-pick .opt:focus-visible{outline:2px solid #14e0ff;outline-offset:2px}
+#arena-pick .opt b{display:block;font-size:17px;font-weight:800}
+#arena-pick .opt small{display:block;margin-top:3px;font-size:12.5px;color:#93a4cc}
+#arena-pick .opt.locked b{color:#7f8fb6}
+#arena-pick .x{width:100%;min-height:44px;border:0;border-radius:12px;background:#18244a;color:#c3cfee;font:700 15px inherit;cursor:pointer}`;document.head.append(css);
+const dlg=document.createElement('dialog');dlg.id='arena-pick';dlg.setAttribute('aria-labelledby','arena-title');document.body.append(dlg);
+const openArena=()=>{const t=tourOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>👑 보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}🏆 대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="x">닫기</button>`;
+ dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();(b.dataset.go==='boss'?document.querySelector('.segmented [data-mode="boss"]'):$('tournament-open'))?.click();});
+ dlg.showModal();dlg.querySelector('.opt').focus();};
+document.addEventListener('click',e=>{if(e.target.closest('#arena-open'))openArena();});}
 })();
