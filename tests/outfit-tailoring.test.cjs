@@ -11,6 +11,12 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),http=require('n
   const results=await page.evaluate(()=>{
    sound=false;playing=false;const before=JSON.stringify({myFit,prog}),missing=[],v=document.createElement('canvas');
    const tops=FIT_TOPS.filter(x=>x[2]),bots=FIT_BOTS.filter(x=>x[2]);
+   for(const [id,,,,,req] of COMEDY_FITS){
+    const set=FIT_COLLECTIONS.find(x=>x.id===id);
+    if(!set||JSON.stringify(set.req)!==JSON.stringify(req))missing.push('collection gate:'+id);
+    for(const [items,ri] of [[FIT_TOPS,3],[FIT_BOTS,3],[FIT_ACC,5]])if(JSON.stringify(items.find(x=>x[0]===id)?.[ri])!==JSON.stringify(req))missing.push('item gate:'+id);
+    if(fitClean(set.fit).head!==id)missing.push('saved hat:'+id);
+   }
    for(const [id,,look] of bots)if((look.skirt||look.legx==='vet_sauna')&&!FIT_SKIRT_CUTS[id])missing.push('skirt:'+id);
    for(const [items,cuts,slot] of [[tops,FIT_CUTS,'top'],[bots,FIT_LEG_CUTS,'bot']])for(const [id] of items){
     if(!cuts[id])missing.push(slot+':'+id);

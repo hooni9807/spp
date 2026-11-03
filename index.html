@@ -1298,6 +1298,20 @@ FIT_COLLECTIONS.push(
 const TODAY_FIT_REQ={studio_club:{lv:5},studio_cloud:{lv:8},studio_arcade:{lv:12},studio_rose:{lv:15},studio_midnight:{lv:20},studio_varsity:{lv:25},night_runner:{lv:5},sunset_court:{lv:8},checkmate:{lv:12},orchid_shell:{lv:15},lux_tweed:{lv:18},lux_trench:{lv:20},lux_leather:{tier:'hard'},lux_weave:{lv:25},lux_yacht:{tier:'ultra'},lux_opera:{lv:30},lux_silk:{tier:'uhard'},lux_alpine:{bosses:true},lux_tailor:{online:10},lux_garden:{tier:'uext'},ref_garden:{lv:22},ref_pixel:{tier:'hard'},ref_moon:{lv:30},ref_neo:{tier:'ultra'},ref_coral:{lv:10},blue_podium:{tier:'extreme'},league_black:{villain:1},league_blue:{villain:1},league_purple:{villain:1},league_red:{villain:1},league_pink:{villain:1},aero_lime:{tier:'hard'},coral_dash:{tier:'extreme'},glacier_net:{survival:true},ink_arrow:{tier:'ultra'},violet_clear:{boss:'minhee'},sunrise_drop:{tour:'daejeon'},mint_rally:{tier:'uhard'},crimson_drive:{boss:'maou'},silver_shuttle:{tour:'sejong'},cobalt_jump:{tier:'uext'},peach_net:{tour:'busan'},forest_lift:{tour:'seoul'}};
 const applyTodayFitRequirements=()=>{for(const [id,req] of Object.entries(TODAY_FIT_REQ)){for(const [items,ri] of [[FIT_TOPS,3],[FIT_BOTS,3],[FIT_ACC,5]]){const item=items.find(x=>x[0]===id);if(item)item[ri]=req;}for(const set of FIT_COLLECTIONS)if(set.id===id||set.fit.top===id||set.fit.bot===id)set.req=req;}};applyTodayFitRequirements();
 FIT_TOPS.push(['cornilleau_uniform','코닐리우 리그 저지',{shirt:'#163f7b',sleeve:'#163f7b',collar:'#fff7d6',pat:{k:'league_polo',a:'#f2c766',b:'#102342'}},{villain:1}]);FIT_BOTS.push(['cornilleau_uniform','코닐리우 리그 쇼츠',{pants:'#102342',shorts:true,shortsLen:.56,pstripe:'#f2c766',socks:true},{villain:1}]);FIT_COLLECTIONS.push({id:'cornilleau_uniform',name:'코닐리우 유니폼',label:'CORNILLEAU',desc:'코닐리우 이벤트 매치 우승 보상. 딥 블루와 골드 라인의 리그 저지 세트.',colors:['#163f7b','#102342','#f2c766'],fit:{top:'cornilleau_uniform',bot:'cornilleau_uniform'},req:{villain:1}});
+const COMEDY_FITS=[
+ ['gag_egg','반숙 에이스','프라이팬 모자에 반숙 노른자. 오늘도 코트에서 뒤집힐 준비 완료.','#fff5da','#e9ac32',{lv:5},[21,19,'satin','drape']],
+ ['gag_cone','코트 공사중','라바콘 모자와 안전띠. 공사는 끝나지 않아도 랠리는 계속됩니다.','#f47726','#383e49',{tier:'hard'},[22,17,'shell','vent']],
+ ['gag_dino','풍선 공룡','눈이 튀어나온 공룡 후드와 통통한 배. 작은 앞발은 장식, 라켓은 진심.','#65a981','#e3d7a2',{lv:12},[23,21,'shell','quilt']],
+ ['gag_parcel','택배 왔습니다','머리에 상자를 얹고 코트까지 배송 완료. 취급주의: 강스매시 포함.','#bd8b53','#67513d',{tier:'ultra'},[20,20,'canvas','patch']]
+];
+for(const [id,name,desc,shirt,accent,req,cut] of COMEDY_FITS){
+ FIT_CUTS[id]=cut;FIT_LEG_CUTS[id]=id==='gag_dino'?[15,8,'cuff']:[12,9,'hem'];
+ FIT_TOPS.push([id,name+' 상의',{shirt,sleeve:shirt,collar:accent,longSleeve:true,pat:{k:id,a:accent}},req]);
+ FIT_BOTS.push([id,name+' 팬츠',{pants:id==='gag_egg'?'#313747':shirt,shorts:false,pstripe:accent},req]);
+ FIT_ACC.push([id,name+' 모자','head','',{hat:id,hatC:shirt,hb:null},req]);
+ FIT_COLLECTIONS.push({id,name,label:'코믹 코트',desc,colors:[shirt,accent,'#fff5da'],fit:{top:id,bot:id,head:id},req});
+ FIT_EXT.top[id]=comedyTorso;FIT_EXT.head[id]=comedyHead;
+}
 const FIT_LABELS={collection:'스튜디오 컬렉션',veteran:'고인물 아카이브',top:'상의',bot:'하의',head:'머리',arm:'손목',body:'목 · 몸',wing:'날개',aura:'이펙트',pet:'펫',skin:'라켓 스킨'};
 let fitBack=false;
 function fitApplyCollection(id){const c=FIT_COLLECTIONS.find(c=>c.id===id);if(!c||c.req&&!fitOk(c.req)){if(c?.req)$('fit-status').textContent='🔒 '+fitReqText(c.req)+' 달성 시 착용 가능 · 지금은 미리보기만 돼요';return;}fitDraft=fitClean(c.fit,true);renderFit();fitPreview();}
@@ -2186,6 +2200,42 @@ if(live&&['loop','drive','crescent','lightning','smash','chiquita'].includes(str
 // halos, wings, auras and pets (MapleStory-style coordi) - all drawn here from scratch, no game assets.
 const FOL='rgba(12,8,24,.5)';
 // Tailoring in a 36 × 64 garment frame, shared by the court and fitting-room canvases.
+function comedyTorso(look,ux,top,th,s,isBack,at,q){
+ ctx.translate(ux,top);ctx.scale(s,th/64);
+ const oval=(x,y,rx,ry,c)=>{ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();};
+ const box=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h);};
+ if(q.k==='gag_egg'){
+  oval(0,33,20,28,LG(-20,0,20,0,['#d9d8ca','#fffdf3','#ece6d0']));
+  if(!isBack){oval(0,34,12,13,RG(-4,29,19,['#fff395','#ffc02b','#db7c12']));oval(-4,29,3,2,'#fff8cc');}
+  else{ctx.strokeStyle='#ba9c68';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-9,24);ctx.lineTo(-3,30);ctx.lineTo(-7,35);ctx.lineTo(3,43);ctx.stroke();}
+ }else if(q.k==='gag_cone'){
+  box(-24,19,48,8,LG(-24,0,24,0,['#b1b9bc','#fffef5','#bdc4c6']));box(-24,43,48,9,'#fffdf2');box(-24,58,48,6,'#363c45');
+  if(!isBack){ctx.fillStyle='#252b35';ctx.beginPath();ctx.moveTo(0,29);ctx.lineTo(-7,40);ctx.lineTo(7,40);ctx.fill();box(-.8,32,1.6,4,'#ffd85e');box(-.8,37,1.6,1,'#ffd85e');}
+ }else if(q.k==='gag_dino'){
+  if(isBack){for(let y=8;y<60;y+=10){ctx.fillStyle='#e3d7a2';ctx.beginPath();ctx.moveTo(-3,y);ctx.lineTo(5,y+4);ctx.lineTo(-3,y+8);ctx.fill();}}
+  else{oval(0,35,16,24,LG(-16,0,16,0,['#b7ba7f','#f5e9b8','#c3c690']));for(const k of [-1,1]){oval(k*13,22,4,7,'#3c805c');for(let i=0;i<3;i++)oval(k*12+(i-1)*2,28,1,2,'#fff3d5');}}
+ }else{
+  box(-23,3,46,57,LG(-23,0,23,0,['#926437','#dab17b','#b18049']));box(-3,3,6,57,'#ead1a68c');
+  box(isBack?-13:-12,24,24,20,'#f7efd9');ctx.fillStyle='#443626';ctx.font='bold 6px sans-serif';ctx.textAlign='center';ctx.fillText(isBack?'반품 금지':'취급주의',0,31);
+  for(let x=-9;x<10;x+=2){box(x,35,x%3?1:1.5,6,'#574636');}
+ }
+}
+function comedyHead(look,hx,hd,s,ph,isBack,at,{ht,hw}){
+ ctx.translate(hx,ht+2*s);ctx.scale(s,s);const w=Math.min(19,hw/s+3);
+ const oval=(x,y,rx,ry,c)=>{ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,7);ctx.fill();};
+ if(look.hat==='gag_egg'){
+  ctx.fillStyle='#343b46';ctx.beginPath();ctx.roundRect(w-2,-8,15,5,2);ctx.fill();oval(0,-5,w,6,LG(0,-11,0,1,['#738292','#242b36']));oval(0,-7,w-3,3,'#d7dcdf');oval(-2,-8,8,2.5,'#fff4d5');oval(-1,-9,3.5,2,'#ffc642');
+ }else if(look.hat==='gag_cone'){
+  ctx.beginPath();ctx.moveTo(-w,0);ctx.lineTo(-4,-29);ctx.lineTo(4,-29);ctx.lineTo(w,0);ctx.closePath();ctx.fillStyle=LG(-w,0,w,0,['#b84719','#ffad54','#ea6c20']);ctx.fill();ctx.save();ctx.clip();ctx.fillStyle='#fff6dc';ctx.fillRect(-w,-20,w*2,5);ctx.fillRect(-w,-9,w*2,5);ctx.restore();oval(0,1,w+3,3,'#41434b');
+ }else if(look.hat==='gag_dino'){
+  oval(0,-4,w,10,LG(-w,0,w,0,['#317251','#91c899','#4e966a']));
+  for(const k of [-1,1]){oval(k*9,-12,6,6,'#8dc795');oval(k*9,-13,4,4,'#fffce9');if(!isBack)oval(k*9+1,-12,1.7,2.5,'#263b30');}
+  oval(0,2,w+1,4,'#4d9568');if(!isBack)for(const x of [-12,-6,6,12]){ctx.fillStyle='#fff4d6';ctx.beginPath();ctx.moveTo(x-2,2);ctx.lineTo(x+2,2);ctx.lineTo(x,6);ctx.fill();}
+ }else{
+  ctx.fillStyle=LG(-w,0,w,0,['#a57341','#dcb784','#ac7946']);ctx.fillRect(-w,-19,w*2,20);ctx.fillStyle='#efdab6';ctx.fillRect(-3,-19,6,20);
+  for(const k of [-1,1]){ctx.beginPath();ctx.moveTo(k*w,-19);ctx.lineTo(k*(w+7),-25);ctx.lineTo(k*4,-25);ctx.lineTo(0,-19);ctx.closePath();ctx.fillStyle=k<0?'#e6c697':'#c69761';ctx.fill();}
+ }
+}
 function studioTorso(look,ux,top,th,s,isBack,at,q){
  ctx.translate(ux,top);ctx.scale(s,th/64);ctx.lineCap='round';ctx.lineJoin='round';
  const fill=(x,y,w,h,c,r=0)=>{ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
@@ -2952,7 +3002,7 @@ else{ctx.strokeStyle='#121214';ctx.lineWidth=4*s;for(const k of [-1,1]){ctx.begi
 if(look.tee){ctx.save();ctx.clip();ctx.strokeStyle=look.collar;ctx.lineWidth=2.4*s;ctx.beginPath();ctx.ellipse(ux,top,9*s,isBack?3*s:6*s,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#00000014';ctx.fillRect(ux-18*s,top+th*.82,36*s,th*.18);ctx.restore();}   // crew neck, a shade at the hem
 if(look.hoodie){ctx.save();ctx.clip();if(isBack){ctx.fillStyle='#86888d';ctx.beginPath();ctx.ellipse(ux,top+4*s,14*s,10*s,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#6f7176';ctx.lineWidth=1.2*s;ctx.stroke();}
 else{ctx.fillStyle=look.collar;ctx.beginPath();ctx.moveTo(ux-8*s,top);ctx.lineTo(ux+8*s,top);ctx.lineTo(ux,top+16*s*T);ctx.fill();ctx.strokeStyle='#c8c9cc';ctx.lineWidth=1.1*s;ctx.beginPath();ctx.moveTo(ux,top+16*s*T);ctx.lineTo(ux,top+th);ctx.stroke();ctx.strokeStyle='#808287';ctx.beginPath();ctx.moveTo(ux-14*s,top+th*.62);ctx.lineTo(ux+14*s,top+th*.62);ctx.stroke();}ctx.restore();}   // grey zip hoodie
-if(!/^(studio_|vet_)/.test(look.pat?.k||'')){const kit=look.kit||{name:'SPIN'};
+if(!/^(studio_|vet_|gag_)/.test(look.pat?.k||'')){const kit=look.kit||{name:'SPIN'};
 if(isBack){const sq=1-Math.min(.45,Math.abs(pose.twist)*.4),cxp=ux+pose.twist*side*9*s+st.lean*5*s;   // print turns with the torso
 ctx.save();ctx.translate(cxp,top+th*.5);ctx.scale(sq,1);ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';
 ctx.font=`900 ${10.5*s}px Arial`;{const fit=Math.min(1,32*s/ctx.measureText(kit.name).width);if(fit<1)ctx.font=`900 ${10.5*s*fit}px Arial`;}ctx.lineWidth=3.4*s;ctx.strokeStyle='#14121c';ctx.strokeText(kit.name,0,look.backpack?-th*.36:-th*.04);ctx.fillStyle="#ffffff";ctx.fillText(kit.name,0,look.backpack?-th*.36:-th*.04);ctx.restore();}
@@ -4410,6 +4460,7 @@ async function syncAttendanceRecord(){try{const db=await pvpRemote();if(!db)retu
 const attendanceTrophy=TOUR_REWARDS.find(r=>r.id==='attendance');attendanceTrophy.trophyName='칠성 크라운 트로피';{const s=document.createElement('style');s.textContent='.seven-trophy{position:relative;display:inline-grid;place-items:center;width:1.05em;height:1.18em;vertical-align:middle;isolation:isolate;font-family:Georgia,serif}.seven-trophy:before{content:"";position:absolute;z-index:-1;inset:12% 8% 16%;clip-path:polygon(8% 0,100% 0,83% 69%,50% 100%,17% 69%);border:2px solid #fff0a4;border-radius:17% 17% 42% 42%;background:linear-gradient(135deg,#fff3b4,#d69b35 47%,#2e71ad);box-shadow:0 0 .16em #fff6b1,0 .11em .18em #0a1a47}.seven-trophy:after{content:"";position:absolute;z-index:-1;bottom:5%;width:76%;height:10%;border:1px solid #fff0a4;border-radius:50%;background:#dca944;box-shadow:0 .05em .1em #0a1a47}.seven-trophy i{font-style:normal;font-weight:900;font-size:1.02em;line-height:1;color:#fffdf0;text-shadow:0 .03em .04em #614313,-.02em 0 #614313,.02em 0 #614313}.seven-trophy b{position:absolute;right:3%;bottom:15%;font:700 .28em/1 sans-serif;color:#fff8be;text-shadow:0 0 .2em #fff}';document.head.append(s);}
 function showAttendance(){const q=prog.q??={},day=Math.min(7,q.attendance||0);if(q.attendanceDate===attendanceDate()||day>=7)return;let d=$('attendance');if(!d){d=document.createElement('dialog');d.id='attendance';d.innerHTML='<button class="dlg-x" aria-label="닫기">✕</button><img class="attendance-art" alt="칠성 연미복"><h3>7일 출석 로그인 이벤트</h3><p>오늘의 별을 받아가세요. 누적 출석 보상은 놓치지 않습니다.</p><div class="attendance-days"></div><button class="attendance-claim" type="button">오늘 보상 받기</button>';document.body.append(d);const s=document.createElement('style');s.textContent='#attendance{width:min(520px,94vw);border:0;border-radius:22px;padding:22px;background:#0c1631;color:#f7f5ed;text-align:center;box-shadow:0 22px 70px #000b}#attendance::backdrop{background:#040711cc}.attendance-art{width:118px;height:118px;object-fit:contain;margin:-8px auto 0;filter:drop-shadow(0 12px 16px #0008)}#attendance h3{margin:0;font-size:23px;color:#f4d77c}.attendance p{color:#c9d8f2;font-size:13px}.attendance-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:16px 0}.attendance-days button{min-height:88px;border:0;border-radius:12px;background:#17264b;color:#eaf1ff;font:inherit}.attendance-days button.on{background:#e8c96e;color:#19213b}.attendance-days button.today{outline:2px solid #fff}.attendance-days img{width:38px;height:38px;object-fit:contain;display:block;margin:3px auto}.attendance-days small{display:block;font-size:10px}.attendance-claim{width:100%;border:0;border-radius:10px;padding:13px;background:#e8c96e;color:#162242;font-weight:900}.attendance-claim:disabled{opacity:.5}@media(prefers-reduced-motion:no-preference){#attendance[open]{animation:attIn .28s ease-out}@keyframes attIn{from{transform:translateY(18px) scale(.96);opacity:0}to{transform:none;opacity:1}}}';document.head.append(s);d.querySelector('.dlg-x').onclick=()=>d.close();}const cards=d.querySelector('.attendance-days'),asset=i=>i===5?'assets/attendance-starlight-tailcoat.png':i===6?'assets/attendance-astral-racket.png':i===7?'assets/attendance-seven-star-title.png':'';cards.innerHTML=ATTENDANCE_REWARDS.map((r,i)=>`<button type="button" class="${i<day?'on':''} ${i===day?'today':''}" ${i>day?'disabled':''}><b>${i+1}일</b>${asset(i+1)?`<img src="${asset(i+1)}" alt="">`:''}<small>${r[0]}</small></button>`).join('');const claim=d.querySelector('.attendance-claim');claim.disabled=day>=7;claim.textContent=day>=7?'7일 출석 완료':'오늘 보상 받기';claim.onclick=()=>{const n=day+1,date=attendanceDate();q.attendance=n;q.attendanceDate=date;saveAttendanceRecord(date,n);if(n===1)gainXp(50,'7일 출석 1일차');if(n===2)gainXp(80,'7일 출석 2일차');if(n===3)gainCoins(80,'7일 출석 3일차');if(n===4)gainCoins(120,'7일 출석 4일차');if(n===5)toast('👕 칠성 연미복을 획득했어요!',2.5);if(n===6){q._trophies??=[];if(!q._trophies.includes('attendance'))q._trophies.push('attendance');q._racketSkin='attendance_astral';toast('🏓 성운 크리스털 라켓을 획득·착용했어요!',2.5);}if(n===7){q.attendance7=1;toast('👑 한정 칭호 〔칠일성〕을 획득했어요!',2.5);}saveProg();d.close();};d.showModal();}
 const basePatchNotes=showPatchNotes;showPatchNotes=function(){basePatchNotes();const d=$('patch-notes');if(d&&!d.dataset.attendance){d.dataset.attendance='1';d.addEventListener('close',()=>setTimeout(()=>{if(!document.querySelector('dialog[open]:not(#auth-gate)'))showAttendance();},120));}};
+PATCH_NOTES.unshift(['코믹 코트 코디 4종','반숙 에이스(Lv5), 코트 공사중(하드 이상 승리), 풍선 공룡(Lv12), 택배 왔습니다(울트라 이상 승리)를 추가했습니다. 코디 컬렉션에서 상의·하의·전용 모자를 미리보고 해금 후 착용할 수 있습니다. 외형 전용이며 경기 능력치는 바뀌지 않습니다.']);
 const BADMINTON_SETS=[['aero_lime','에어로 라임 스매시','#17222e','#b9f247','#f7fbff'],['coral_dash','코랄 대시','#ef5f57','#182a4d','#fff4ea'],['glacier_net','글레이셔 네트','#dff7f4','#167b9c','#17334a'],['ink_arrow','잉크 애로우','#182440','#f1f2f5','#f25b4b'],['violet_clear','바이올렛 클리어','#59419b','#d3b5ff','#fcf7ff'],['sunrise_drop','선라이즈 드롭','#f5a33f','#17355d','#fff9ed'],['mint_rally','민트 랠리','#49c7b7','#163743','#effff9'],['crimson_drive','크림슨 드라이브','#b92e43','#1b2236','#fff0f1'],['silver_shuttle','실버 셔틀','#8e9dac','#202938','#edf3f8'],['cobalt_jump','코발트 점프','#185fd2','#f7f7f3','#efb935'],['peach_net','피치 네트','#f1a08d','#fff4e9','#375a77'],['forest_lift','포레스트 리프트','#1f6357','#d9e7c7','#f7f5df']];
 for(const [id,name,a,b,c] of BADMINTON_SETS){FIT_TOPS.push([id,name+' 배드민턴 저지',{shirt:a,sleeve:a,collar:c,pat:{k:'band',a:b},longSleeve:false},{lv:6}]);FIT_BOTS.push([id,name+' 게임 쇼츠',{pants:b,shorts:true,shortsLen:.55,pstripe:c,socks:true},{lv:6}]);FIT_COLLECTIONS.push({id,name,label:'BADMINTON COURT',desc:'배드민턴 경기복의 통기성 메쉬 패널과 대각 컬러 블록을 재해석한 코트 세트.',colors:[a,b,c],fit:{top:id,bot:id,head:'hb',arm:'wb'}});}
 // Courtwear silhouettes are original, brand-free interpretations of current badminton and tennis tournament kits.
