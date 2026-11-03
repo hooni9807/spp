@@ -95,6 +95,6 @@ const worldControlStyle=document.createElement('style');worldControlStyle.textCo
 // 세계정복 필살기 리턴률 [1티어,2티어,3티어,4티어]: 중국 > 일본 > 유럽.
 const WORLD_ULT_RETURN={china:[.95,.85,.80,.70],japan:[.90,.80,.72,.62],europe:[.85,.75,.66,.55]};
 const worldUltReturn=t=>{const k=chinaActive()?'china':euroRun?.country==='japan'?'japan':'europe',row=WORLD_ULT_RETURN[k];return row[(t||4)-1]??row[3];};
-const conquestFinalReturn=P.returnRoll;P.returnRoll=function(ball,tier,chance,bonus=0){if(worldCampaignActive()&&ball?.ult)return worldUltReturn(ball.ultTier);const rate=conquestFinalReturn(ball,tier,chance,bonus),floor=conquestReturnFloor()-(typeof chinaActive==='function'&&chinaActive()?Math.min(.03,(+ball?.aiMovePenalty||0)*.2):0);return floor&&!ball?.ult?Math.max(floor,rate):rate;};
+const conquestFinalReturn=P.returnRoll;P.returnRoll=function(ball,tier,chance,bonus=0){if(worldCampaignActive()&&ball?.ult)return worldUltReturn(ball.ultTier);const rate=conquestFinalReturn(ball,tier,chance,bonus),floor=conquestReturnFloor()-Math.min(1,(+ball?.aiMovePenalty||0)/.15)*(typeof chinaActive==='function'&&chinaActive()?.03:typeof euroActive==='function'&&euroActive()?(euroRun.country==='japan'?.03:.04):0);return floor&&!ball?.ult?Math.max(floor,rate):rate;};
 addEventListener('pagehide',()=>{if(chinaRun?.live)persist();});
 })();
