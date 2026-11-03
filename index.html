@@ -3595,11 +3595,9 @@ function pause(){if(!playing||net)return;paused=!paused;lockPage(!paused);swingM
 function racketNote(type,blade,rubber){const R=RACKETS[type];return `타격 범위 ${Math.round(R.reach*100)}% · 파워 ${Math.round(R.power*100)}% · ${R.skill}`+(type==='shake'?gearNote(blade,rubber):'');}
 // Characters with their own racket (금호관장 일본식 펜홀더, 송스타 수비수 라켓): picking one puts my own racket / blade / rubber
 // aside; picking a normal character again brings that setup back.
-const charRacket=k=>LOOKS[k]?.racket||(LOOKS[k]?.pen?'jpen':null);
-function gearForChar(prev){const was=charRacket(prev),now=charRacket(charType);if(!was&&!now)return;
-if(now){if(!was)store.set('myGear',JSON.stringify({racket:racketType,blade:bladeType,rubber:rubberType}));setRacket(now);return;}
-let g=null;try{g=JSON.parse(store.get('myGear'));}catch{}if(!g||!RACKETS[g.racket])return;
-if(BLADES[g.blade])bladeType=g.blade;if(RUBBERS[g.rubber])rubberType=g.rubber;store.set('blade',bladeType);store.set('rubber',rubberType);$('blade').value=bladeType;$('rubber').value=rubberType;setRacket(g.racket);toast(`내 장비로 돌아왔어요: ${RACKETS[g.racket].name}`+(g.racket==='shake'?` · ${BLADES[bladeType].name} + ${RUBBERS[rubberType].name}`:''),1.8);}
+const charRacket=k=>LOOKS[k]?.racket||(LOOKS[k]?.pen?'jpen':'shake');
+{const selectCharacterWithRacket=setCharacter;setCharacter=function(...args){const result=selectCharacterWithRacket.apply(this,args);setRacket(charRacket(charType));return result;};}
+function gearForChar(){setRacket(charRacket(charType));}
 function setRacket(type){type=charRacket(charType)||type;if(!RACKETS[type])return;racketType=type;$('racket').value=type;$('racket-note').textContent=racketNote(type,bladeType,rubberType);$('special-name').textContent='✦ 장착 필살기';store.set('racket',type);$('gear').hidden=type!=='shake';}
 // Campaign lineups call setCharacter directly, bypassing the equipment dialog.
 // Resolve the selected character's mandatory racket before any match starts.
@@ -3656,7 +3654,7 @@ function suRefresh(){$('su-gear').hidden=su.racket!=='shake';$('su-note').textCo
 function suStep(n){$('su-p0').hidden=n!==0;$('su-steps').hidden=n===0;const L=suList();for(const i of [1,2,3]){$('su-p'+i).hidden=n!==i;$('su-s'+i).classList.toggle('on',n===i);}$('su-s2').hidden=!L.includes(2);$('su-s3').hidden=!L.includes(3);$('su-next').textContent=L.length===1?'플레이 시작 ↗':'다음 →';$('su-next2').textContent='플레이 시작 ↗';}
 function suCancel0(){$('setup').close();}
 function openSetup(){if(ceremonyActive()||!loginGate())return;Object.assign(su,{racket:racketType,blade:bladeType,rubber:rubberType,diff:difficulty,tier:aiTier});suTierOpts();
-suOpts($('su-racket'),'racket','racket',suRefresh);suOpts($('su-diff'),'difficulty','diff');
+su.racket=charRacket(charType);$('su-racket').textContent=`${LOOKS[charType].nick} 전용 · ${RACKETS[su.racket].name}`;suOpts($('su-diff'),'difficulty','diff');
 $('su-blade').innerHTML=$('blade').innerHTML;$('su-rubber').innerHTML=$('rubber').innerHTML;$('su-blade').value=su.blade;$('su-rubber').value=su.rubber;suRefresh();
 if(store.get('setupDone')){const opt=(sel,v)=>[...$(sel).options].find(o=>o.value===v)?.text.split(' · ')[0]||v,rows=[['라켓',opt('racket',su.racket)],...(su.racket==='shake'?[['목판',opt('blade',su.blade)],['러버',opt('rubber',su.rubber)]]:[]),...(mode==='match'?[['AI 난이도',TIERS[su.tier].name]]:[])];
 $('su-last').textContent='';for(const [k,v] of rows){const li=document.createElement('li'),a=document.createElement('span');a.textContent=k;li.append(a,v);$('su-last').append(li);}suStep(0);}else suStep(1);$('setup').showModal();}
@@ -3668,7 +3666,8 @@ function applyQueuedSettings(){const v=queuedSettings();if(!v)return;const prevC
 function applySettings(){if(!pendingSettings())return;if(playing){const v={character:$('character').value,racket:$('racket').value,difficulty:$('difficulty').value,blade:$('blade').value,rubber:$('rubber').value};store.set('nextSettings',JSON.stringify(v));toast('설정이 저장됐어요 · 다음 경기부터 적용됩니다',2);return;}store.set('nextSettings','null');const prevC=charType;setCharacter($('character').value);bladeType=$('blade').value;rubberType=$('rubber').value;store.set('blade',bladeType);store.set('rubber',rubberType);setRacket($('racket').value);if(charType!==prevC)gearForChar(prevC);difficulty=$('difficulty').value;store.set('difficulty',difficulty);markPending();
 toast(`설정 적용 · ${LOOKS[charType].nick||LOOKS[charType].name} · ${RACKETS[racketType].name} · ${mode==='match'?TIERS[aiTier].name:modeText(mode)}`,2);}
 onBegin('pre',50,()=>applyQueuedSettings());
-function previewSettings(){const rk=$('racket').value,ch=LOOKS[$('character').value]||LOOKS.jersey;$('gear').hidden=rk!=='shake';$('racket-note').textContent=racketNote(rk,$('blade').value,$('rubber').value);drawFace($('char-face'),ch);$('char-name').textContent=ch.nick||ch.name;}
+function previewSettings(){const rk=charRacket($('character').value),ch=LOOKS[$('character').value]||LOOKS.jersey;$('racket').value=rk;$('gear').hidden=rk!=='shake';$('racket-note').textContent=racketNote(rk,$('blade').value,$('rubber').value);drawFace($('char-face'),ch);$('char-name').textContent=ch.nick||ch.name;}
+$('racket').disabled=true;$('racket').closest('label').firstChild.textContent='캐릭터 전용 라켓 (자동 적용) ';
 for(const id of ['character','racket','difficulty','blade','rubber'])$(id).onchange=()=>{markPending();previewSettings();if(['racket','blade','rubber'].includes(id)){applySettings();saveCloudSetup();}};
 $('blade').value=bladeType;$('rubber').value=rubberType;
 // Front-facing portrait (the in-game figure is seen from behind). Drawn in a 112-unit box into any canvas.
