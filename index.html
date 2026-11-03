@@ -571,7 +571,7 @@ const conquestCount=()=>{try{const S=tS();return (S.chinaCup2?1:0)+(typeof EURO_
 const conquestBonus=()=>0;
 function worldEntryRequirement(id){return ({china:8,japan:5,canada:3,argentina:3,australia:3,southafrica:3,mexico:3,greenland:3})[id]||0;}
 function worldEntryAllowed(id,notify=true){const need=worldEntryRequirement(id),S=tS(),own=id==='china'?!!S.chinaCup2:!!S['world_'+id],others=conquestCount()-(own?1:0),ok=others>=need;if(!ok&&notify)toast(`다른 나라 ${need}개국 제패 후 도전 가능 · 현재 ${others}/${need}`,2.5);return ok;}
-const conquestReturnFloor=()=>{try{if(typeof chinaActive==='function'&&chinaActive())return .93;if(typeof euroActive==='function'&&euroActive())return euroRun.country==='japan'?.89:.84;}catch{}return 0;};
+const conquestReturnFloor=()=>{try{if(typeof chinaActive==='function'&&chinaActive())return .93;if(typeof euroActive==='function'&&euroActive())return euroRun.country==='japan'?.90:.88;}catch{}return 0;};
 const enhanceShownAiMiss=()=>enhanceAiMissAt(enhanceLevel());
 // +1~10 stays approachable; +11~19 is a commitment and +20~30 is end-game.
 const enhanceCost=()=>{const n=enhanceLevel()+1;return n<=10?10:n<20?120:600;};
