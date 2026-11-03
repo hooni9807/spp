@@ -75,10 +75,31 @@ window.contentGate.sync=sync;setInterval(sync,1500);setTimeout(sync,300);
 #arena-pick .opt b{display:block;font-size:17px;font-weight:800}
 #arena-pick .opt small{display:block;margin-top:3px;font-size:12.5px;color:#93a4cc}
 #arena-pick .opt.locked b{color:#7f8fb6}
-#arena-pick .x{width:100%;min-height:44px;border:0;border-radius:12px;background:#18244a;color:#c3cfee;font:700 15px inherit;cursor:pointer}`;document.head.append(css);
+#arena-pick .x{width:100%;min-height:44px;border:0;border-radius:12px;background:#18244a;color:#c3cfee;font:700 15px inherit;cursor:pointer}
+html body .control-card .segmented #arena-open{background:linear-gradient(135deg,#ff5a5a,#f6a13a);border:0;color:#2a0a06;box-shadow:0 5px 14px #ff6a4a44}
+#boss-select{width:min(460px,94vw);max-height:90dvh;padding:18px}
+#boss-select::backdrop{background:#080512df}
+#boss-select h3{margin:0 0 5px;color:#ff8a6a}
+#boss-select>p{margin:0;color:#cbbcf0;font-size:13px}
+#boss-events{display:grid;gap:8px;margin-top:14px}
+#boss-events button{text-align:left;padding:14px;border:1px solid #5b477e;border-radius:12px;background:#241a3b;color:#fff;font:inherit;cursor:pointer}
+#boss-events button:hover{background:#2e2350}
+#boss-events button:focus-visible{outline:2px solid #ff8a6a;outline-offset:2px}
+#boss-events small:not(.boss-clear){display:block;margin-top:4px;color:#cbbcf0;font-size:12px}
+#boss-events b{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#boss-events .boss-clear{padding:3px 6px;border:1px solid #7cf0b6;border-radius:999px;background:#133b35;color:#9dffd0;font-size:10px;line-height:1;white-space:nowrap}
+#boss-events button.cleared{border-color:#6fe6b0;background:linear-gradient(135deg,#193d3b,#29224c)}`;document.head.append(css);
 const dlg=document.createElement('dialog');dlg.id='arena-pick';dlg.setAttribute('aria-labelledby','arena-title');document.body.append(dlg);
 const openArena=()=>{const t=tourOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="x">닫기</button>`;
- dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();(b.dataset.go==='boss'?document.querySelector('.segmented [data-mode="boss"]'):$('tournament-open'))?.click();});
+ dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();b.dataset.go==='boss'?openBoss():$('tournament-open')?.click();});
  dlg.showModal();dlg.querySelector('.opt').focus();};
+// 보스전도 대회처럼 팝업 명단에서 고르고 바로 시작한다. 명단은 기존 보스 선택(#boss-pick) 버튼을 그대로 읽는다.
+const BOSS_DONE={minhee:'minhee',boss:'maou',sejong:'sejong',godyung:'godyung',aribeom:'aribeom'};
+const bd=document.createElement('dialog');bd.id='boss-select';bd.setAttribute('aria-labelledby','boss-select-title');document.body.append(bd);
+const openBoss=()=>{const S=(()=>{try{return tS()||{};}catch{return {};}})();bd.innerHTML='<button type="button" class="dlg-x" aria-label="닫기">✕</button><h3 id="boss-select-title">보스 도전</h3><p>도전할 보스를 고르세요.</p><div id="boss-events"></div>';
+ const list=bd.querySelector('#boss-events');for(const src of document.querySelectorAll('#boss-pick [data-boss]')){const id=src.dataset.boss,done=!!S[BOSS_DONE[id]||id],b=document.createElement('button'),h=document.createElement('b'),nm=document.createElement('span');b.type='button';b.dataset.boss=id;nm.textContent=src.textContent.trim();h.append(nm);if(done){const c=document.createElement('small');c.className='boss-clear';c.textContent='✓ 클리어';h.append(c);b.classList.add('cleared');}b.append(h);{let lv='';try{lv=TIERS[BOSS_ULT_TIER[id]]?.name||'';}catch{}if(lv){const sm=document.createElement('small');sm.textContent=lv+'급 난이도';b.append(sm);}}list.append(b);}
+ bd.querySelector('.dlg-x').onclick=()=>bd.close();
+ list.onclick=e=>{const id=e.target.closest('[data-boss]')?.dataset.boss;if(!id)return;bd.close();document.querySelector('.segmented [data-mode="boss"]')?.click();document.querySelector(`#boss-pick [data-boss="${id}"]`)?.click();setTimeout(()=>$('start')?.click(),50);};
+ bd.showModal();list.querySelector('button')?.focus();};
 document.addEventListener('click',e=>{if(e.target.closest('#arena-open'))openArena();});}
 })();
