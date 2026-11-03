@@ -1600,7 +1600,7 @@ const savePrefs=()=>store.set('gamePrefs',JSON.stringify(prefs));
 const ultMotion=()=>!prefs.ultSkip;
 /* 만취범 취기가 쌓일수록 화면이 천천히 크게 일렁인다 (취기 5 = 약 17px). 화면 흔들림 설정과 무관하게 늘 켜짐(캐릭터 약점). */
 let drunkEnv=0;   /* 만취 일렁임은 상대 공이 내 쪽으로 오는 동안만 (서서히 켜지고 꺼짐) · 1~5단계는 살짝, 6단계부터 크게 */
-const drunkWob=a=>{const s=window.drunkStack||0;if(!s||!playing||!LOOKS[charType]?.drunk)return 0;if(!a)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.08;const A=[0,.5,1,2,3,4.5,13,17.5][Math.min(7,s)]*drunkEnv,kick=Math.max(0,1-(time-(window.drunkKickT??-9))/.5)*8;return (a?Math.sin(time*65):Math.sin(time*90)*.35)*kick+(a?Math.sin(time*2.3)*A*.6+Math.sin(time*5.1)*A*.25:Math.sin(time*1.7)*A+Math.sin(time*4.3)*A*.3);};
+const drunkWob=a=>{const s=window.drunkStack||0;if(!s||!playing||!LOOKS[charType]?.drunk)return 0;if(!a)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.18;const A=[0,2,3,4,5,6.5,13,17.5][Math.min(7,s)]*drunkEnv,kick=Math.max(0,1-(time-(window.drunkKickT??-9))/.5)*8;return (a?Math.sin(time*65):Math.sin(time*90)*.35)*kick+(a?Math.sin(time*7.3)*A*.6+Math.sin(time*12.1)*A*.25:Math.sin(time*6.1)*A+Math.sin(time*10.7)*A*.3);};
 const setShake=()=>{if(!prefs.reduceMotion)shakeT=time;};
 const vibrate=ms=>{if(prefs.haptics)navigator.vibrate?.(ms);};
 try{const nativeVibrate=navigator.vibrate?.bind(navigator);if(nativeVibrate)navigator.vibrate=ms=>prefs.haptics&&nativeVibrate(ms);}catch{}
