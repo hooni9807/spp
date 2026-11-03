@@ -1,0 +1,116 @@
+{
+  "title": "SPP 새 비주얼 월드 고르기",
+  "question": "주사위가 ‘생활체육대회 · 운동회’ 월드를 골랐어요. 이걸로 갈지, 다른 카드로 갈지, 다시 굴릴지 골라 주세요.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "생활체육대회 · 운동회",
+      "kicker": "THE ROLL",
+      "lineage": "동호회 친선대회 · 학교 운동회: 삼각 깃발 줄, 현수막 붓글씨, 리본 메달, 상장",
+      "thesis": "매 경기가 동호회 친선대회 하루: 메인은 대회장 입구, 경기는 본경기, 결과는 시상대와 상장.",
+      "palette": ["#f4efe2", "#1f4fd1", "#e8402a", "#f6c21c", "#127a4b", "#141414"],
+      "materials": ["천 현수막 위 굵은 레터링", "삼각 깃발 줄(무늬 없는 단색 천)", "리본 로제트 메달", "상장 종이와 금박 도장"],
+      "viewport": "화면 위를 가로지르는 단색 삼각 깃발 줄 아래, 천 현수막에 ‘SPP 친선 탁구대회’가 크게 걸리고, 그 아래 내 캐릭터 얼굴이 배번(번호표)을 달고 서 있어요. 엄지 닿는 아래쪽에 ‘경기 시작’ 큰 버튼, 모드는 대진표 줄로 고릅니다.",
+      "risk": "깃발·현수막을 장식으로만 쓰면 촌스러운 행사 포스터가 돼요. 깃발 줄은 진행 표시(레벨·랠리)로, 현수막은 실제 제목으로 일하게 해야 해요.",
+      "raised": [
+        {"from": "challenger-emission", "raise": "상태는 색만이 아니라 모양으로: 해금=꽉 찬 리본, 잠김=점선 테두리, 장착=겹친 이중선."},
+        {"from": "challenger-sixpack", "raise": "경험치·필살기 게이지는 스프링처럼 출렁이며 차오르는 실제 계기처럼 움직여요."}
+      ]
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "label": "동호회 탁구장 홀",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "동네 탁구장: 파란 탁구대, 초록 매트, 칸막이 펜스, 형광등",
+      "thesis": "앱 전체가 우리 탁구장 한 칸: 펜스가 메뉴, 탁구대가 무대.",
+      "palette": ["#0f3d8c", "#1d7a52", "#ffffff", "#e23b2e", "#0b0f1a"],
+      "materials": ["무광 탁구대 상판과 흰 라인", "펜스 보드", "고무 바닥 매트"],
+      "viewport": "위에서 내려다본 파란 탁구대 위에 캐릭터와 메뉴가 놓이고, 펜스 보드가 탭 바가 돼요.",
+      "risk": "탁구 게임이면 누구나 떠올리는 가장 익숙한 그림이에요. 잘 만들어도 ‘흔한 탁구 앱’으로 보일 수 있어요."
+    },
+    {
+      "id": "challenger-itasha",
+      "kind": "challenger",
+      "catalogId": "pop-culture-shelf-itasha-vinyl-wrap",
+      "label": "캐릭터 래핑(이타샤)",
+      "verdict": "competitive",
+      "lineage": "차체 전체를 감싼 캐릭터 비닐 래핑과 스폰서 띠",
+      "thesis": "동호회원 얼굴을 화면 판넬 전체에 크게 래핑, 메뉴는 스폰서 띠처럼.",
+      "palette": ["#111111", "#ff2d7a", "#18c6ff", "#ffe600", "#ffffff"],
+      "materials": ["광택 비닐", "판넬 이음선", "로고 띠"],
+      "viewport": "선택한 캐릭터 얼굴이 화면 두세 판넬에 걸쳐 크게 깔리고, 아래 띠에 모드 버튼이 줄지어요.",
+      "case": "동호회원 얼굴을 주인공으로 크게 쓰는 점이 우리 게임과 강하게 맞아요(사용자 공감 우세). 다만 메뉴가 많은 창들에서는 덜 명확해요.",
+      "risk": "얼굴 사진 품질이 제각각이라 크게 키우면 거칠어 보일 수 있어요.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-itasha-vinyl-wrap-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/pop-culture-shelf-itasha-vinyl-wrap.webp"
+    },
+    {
+      "id": "challenger-silkscreen",
+      "kind": "challenger",
+      "catalogId": "posters-covers-sleeves-ospaaal-poster",
+      "label": "실크스크린 대회 포스터",
+      "verdict": "competitive",
+      "lineage": "단색 판을 겹쳐 찍은 실크스크린 포스터",
+      "thesis": "단색 면을 겁 없이 겹친 포스터 한 장이 화면, 상태가 바뀔 때마다 판 한 장이 더 찍혀요.",
+      "palette": ["#f3ead8", "#e8402a", "#f6c21c", "#1b1b1b"],
+      "materials": ["평평한 잉크 면", "판 어긋남"],
+      "viewport": "가운데 내 캐릭터 실루엣, 가장자리를 따라 ‘SNAP PING PONG’ 문구가 테두리처럼 돌아요.",
+      "case": "단순하고 큰 색면이라 휴대폰에서 명확해요(명확성 우세). 동호회 사람들이 ‘우리 이야기’로 느끼는 힘은 약해요.",
+      "risk": "단색만 쓰면 캐릭터 얼굴 사진이 떠 보일 수 있어요.",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-ospaaal-poster-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/posters-covers-sleeves-ospaaal-poster.webp"
+    },
+    {
+      "id": "challenger-emission",
+      "kind": "challenger",
+      "catalogId": "operate-c-emission-line-rail",
+      "label": "분광 라인 레일",
+      "verdict": "declined",
+      "lineage": "밤의 분광 사진판",
+      "palette": ["#2a2a2a", "#e9e4d8", "#f2c94c"],
+      "materials": ["가는 발광선", "회색 연속 띠"],
+      "case": "동호회 탁구 게임과 공감대가 거의 없고, 캐주얼 게임에 너무 차가워요.",
+      "kept": "상태를 색이 아닌 선 모양(실선·점선·이중선)으로 구분하는 규칙.",
+      "hero": "https://impeccable.style/worlds/cards/operate-c-emission-line-rail-hero.webp"
+    },
+    {
+      "id": "challenger-sixpack",
+      "kind": "challenger",
+      "catalogId": "signals-instruments-night-flight-six-pack",
+      "label": "야간 비행 계기판",
+      "verdict": "declined",
+      "lineage": "경비행기 계기 6개",
+      "palette": ["#0b0b0b", "#e8e8e8", "#7cff9a"],
+      "materials": ["원형 계기", "야광 바늘"],
+      "case": "탁구 동호회와 연결고리가 약하고 메인 화면이 조종석처럼 무거워져요.",
+      "kept": "게이지가 스프링처럼 출렁이며 실제 계기처럼 움직이는 감각.",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-night-flight-six-pack-hero.webp"
+    },
+    {
+      "id": "challenger-versailles",
+      "kind": "challenger",
+      "catalogId": "architecture-inhabitable-space-versailles-bosquet-vistas",
+      "label": "베르사유 정원",
+      "verdict": "declined",
+      "lineage": "궁전 정원의 축선과 분수",
+      "palette": ["#3d5a2a", "#d8c9a3", "#c9a24a"],
+      "materials": ["다듬은 생울타리", "자갈"],
+      "case": "게임과 사용자 모두와 동떨어져요.",
+      "kept": "한 축을 따라 걸어가며 하나씩 드러나는 순서(진행·해금의 공개 순서).",
+      "hero": "https://impeccable.style/worlds/cards/architecture-inhabitable-space-versailles-bosquet-vistas-hero.webp"
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "모바일 게임 표준",
+    "thesis": "요즘 모바일 스포츠 게임이 쓰는 어두운 바탕 + 광택 카드 + 네온 강조 UI를 제대로.",
+    "palette": ["#0d1020", "#1b2140", "#ffd166", "#ff345d"],
+    "materials": ["광택 카드", "그라데이션 버튼"],
+    "viewport": "어두운 배경 위 캐릭터 카드 캐러셀과 큰 ‘PLAY’ 버튼.",
+    "risk": "지금 SPP와 크게 달라지지 않고, 다른 게임과 구분이 안 돼요."
+  }
+}
