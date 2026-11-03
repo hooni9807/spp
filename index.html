@@ -3419,7 +3419,7 @@ if(LOOKS[charType].defender&&verdict==='ok'&&!special&&!flair&&!shot.chance&&Mat
 if(rally<=1||f!=='cut')me.cutRun=0;   /* 백핸드 커트 연속 횟수: 다른 공을 치거나 새 랠리면 초기화 */
 if(f==='cut'){if(inc==='drive'){shot={...shot,spin:shot.spin*({PERFECT:1.1,GREAT:1.05,GOOD:1.025}[quality]||1)};const s2=Math.random()<.3&&shortCutShot(shot,ball.y,ball.z);if(s2){shot=s2;flair='shortCut';}}   /* 드라이브를 커트로 막으면 30% 짧은 투바운드 */
 const chopFh=fh&&(inc==='drive'||Math.random()<.5);   /* 포핸드로 온 드라이브는 늘, 다른 공은 50% 백핸드로 돌아서 깎는다 */
-if(chopFh){playerSide=-playerSide;bhFakeUntil=time+.6;if(!flair)flair='bhFake';if(inc==='drive')toast('송스타 포핸드 드라이브를 백핸드로 깎아 넘겨요!',1.2);else{shot={...P.power(shot,ball.y,ball.z,1.15),defMiss:Math.max(shot.defMiss||0,.06)};toast('송스타 돌아서서 백핸드 커트! 받기 어려운 공',1.2);}}   /* 포핸드 쪽 커트 50%: 백핸드 커트 모션 · 낮고 빠른 공 · 상대 실수 +6% */
+if(chopFh){playerSide=-playerSide;bhFakeUntil=time+.6;if(!flair)flair='bhFake';if(inc==='drive')toast('롱으로 깎았어요!',1.2);else{shot={...P.power(shot,ball.y,ball.z,1.15),defMiss:Math.max(shot.defMiss||0,.06)};toast('송스타 돌아서서 백핸드 커트! 받기 어려운 공',1.2);}}   /* 포핸드 쪽 커트 50%: 백핸드 커트 모션 · 낮고 빠른 공 · 상대 실수 +6% */
 if(!fh||chopFh){me.cutRun=(me.cutRun||0)+1;const run=Math.min(.1,.02*(me.cutRun-1));   /* 백핸드 커트 랠리가 이어질수록 상대 실수 +2%씩 (최대 +10%) */if(ball.type==='serve'&&(ball.spin||0)<0)shot={...shot,spin:Math.max(.6,Math.abs(shot.spin)),type:'loop'};
 else if(inc==='cut')shot={...shot,spin:.35,type:'loop'};   // rally cut on the backhand long: unwinds into a weak topspin
 if(quality==='PERFECT')shot={...P.power(shot,ball.y,ball.z,1.15),defMiss:.05+run};else if(quality==='GREAT')shot={...shot,defMiss:.025+run};else if(run)shot={...shot,defMiss:run};if(run>=.04)toast(`백핸드 커트 ${me.cutRun}연속 · 상대 실수 +${Math.round(run*100)}%`,1);}}}}
