@@ -723,7 +723,7 @@ function gamblerSecretEdge(){return!!tS().gambler6win;}function gamblerSecretNet
 const AJAE_SECRET=['ajaeBold','뻔뻔범','아재범으로 아웃 공 엣지 판정을 3번 살리고 승리'];
 function ajaeSecret(){return!!tS().ajaeBold;}function applyAjaeSecretName(){if(ajaeSecret())LOOKS.ajae.nick='뻔뻔범';}
 function unlockAjaeSecret(){const S=tS();if(S.ajaeBold)return false;S.ajaeBold=1;applyAjaeSecretName();if(charType==='ajae')setCharacter('ajae');saveProg();unlockQ.push(['secret:ajaeBold','히든 업적 달성!',AJAE_SECRET[1],AJAE_SECRET[2]+' · 내 아웃 공 엣지 +3% · 내 네트 미스 통과 +5%']);showUnlockNote();return true;}
-function playerEdgeChance(){return .01+(gamblerSecretEdge()?.03:0)+(ajaeSecret()?.03:0);}function playerNetCordChance(){return .10+(gamblerSecretNet()?.05:0)+(ajaeSecret()?.05:0)+R_('utNetLuck');}window.playerEdgeChance=playerEdgeChance;window.playerNetCordChance=playerNetCordChance;applyAjaeSecretName();
+function playerEdgeChance(){return .01+(charType==='gambler'&&gamblerSecretEdge()?.03:0)+(charType==='ajae'&&ajaeSecret()?.03:0);}function playerNetCordChance(){return .10+(charType==='gambler'&&gamblerSecretNet()?.05:0)+(charType==='ajae'&&ajaeSecret()?.05:0)+R_('utNetLuck');}window.playerEdgeChance=playerEdgeChance;window.playerNetCordChance=playerNetCordChance;applyAjaeSecretName();
 const DOUBLES_HARMONY=['doublesHarmony','완벽한 호흡','복식에서 나와 파트너의 타구를 합쳐 10회 이상 성공하고 승리'];
 function doublesHarmonySecret(){return!!tS().doublesHarmony;}function harmonyBonus(){return doublesHarmonySecret()?.02:0;}function harmonyK(){return 1+harmonyBonus();}
 function unlockDoublesHarmony(){const S=tS();if(S.doublesHarmony)return false;S.doublesHarmony=1;saveProg();unlockQ.push(['secret:doublesHarmony','히든 업적 달성!',DOUBLES_HARMONY[1],DOUBLES_HARMONY[2]+' · 모든 복식 시너지 강화']);showUnlockNote();return true;}
