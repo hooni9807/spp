@@ -3868,7 +3868,7 @@ $('character').onchange=()=>showCharInfo($('character').value);$('char-info').ad
 // Solo matches resume from the next serve. Multiplayer never stores a local continuation.
 const SOLO_SAVE_MODES=new Set(['practice','match','boss','doubles','trio','cutman','hiball','threeclick','fourclick']);
 function clearSave(){try{localStorage.removeItem('spinlab.save');}catch{}}
-function loadSave(){try{const v=JSON.parse(store.get('save'));return v&&Number.isInteger(v.you)&&Number.isInteger(v.cpu)&&SOLO_SAVE_MODES.has(v.mode)?v:null;}catch{return null;}}
+function loadSave(){try{const v=JSON.parse(store.get('save'));return v&&Number.isInteger(v.you)&&v.you>=0&&Number.isInteger(v.cpu)&&v.cpu>=0&&SOLO_SAVE_MODES.has(v.mode)&&(!v.aiChar||Object.hasOwn(LOOKS,v.aiChar))?v:null;}catch{return null;}}
 function saveRun(){if(net||rankOn||!SOLO_SAVE_MODES.has(mode))return null;const v={you,cpu,mode,charge,driveBonus,aiChar,aiTier,bossChoice,tour:tournament?.state==='playing'?JSON.parse(JSON.stringify(tournament)):null};store.set('save',JSON.stringify(v));return v;}
 function resumeLabel(v){return `이어하기 (${v.you} : ${v.cpu} · ${v.tour?tourEvent()?.name||'대회':v.mode==='boss'?'보스전':v.mode==='match'?'AI전':modeText(v.mode)}) `;}
 function showResume(v){$('resume').firstChild.textContent=resumeLabel(v);$('resume').hidden=false;}
@@ -4398,7 +4398,7 @@ const TEST_HOST=/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)&&!N
 async function remote(){if(!FIREBASE_CONFIG||TEST_HOST)return null;if(rankDb)return rankDb;
 const app=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');rankFs=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js');
 rankApp=app.initializeApp(FIREBASE_CONFIG);rankDb=rankFs.getFirestore(rankApp);return rankDb;}
-function localBoard(k){try{return JSON.parse(store.get('rank-'+k))||[];}catch{return [];}}
+function localBoard(k){try{const rows=JSON.parse(store.get('rank-'+k));return Array.isArray(rows)?rows.filter(r=>r&&typeof r==='object'):[];}catch{return [];}}
 function cleanName(v){return String(v).replace(/[\u0000-\u001f<>]/g,'').trim().slice(0,12);}
 // One record per match (id = matchId, so a resend can never add it twice). Everything is captured now, so it can also be
 // sent on the next visit when the page was closed mid-game.

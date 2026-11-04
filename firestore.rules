@@ -219,10 +219,10 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['name', 'trophies', 'regions', 'count', 'at'])
         && request.resource.data.keys().hasAll(['name', 'trophies', 'regions', 'count', 'at'])
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.trophies is list && request.resource.data.trophies.size() <= 6
-        && request.resource.data.trophies.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'seoul', 'attendance'])
-        && request.resource.data.regions is list && request.resource.data.regions.size() <= 5
-        && request.resource.data.regions.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'seoul'])
+        && request.resource.data.trophies is list && request.resource.data.trophies.size() <= 7
+        && request.resource.data.trophies.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'pyeongtaek', 'seoul', 'attendance'])
+        && request.resource.data.regions is list && request.resource.data.regions.size() <= 6
+        && request.resource.data.regions.hasOnly(['daejeon', 'sejong', 'busan', 'okcheon', 'pyeongtaek', 'seoul'])
         && request.resource.data.count is int && request.resource.data.count == request.resource.data.trophies.size()
         && request.resource.data.at == request.time;
     }
@@ -235,7 +235,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['name', 'coins', 'racketEnhance', 'at'])
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.coins is int && request.resource.data.coins >= 0
-        && request.resource.data.racketEnhance is int && request.resource.data.racketEnhance >= 0 && request.resource.data.racketEnhance <= 100
+        && request.resource.data.racketEnhance is int && request.resource.data.racketEnhance >= 0 && request.resource.data.racketEnhance <= 30
         && grows('coins', 20000, 5000) && grows('racketEnhance', 1, 1)
         && request.resource.data.at == request.time;
     }
