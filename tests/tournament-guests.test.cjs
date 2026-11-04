@@ -7,7 +7,7 @@ let n=0;const names=context.names(44,['김치성','아담 성'],()=>((n++*17)%10
 assert.equal(names.length,44);assert.equal(new Set(names).size,44);assert(!names.includes('김치성'));assert(!names.includes('아담 성'));
 assert.equal(context.names(0).length,0);
 assert(html.includes('id="tournament-open"'));
-assert(html.includes('id="tournament-open" type="button">대회 출전'));
+assert(/id="tournament-open" type="button"[^>]*>대회 출전/.test(html));
 assert(html.includes('id="net-quick" type="button">PVP'));
 assert(html.includes('id="tournament-select"'));
 assert(html.includes('data-tour="sejong"'));
@@ -16,7 +16,7 @@ assert(html.includes("TOUR_TIERS=['ultra','uhard','uext','uext','uext','uext']")
 assert(html.includes("id:'sejong',name:'세종시대회',tiers:['extreme','ultra','uhard','uext','uext','uext'],handicap:4"));
 assert(html.includes("tournament?.state==='playing'&&tourHandicap()"));
 assert(html.includes("id:'seoul',name:'서울시대회',tiers:['unight','unight','unight','unight','unight','unight'],returnBonus:.1,speedRound:3,reachRound:4,ultRound:5"));
-assert(html.includes('P.returnRoll(ball,mode===\'match\'||bossCharm()?tierNow():null'));
+assert(html.includes('P.returnRoll(ball,mode===\'match\'||bossCharm()||maouFight()?tierNow():null'));
 assert(html.includes('tourReturnBonus()'));
 assert(html.includes('*tourReach()'));
 assert(html.includes('if(a.named!==b.named)return a.named?a:b'));
