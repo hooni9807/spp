@@ -3032,6 +3032,9 @@ hipY+=ultOffset.y;
 const pose=strokePose(stroke,since,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T),armPose=look.lateArm?strokePose(stroke,since-.18,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T):pose;
 ultMotionPose(pose,st.ultMove,side,s);
 const cheer=st.cheerT!=null&&time-st.cheerT<1.2?Math.abs(Math.sin((time-st.cheerT)*8)):-1;   // won the point: jump with both arms up
+// Pre-serve routine: inspect the racket, bounce the ball, rehearse, then settle for the toss.
+const routine=st===foe&&!net&&aiChar==='nemseop'&&nemPrepUntil>time?20-(nemPrepUntil-time):-1;
+if(routine>=0){const t=routine;pose.target={x:x+arm*(t<5?12+5*Math.sin(t*3):t<11?28:t<16?30+20*Math.sin((t-11)*2):18)*s,y:hipY-(t<5?51:t<11?40:t<16?48+12*Math.cos((t-11)*2):44)*s*T};pose.angle=arm*(t<5?Math.sin(t*2)*.7:t<16?.4:.8);pose.crouch=t<16?.15+.08*Math.sin(t*2):.35+.1*Math.sin(t);pose.twist=t<5?.15:t<16?.25*Math.sin(t*2):.2;}
 if(cheer>=0){pose.target={x:x+side*16*s,y:hipY-128*s*T};pose.angle=side*.15;pose.crouch=.15;pose.twist=0;}
 const squat=look.squatCheer&&st.ceremT!=null&&time-st.ceremT<1.2;   // PERFECT ceremony, independent of scoring
 if(squat){pose.target={x:x+arm*32*s,y:hipY+(st.legLen||30*s*T)*.5-122*s*T};pose.angle=arm*.15;pose.crouch=1;pose.twist=0;}
@@ -3078,6 +3081,7 @@ const bal=look.balance&&!sad&&cheer<0&&!squat&&(prep!=null||since>=0&&since<.7)?
 const shout=!sad&&look.shout&&st.shoutT!=null&&time-st.shoutT<.6;const free=bal?bal:sad?{x:ux-arm*4*s,y:hy-72*s*T}:cheer>=0||squat?(squat?{x:ux-arm*34*s,y:hy-112*s*T}:{x:ux-arm*20*s,y:hy-98*s*T}):shout?{x:ux-arm*20*s,y:hy-82*s*T}:st.holding?{x:ux-arm*22*s,y:hy-34*s*T}:look.fist&&!st.tossing?{x:ux-arm*24*s,y:hy-(46+pose.twist*6)*s*T}:st.tossing?{x:ux-arm*20*s,y:hy-78*s*T}:{x:ux-arm*(26-pose.twist*6)*s,y:hy-(24+pose.twist*10)*s*T};st.free=free;const fs={x:ux-arm*15*s,y:hy-50*s*T};line(fs,free,look.armSleeve||(look.longSleeve?look.sleeve:skin),7*s);if(look.longSleeve||look.armSleeve){ctx.beginPath();ctx.arc(free.x,free.y,3.6*s,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();}if(look.longSleeve){const fe={x:lerp(fs.x,free.x,.5)-arm*4*s,y:lerp(fs.y,free.y,.5)+5*s};fitBentCloth(fs,fe,{x:lerp(fs.x,free.x,.93),y:lerp(fs.y,free.y,.93)},look.sleeve,s,10,7.8);}else if(!look.bareArms)fitSleeve(fs,{x:lerp(fs.x,free.x,.3),y:lerp(fs.y,free.y,.3)},look.sleeve,s,10);
 if(!look.longSleeve&&!look.armSleeve){const fe={x:lerp(fs.x,free.x,.5)-arm*3*s,y:lerp(fs.y,free.y,.5)+3*s};volumeLimb({x:lerp(fs.x,fe.x,.65),y:lerp(fs.y,fe.y,.65)},fe,skin,8*s*(look.fat||1));volumeLimb(fe,free,skin,7*s*(look.fat||1));}
 fitWrist(look,fs,free,s,'free');
+if(routine>=0){const t=routine,bounce=t>=5&&t<11?Math.abs(Math.sin((t-5)*Math.PI*1.6))*25*s:0,toss=t>19?Math.sin((t-19)*Math.PI)*45*s:0;ctx.save();ctx.fillStyle='#fff7df';ctx.strokeStyle='#bda97e';ctx.lineWidth=s;ctx.beginPath();ctx.arc(free.x,free.y-5*s+bounce-toss,4*s,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();}
 if(look.wb2)line({x:lerp(fs.x,free.x,.78),y:lerp(fs.y,free.y,.78)},{x:lerp(fs.x,free.x,.92),y:lerp(fs.y,free.y,.92)},look.wb2,8*s);
 if(look.watch){const w={x:lerp(fs.x,free.x,.86),y:lerp(fs.y,free.y,.86)};ctx.beginPath();ctx.arc(w.x,w.y,(look.bigWatch?4.4:3.4)*s,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();}
 if(look.fist||squat){ctx.beginPath();ctx.arc(free.x,free.y,(squat?5.4:4.6)*s,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();}
