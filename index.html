@@ -3339,7 +3339,9 @@ if(dblA){const G=actIdx?foe:foe2,GL=actIdx?aiChar:foe2Char,gx=(ball&&ball.x>0?-1
 person(G,gf.y-G.legLen,{x:G.x-30*gs,y:gf.y-G.legLen-40*gs},-.35,LOOKS[GL],gs,'shake',LOOKS[GL].lefty?RED:BLACK,-1,'drive',9,null);}
 const opponent=project(net?P.clamp(-net.opp.x,-.9,.9):ball?P.clamp(ball.x,-1,1):0,2.8+P.DEEP_M*deepS,.18),foeFeet=project(0,FOE_FEET_Y+(F.depth||0)*.3+P.DEEP_M*deepS,-.76),aiScale=figScale(foeFeet)*(!net&&LOOKS[FL].boss&&!String(FL).startsWith('china_')?1.15:1),foeLeg=F.legLen=legPx(foeFeet),aiSide=net?-(net.opp.side||1):ball&&ball.x<0?-1:1;
 // AI faces us: its forehand (black) is on our left.
-F.stanceK=1+Math.abs(F.lean||0)*.6;stepBody(F,opponent.x-aiSide*34*aiScale,rdt,ball&&ball.owner==='you'?.55:.25,aiScale);
+const nemWalk=!net&&FL==='nemseop'&&nemPrepUntil>time?20-(nemPrepUntil-time):-1;
+const nemWalkX=nemWalk>=0?Math.sin(nemWalk*Math.PI/3)*.42*Math.min(1,nemWalk/1.2,(20-nemWalk)/2):0;
+F.stanceK=1+Math.abs(F.lean||0)*.6;stepBody(F,(nemWalk>=0?project(nemWalkX,2.8+P.DEEP_M*deepS,.18).x:opponent.x)-aiSide*34*aiScale,paused?0:rdt,ball&&ball.owner==='you'?.55:.25,aiScale);
 F.depth=lerp(F.depth||0,ball&&ball.owner==='you'&&!ball.held?P.clamp((ball.y-1.9)/.9,0,1):.2,Math.min(1,rdt*5));   // backs off as a deep ball comes
 const nemPrep=!net&&FL==='nemseop'&&nemPrepUntil>time,nemPhase=nemPrep?20-(nemPrepUntil-time):0,foePrep=!net&&ball&&ball.owner==='you'&&!ball.held&&ball.y>1.37&&time-lastAIHit>.65?P.clamp((ball.y-1.37)/1.43,0,1)*.35:null;
 if(nemPrep){F.holding=nemPhase<15;F.tossing=nemPhase>=15;F.crouch=.2+.18*(.5+.5*Math.sin(nemPhase*1.5));}
