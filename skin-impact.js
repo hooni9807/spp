@@ -1,6 +1,6 @@
 // 디자인 컬렉션 라켓 스킨 타구 임팩트: 내가 공을 치는 순간 라켓 스킨마다 다른 이펙트를 코트 위 겹친 캔버스에 그린다.
 // pixelfx 원칙: 빠르게 터지고 천천히 사라짐(outExpo) · 첫 2프레임 흰 섬광 · 중심 하나 + 2차 입자 · 색은 스킨 팔레트 3단.
-// PERFECT면 크기 ×1.5 · 입자 수 증가. 게임 판정에는 영향 없음(연출 전용).
+// PERFECT면 크기 ×1.5 · 입자 수 증가. 경기 중에는 장착한 스킨의 배경 효과도 가장자리에 깐다. 게임 판정에는 영향 없음(연출 전용).
 (()=>{
 const cv=document.createElement('canvas');cv.id='skin-impact';cv.setAttribute('aria-hidden','true');
 cv.style.cssText='position:fixed;pointer-events:none;z-index:39;left:0;top:0';document.body.append(cv);
@@ -50,6 +50,33 @@ function spawn(){const def=typeof equippedSkin==='function'?equippedSkin():null,
  seed=(Date.now()%100000)+1;live.push({x:q.x,y:q.y,t:performance.now(),fx,s,c:def.colors,e:fx.make(s),perfect});if(live.length>6)live.shift();}
 // 미리보기/점검용: 코트 좌표(x, y)에 해당 스킨 이펙트를 한 번 띄운다.
 window.skinImpactPreview=(id,x,y,perfect=false)=>{const def=typeof allRacketSkins==='function'&&allRacketSkins().find(r=>r.skin===id),fx=FX[id];if(!def||!fx)return false;const s=perfect?1.5:1;seed=(Date.now()%100000)+1;live.push({x,y,t:performance.now(),fx,s,c:def.colors,e:fx.make(s),perfect});return true;};
+// 배경 효과: 디자인 라켓을 끼고 경기하는 동안 코트 가장자리에 스킨 분위기를 옅게 깐다(공 길을 가리지 않게 낮은 투명도 · 가장자리 위주).
+// 입자는 코트 크기 비율(0~1) 좌표로 두고 매 프레임 시간으로만 계산한다(상태 없음, 끊김 없는 반복).
+const AMB_N={eclipse:10,glacier:22,ember:24,jade:16,sakura:18,circuit:6};
+const R_=(i,j)=>{const h=Math.sin(i*91.3+j*47.9)*24634.6345;return h-Math.floor(h);};
+function ambient(now,w,h,def){const id=def.skin,c=def.colors,t=now/1000,n=AMB_N[id];if(!n)return;
+ const edge=(i)=>{const u=R_(i,1);return u<.5?u*.36:1-(u-.5)*.36;};   // 좌우 가장자리 18% 띠에 몰아 둔다
+ g.save();
+ if(id==='eclipse'){const x=w*.88,y=h*.12,R=Math.min(w,h)*.09,rot=t*.08;   // 오른쪽 위 작은 일식: 검은 원반 · 숨쉬는 금빛 코로나 · 천천히 도는 광선
+  const gr=g.createRadialGradient(x,y,R*.6,x,y,R*2.4);gr.addColorStop(0,c[0]+'66');gr.addColorStop(1,c[0]+'00');g.fillStyle=gr;g.globalAlpha=.55+.15*Math.sin(t*1.3);g.beginPath();g.arc(x,y,R*2.4,0,TAU);g.fill();
+  g.globalAlpha=.35;g.strokeStyle=c[1];g.lineWidth=1.2;for(let i=0;i<n;i++){const a=rot+i/n*TAU,l=R*(1.5+.6*Math.sin(t*.9+i));g.beginPath();g.moveTo(x+Math.cos(a)*R*1.1,y+Math.sin(a)*R*1.1);g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke();}
+  g.globalAlpha=.85;g.fillStyle=c[2];g.beginPath();g.arc(x,y,R,0,TAU);g.fill();g.globalAlpha=.9;g.strokeStyle=c[0];g.lineWidth=1;g.stroke();
+  const ba=t*.5;g.fillStyle='#fff';g.globalAlpha=.6+.4*Math.sin(t*3);g.beginPath();g.arc(x+Math.cos(ba)*R,y+Math.sin(ba)*R,2.2,0,TAU);g.fill();}   // 다이아몬드 링 반짝임
+ else if(id==='glacier'){for(let i=0;i<n;i++){const sp=.03+R_(i,2)*.04,y=((R_(i,3)+t*sp)%1)*h,x=edge(i)*w+Math.sin(t*.7+i)*8,z=1.5+R_(i,4)*2.5;   // 가장자리로 천천히 내리는 얼음 결정 · 가끔 반짝
+   g.globalAlpha=.25+.35*Math.max(0,Math.sin(t*1.6+i*1.7));g.fillStyle=c[0];g.save();g.translate(x,y);g.rotate(t*.4+i);g.beginPath();g.moveTo(0,-z*1.6);g.lineTo(z*.7,0);g.lineTo(0,z*1.6);g.lineTo(-z*.7,0);g.closePath();g.fill();g.restore();}}
+ else if(id==='ember'){g.globalCompositeOperation='lighter';for(let i=0;i<n;i++){const sp=.05+R_(i,2)*.08,k=(R_(i,3)+t*sp)%1,y=h*(1-k),x=edge(i)*w+Math.sin(t*1.1+i*2)*10*k,z=1+R_(i,4)*2;   // 아래 가장자리에서 떠오르는 불티
+   g.globalAlpha=(1-k)*.6;g.fillStyle=k<.3?c[0]:c[1];g.fillRect(x,y,z,z);}
+  const gr=g.createLinearGradient(0,h,0,h*.75);gr.addColorStop(0,c[1]+'44');gr.addColorStop(1,c[1]+'00');g.globalAlpha=.6+.25*Math.sin(t*2.1);g.fillStyle=gr;g.fillRect(0,h*.75,w,h*.25);}   // 바닥 쪽 맥동하는 붉은 빛
+ else if(id==='jade'){for(let arm=0;arm<2;arm++){const cx=arm?w*.92:w*.08,cy=h*(arm?.3:.7);g.beginPath();for(let i=0;i<=30;i++){const k=i/30,a=t*.35*(arm?1:-1)+k*5,R=(6+k*44);g.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R*.7);}   // 양쪽 가장자리에 천천히 도는 용 소용돌이 · 비취 안개
+   g.globalAlpha=.22;g.strokeStyle=c[1];g.lineWidth=3;g.stroke();g.globalAlpha=.35;g.strokeStyle=c[0];g.lineWidth=1;g.stroke();}
+  for(let i=0;i<n;i++){const a=t*.2+i,x=edge(i)*w+Math.cos(a)*14,y=((R_(i,3)+t*.02)%1)*h,z=2+R_(i,4)*3;g.globalAlpha=.18+.12*Math.sin(t+i);g.fillStyle=c[0];g.beginPath();g.arc(x,y,z,0,TAU);g.fill();}}
+ else if(id==='sakura'){for(let i=0;i<n;i++){const sp=.035+R_(i,2)*.04,k=(R_(i,3)+t*sp)%1,y=k*h,x=edge(i)*w+Math.sin(t*.9+i*1.3)*16,z=3+R_(i,4)*2.5,fl=Math.abs(Math.sin(t*1.7+i));   // 가장자리로 흩날려 떨어지는 꽃잎 · 빛 받으면 반짝
+   g.save();g.translate(x,y);g.rotate(t*.8+i);g.scale(1,.35+fl*.65);g.globalAlpha=.3+.3*fl;g.fillStyle=fl>.9?c[0]:c[1];g.beginPath();g.ellipse(0,0,z*.55,z,0,0,TAU);g.fill();g.restore();}}
+ else if(id==='circuit'){g.globalCompositeOperation='lighter';g.lineWidth=1;for(let i=0;i<n;i++){const left=i%2===0,x0=left?w*.02:w*.98,dir=left?1:-1,y0=h*(.15+.7*R_(i,5)),pts=[[x0,y0],[x0+dir*w*.05,y0],[x0+dir*w*.05,y0+h*.08*(R_(i,6)-.5)*2],[x0+dir*w*.12,y0+h*.08*(R_(i,6)-.5)*2]];   // 좌우 가장자리 회로선 · 펄스가 흘러가고 끝 노드가 깜빡
+   g.globalAlpha=.18;g.strokeStyle=c[1];g.beginPath();pts.forEach((p,j)=>j?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+   const k=(t*.45+R_(i,7))%1,seg=Math.min(2,Math.floor(k*3)),f=k*3-seg,[ax,ay]=pts[seg],[bx,by]=pts[seg+1];g.globalAlpha=.7;g.fillStyle=c[0];g.fillRect(ax+(bx-ax)*f-1.5,ay+(by-ay)*f-1.5,3,3);
+   const [ex,ey]=pts[3];g.globalAlpha=.25+.45*(Math.sin(t*3+i)>.6);g.fillRect(ex-2,ey-2,4,4);}}
+ g.restore();}
 let prevOwner=null;
 (function frame(now){requestAnimationFrame(frame);
  const o=typeof ball!=='undefined'&&ball?ball.owner:null;
@@ -58,7 +85,9 @@ let prevOwner=null;
  const c=court();if(!c)return;const r=c.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);
  if(cv.width!==Math.round(r.width*dpr)||cv.height!==Math.round(r.height*dpr)){cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
  cv.style.left=r.left+'px';cv.style.top=r.top+'px';cv.style.width=r.width+'px';cv.style.height=r.height+'px';
- g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);if(!live.length)return;
+ g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);
+ {const def=typeof equippedSkin==='function'?equippedSkin():null;if(def&&AMB_N[def.skin]&&typeof playing!=='undefined'&&playing&&!(typeof paused!=='undefined'&&paused)&&!(typeof prefs==='object'&&prefs.reduceMotion)){g.setTransform(dpr,0,0,dpr,0,0);ambient(now,r.width,r.height,def);g.globalAlpha=1;g.globalCompositeOperation='source-over';}}
+ if(!live.length)return;
  const k0=r.width/(typeof W==='number'&&W||r.width)*dpr;
  for(let i=live.length-1;i>=0;i--){const e=live[i],k=(now-e.t)/1000/e.fx.d;if(k>=1){live.splice(i,1);continue;}
   g.setTransform(k0,0,0,k0,e.x*k0,e.y*k0);g.globalAlpha=1;
