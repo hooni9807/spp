@@ -1608,7 +1608,15 @@ const savePrefs=()=>store.set('gamePrefs',JSON.stringify(prefs));
 const ultMotion=()=>!prefs.ultSkip;
 /* 만취범 취기가 쌓일수록 화면이 천천히 크게 일렁인다 (취기 5 = 약 17px). 화면 흔들림 설정과 무관하게 늘 켜짐(캐릭터 약점). */
 let drunkEnv=0;   /* 만취범: 취기 1부터 경기 내내 잔 마실 때만큼 떨리고, 상대 공이 올 때는 일렁임이 더해진다 (6단계부터 크게) */
-const drunkWob=a=>{const s=window.drunkStack||0;if(!s||!playing||!LOOKS[charType]?.drunk)return 0;if(!a)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.18;const A=[0,2,3,4,5,6.5,13,30][Math.min(7,s)]*drunkEnv,kick=8*Math.min(7,s)/7;   /* 풀스택은 크게, 취기 흔들림은 느리게 */return (a?Math.sin(time*8):Math.sin(time*10)*.35)*kick+(a?Math.sin(time*3.65)*A*.6+Math.sin(time*6.05)*A*.25:Math.sin(time*3.05)*A+Math.sin(time*5.35)*A*.3);};
+const drunkWob=a=>{
+const stack=Math.min(7,window.drunkStack||0);
+if(!stack||!playing||!LOOKS[charType]?.drunk||prefs.reduceMotion)return 0;
+if(a===0)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.18;
+const strength=stack/7,amplitude=[0,2,3,4,5,6.5,13,30][stack]*(.35+.65*drunkEnv);
+// 서로 다른 주기의 이동과 기울기로 취기의 불규칙한 출렁임을 만든다.
+if(a===2)return strength*strength*(Math.sin(time*1.15)*.025+Math.sin(time*2.03+.8)*.009);
+return a===1?amplitude*(Math.sin(time*1.43+.9)*.55+Math.sin(time*2.37)*.2):amplitude*(Math.sin(time*1.17)+Math.sin(time*1.91+.6)*.35);
+};
 const setShake=()=>{if(!prefs.reduceMotion)shakeT=time;};
 const vibrate=ms=>{if(prefs.haptics)navigator.vibrate?.(ms);};
 try{const nativeVibrate=navigator.vibrate?.bind(navigator);if(nativeVibrate)navigator.vibrate=ms=>prefs.haptics&&nativeVibrate(ms);}catch{}
@@ -3218,7 +3226,7 @@ const chase=false;
 {const inc=!!(ball&&!ball.held&&ball.owner==='ai'&&me.waistY!=null),bp=chase?project(ball.x,ball.y,ball.z):null,hx=chase?bp.x:inc?project(ball.x,contactY(),.25).x:W/2,k=Math.min(1,cdt*(chase?7:inc?4:3));
 const pan=playerWaistAt(deepS)-playerWaistAt(0);cam.cx=lerp(cam.cx||W/2,inc||chase?hx:W/2,k);cam.cy=lerp((cam.cy||H*.62)-(cam.retreatPan||0),chase?bp.y:inc?playerWaistAt(0):H*.62,k)+pan;cam.retreatPan=pan;cam.ax=lerp(cam.ax||W/2,W/2,k);cam.ay=lerp(cam.ay||H*.62,chase?H*.45:inc?H*.5:H*.62,k);}
 cam.z=baseZ;ringK=1;
-const sk=prefs.reduceMotion?0:Math.max(0,1-(time-shakeT)/.5)*10;ctx.save();ctx.translate(cam.ax+Math.sin((time-shakeT)*90)*sk*.35+drunkWob(0),cam.ay+Math.sin((time-shakeT)*65)*sk+drunkWob(1));ctx.scale(cam.z,cam.z);ctx.translate(-cam.cx,-cam.cy);renderScene();drawCritFx();ctx.restore();courtHud();}
+const sk=prefs.reduceMotion?0:Math.max(0,1-(time-shakeT)/.5)*10;ctx.save();ctx.translate(W/2,H/2);ctx.rotate(drunkWob(2));ctx.translate(-W/2,-H/2);ctx.translate(cam.ax+Math.sin((time-shakeT)*90)*sk*.35+drunkWob(0),cam.ay+Math.sin((time-shakeT)*65)*sk+drunkWob(1));ctx.scale(cam.z,cam.z);ctx.translate(-cam.cx,-cam.cy);renderScene();drawCritFx();ctx.restore();courtHud();}
 const KIND_HINT={cut:'하회전 · 내려서 아래→위로 걸어 올리기',drive:'상회전 · 라켓 덮어서 맞드라이브 / 탭 블록',smash:'강타 · 드라이브 / 쇼트로 받기 (PERFECT 낮게 · GOOD 뜸)',spin:'회전 · 공 방향 보고 맞춰 치기',chance:'찬스볼 · 높이 뜬 공, 강하게 때리기!',kill:'찬스볼 강타 · PERFECT 낮게 · GREAT 보통 · GOOD 뜸',short:'짧은 공 · 가볍게 넘기기',serve:'서브 · 바운드 보고 받기'};
 function shotBanner(){const since=time-(net?net.opp.hitT:lastAIHit);if(!ball||ball.owner!=='ai'||ball.held||since<0||since>1.2)return;
 const kind=shotKind(ball),k=KIND[kind],a=since>.9?(1.2-since)/.3:1,pop=1+Math.max(0,.15-since)*3,fz=Math.round(Math.min(34,W*.06)*pop);
