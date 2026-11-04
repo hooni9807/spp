@@ -77,6 +77,8 @@ window.contentGate.sync=sync;setInterval(sync,1500);setTimeout(sync,300);
 #arena-pick .opt.locked b{color:#7f8fb6}
 #arena-pick .x{width:100%;min-height:44px;border:0;border-radius:12px;background:#18244a;color:#c3cfee;font:700 15px inherit;cursor:pointer}
 html body .control-card .segmented #arena-open{background:linear-gradient(135deg,#ff5a5a,#f6a13a);border:0;color:#2a0a06;box-shadow:0 5px 14px #ff6a4a44}
+html body #arena-open{position:relative;overflow:visible}
+html body #arena-open::after{content:'NEW';position:absolute;top:-8px;right:6px;z-index:2;padding:3px 7px;border-radius:6px;background:linear-gradient(180deg,#fff27a,#ffc21a);color:#7a0016;font:900 italic 11px/1.1 var(--num,sans-serif);letter-spacing:.06em;transform:rotate(8deg);box-shadow:0 1px 0 #b3002d,0 2px 6px #ffbe1e80;pointer-events:none}
 #boss-select{width:min(460px,94vw);max-height:90dvh;padding:18px}
 #boss-select::backdrop{background:#080512df}
 #boss-select h3{margin:0 0 5px;color:#ff8a6a}
