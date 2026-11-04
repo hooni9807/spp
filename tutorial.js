@@ -2,7 +2,7 @@
 (()=>{
 const KEY='spp_tutorial_done',ENABLED='spp_tutorial_enabled',$=id=>document.getElementById(id);
 const enabled=()=>{try{return localStorage.getItem(ENABLED)!=='off';}catch{return true;}};
-const settings=$('game-settings');if(settings){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.id='pref-tutorial';input.checked=enabled();input.onchange=()=>{try{localStorage.setItem(ENABLED,input.checked?'on':'off');}catch{}};label.append(input,document.createTextNode(' チュートリアル'));label.lastChild.textContent=' 튜토리얼';const sound=settings.querySelector('[data-gp="sound"]')?.closest('label');if(sound)sound.after(label);else settings.append(label);}
+const settings=$('game-settings');if(settings){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.id='pref-tutorial';input.checked=enabled();input.onchange=()=>{try{localStorage.setItem(ENABLED,input.checked?'on':'off');}catch{}};label.append(input,document.createTextNode(' 튜토리얼'));const sound=settings.querySelector('[data-gp="sound"]')?.closest('label');if(sound)sound.after(label);else settings.append(label);}
 const STEPS=[
  {at:()=>document.querySelector('#char-pick [aria-checked="true"]'),t:'내 선수',d:'지금 고른 캐릭터예요. 위의 "캐릭터 변경"으로 다른 동호회원을 고를 수 있어요.'},
  {at:()=>$('start'),t:'플레이 시작',d:'누르면 바로 AI와 한 경기. 처음엔 쉬움 난이도로 감을 잡아 보세요.'},
