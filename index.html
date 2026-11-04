@@ -3453,6 +3453,8 @@ if(tap==='short'&&P.incoming(ball)==='drive')tap='block';
 let smash=infd()?false:time<=smashUntil;const state=P.timing(ball);if((state==='wait'||state==='none')&&!secondDual)return;
 let motion=swingMemory&&time<=swingMemory.until?swingMemory:null;const dualSwing=!!(ball.dual&&ball.dualHit&&gesture?.dualTap&&gesture.stroke);if(!motion&&dualSwing){const g=gesture;motion={above:g.above,course:null,dir:g.dir,below:g.below,side:g.side,vx:paddle.vx,vy:paddle.vy,rise:(g.y-paddle.y)*cam.z,drop:(paddle.y-g.y)*cam.z,dx:(paddle.x-g.x)*cam.z,fromX:g.x,fromY:g.y,x:paddle.x,y:paddle.y,until:time+.05};}const R=RACKETS[racketType];
 if(!smash&&!tap&&motion&&ball.chance&&(motion.dir!=='down'||racketType==='defense'))smash=true;
+const ninjaChance=LOOKS[charType].noDrive&&!!ball.chance&&!infd(),ninjaChanceTap=ninjaChance&&!!tap;
+if(ninjaChanceTap)smash=false;
 let ninjaSwing=false;if(LOOKS[charType].noDrive&&!smash&&!tap&&motion&&motion.dir!=='down'&&!infd()){tap=P.incoming(ball)==='drive'?'block':'short';ninjaSwing=true;}   /* 탈주닌자 맹타치: 드라이브 스윙도 쇼트로 */
 const adamFake=LOOKS[charType].curver&&ball.chance&&motion&&!tap&&!infd();if(adamFake)smash=false;   // a floated chance ball: any swing smashes it (the defender's chop swing too)
 const p0=project(ball.x,ball.y,ball.z),p=ball.dual?(ball.dualHit&&ball.dualX!=null?project(ball.dualX,ball.y,ball.z):{...p0,x:p0.x+(ball.dualHit?dualOff():-dualOff())}):p0;let distance=Math.hypot(p.x-paddle.x,p.y-paddle.y);   // 투클릭: touch point ① (left of the ball) first, then ② (right)
@@ -3466,7 +3468,8 @@ const boost=racketType==='jpen'&&playerSide*fhDir()>0?{loop:1.15,drive:1.15,side
 const still=tap&&!smash;let shot=P.shot(still||!motion?0:motion.vx*R.power,smash?-1450:still?-200:motion.vy*R.power,ball.z,ball.x,ball.y,pracLike(),motion?{above:motion.above,course:motion.course!=null?motion.course:smash?motion.dx/Math.max(Math.abs(motion.rise||0),40):null,dir:motion.dir,below:motion.below,side:motion.side,rise:motion.rise,drop:motion.drop,dx:motion.dx}:{},special?ult.base:infd()?(playerSide*fhDir()>0?'loop':'back'):smash&&(racketType!=='defense'||ball.chance||playerSide*fhDir()>0)?'smash':tap||(racketType==='defense'&&playerSide*fhDir()<0?'chop':smash?'smash':undefined),boost);
 const inc=P.incoming(ball),resp=P.family(shot.type),verdict=special||(ball.dual||ball.pre||ball.quadNext)&&(quality==='PERFECT'||quality==='GREAT')?'ok':ball.hellfire&&quality!=='PERFECT'?'over':P.judge(inc,resp,quality==='PERFECT',racketType==='defense',!!LOOKS[charType].smashAll);   // specials always get through
 if(verdict!=='ok')shot=P.miss(shot,ball.y,ball.z,verdict);if(!net&&LOOKS[aiChar]?.smell&&verdict==='ok'&&!special&&rally>=2&&Math.random()<Math.min(.3,.05*Math.floor(rally/2))){shot={...P.popup(shot,ball.y,ball.z),chance:true};toast(`냄새에 숨이 막혀… 공이 떴어요 (실수 ${Math.round(Math.min(.3,.05*Math.floor(rally/2))*100)}%)`,1.3);}   /* 냄섭 냄새: 랠리 2번마다 실수 +5%p (최대 30%) · 실수하면 찬스볼 */
-if(LOOKS[charType].noDrive&&verdict==='ok'&&!special&&['short','block'].includes(shot.type))shot={...P.power(shot,ball.y,ball.z,ninjaSwing?1.2:1.4),power:true};   /* 닌자 쇼트: 탭(터치) ×1.4 · 드라이브 스윙이 바뀐 쇼트 ×1.2 */
+if(LOOKS[charType].noDrive&&verdict==='ok'&&!special&&['short','block'].includes(shot.type))shot={...P.power(shot,ball.y,ball.z,ninjaChanceTap?1.5:ninjaSwing?1.2:1.4),power:true};
+if(ninjaChance&&!ninjaChanceTap&&verdict==='ok'&&!special&&shot.type==='smash')shot={...P.power(shot,ball.y,ball.z,1.3),power:true};
 
 if(ult){shot=ultLandGuard(ultApply(ult,shot,ball),ball);const q=project(ball.x,ball.y,ball.z);fireUlt(ult,q.x,q.y);}if(special)shot={...shot,defMiss:Math.max(ultimateDefMiss(ult),shot.defMiss||0)};
 let flair=infd()?'inf':'',errWhy='';const shotOk=shot;   // 무한 드라이브: no random gear / trait errors, only timing decides
