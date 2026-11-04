@@ -1608,7 +1608,7 @@ const savePrefs=()=>store.set('gamePrefs',JSON.stringify(prefs));
 const ultMotion=()=>!prefs.ultSkip;
 /* 만취범 취기가 쌓일수록 화면이 천천히 크게 일렁인다 (취기 5 = 약 17px). 화면 흔들림 설정과 무관하게 늘 켜짐(캐릭터 약점). */
 let drunkEnv=0;   /* 만취범: 취기 1부터 경기 내내 잔 마실 때만큼 떨리고, 상대 공이 올 때는 일렁임이 더해진다 (6단계부터 크게) */
-const drunkWob=a=>{const s=window.drunkStack||0;if(!s||!playing||!LOOKS[charType]?.drunk)return 0;if(!a)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.18;const A=[0,2,3,4,5,6.5,13,17.5][Math.min(7,s)]*drunkEnv,kick=8*Math.min(7,s)/7;   /* 경기 내내 잔 마실 때만큼 떨림 */return (a?Math.sin(time*65):Math.sin(time*90)*.35)*kick+(a?Math.sin(time*7.3)*A*.6+Math.sin(time*12.1)*A*.25:Math.sin(time*6.1)*A+Math.sin(time*10.7)*A*.3);};
+const drunkWob=a=>{const s=window.drunkStack||0;if(!s||!playing||!LOOKS[charType]?.drunk)return 0;if(!a)drunkEnv+=((ball&&!ball.held&&ball.owner==='ai'?1:0)-drunkEnv)*.18;const A=[0,2,3,4,5,6.5,13,30][Math.min(7,s)]*drunkEnv,kick=8*Math.min(7,s)/7;   /* 풀스택은 크게, 취기 흔들림은 느리게 */return (a?Math.sin(time*8):Math.sin(time*10)*.35)*kick+(a?Math.sin(time*3.65)*A*.6+Math.sin(time*6.05)*A*.25:Math.sin(time*3.05)*A+Math.sin(time*5.35)*A*.3);};
 const setShake=()=>{if(!prefs.reduceMotion)shakeT=time;};
 const vibrate=ms=>{if(prefs.haptics)navigator.vibrate?.(ms);};
 try{const nativeVibrate=navigator.vibrate?.bind(navigator);if(nativeVibrate)navigator.vibrate=ms=>prefs.haptics&&nativeVibrate(ms);}catch{}
