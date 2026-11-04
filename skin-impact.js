@@ -1,6 +1,6 @@
 // 디자인 컬렉션 라켓 스킨 타구 임팩트: 내가 공을 치는 순간 라켓 스킨마다 다른 이펙트를 코트 위 겹친 캔버스에 그린다.
 // pixelfx 원칙: 빠르게 터지고 천천히 사라짐(outExpo) · 첫 2프레임 흰 섬광 · 중심 하나 + 2차 입자 · 색은 스킨 팔레트 3단.
-// PERFECT면 크기 ×1.5 · 입자 수 증가. 경기 중에는 장착한 스킨의 배경 효과도 가장자리에 깐다. 게임 판정에는 영향 없음(연출 전용).
+// PERFECT 타구에만 크게(×2.2) 터진다. 경기 중에는 장착한 스킨의 배경 효과도 가장자리에 깐다. 게임 판정에는 영향 없음(연출 전용).
 (()=>{
 const cv=document.createElement('canvas');cv.id='skin-impact';cv.setAttribute('aria-hidden','true');
 cv.style.cssText='position:fixed;pointer-events:none;z-index:39;left:0;top:0';document.body.append(cv);
@@ -46,10 +46,10 @@ const FX={
 
 const court=()=>document.getElementById('court');
 function spawn(){const def=typeof equippedSkin==='function'?equippedSkin():null,fx=def&&FX[def.skin];if(!fx||!ball||typeof project!=='function')return;
- const q=project(ball.x,ball.y,ball.z);if(!Number.isFinite(q?.x))return;const perfect=document.getElementById('timing')?.textContent==='PERFECT',s=perfect?1.5:1;
+ const q=project(ball.x,ball.y,ball.z);if(!Number.isFinite(q?.x))return;const perfect=document.getElementById('timing')?.textContent==='PERFECT',s=2.2;if(!perfect)return;   /* PERFECT 타구에만, 크게 */
  seed=(Date.now()%100000)+1;live.push({x:q.x,y:q.y,t:performance.now(),fx,s,c:def.colors,e:fx.make(s),perfect});if(live.length>6)live.shift();}
 // 미리보기/점검용: 코트 좌표(x, y)에 해당 스킨 이펙트를 한 번 띄운다.
-window.skinImpactPreview=(id,x,y,perfect=false)=>{const def=typeof allRacketSkins==='function'&&allRacketSkins().find(r=>r.skin===id),fx=FX[id];if(!def||!fx)return false;const s=perfect?1.5:1;seed=(Date.now()%100000)+1;live.push({x,y,t:performance.now(),fx,s,c:def.colors,e:fx.make(s),perfect});return true;};
+window.skinImpactPreview=(id,x,y,perfect=false)=>{const def=typeof allRacketSkins==='function'&&allRacketSkins().find(r=>r.skin===id),fx=FX[id];if(!def||!fx)return false;const s=perfect?2.2:1;seed=(Date.now()%100000)+1;live.push({x,y,t:performance.now(),fx,s,c:def.colors,e:fx.make(s),perfect});return true;};
 // 배경 효과: 디자인 라켓을 끼고 경기하는 동안 코트 가장자리에 스킨 분위기를 옅게 깐다(공 길을 가리지 않게 낮은 투명도 · 가장자리 위주).
 // 입자는 코트 크기 비율(0~1) 좌표로 두고 매 프레임 시간으로만 계산한다(상태 없음, 끊김 없는 반복).
 const AMB_N={eclipse:10,glacier:22,ember:24,jade:16,sakura:18,circuit:6};
