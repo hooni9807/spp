@@ -1,4 +1,4 @@
-// 첫 방문 튜토리얼: 처음 화면에서 한 번만 자리를 짚어 주며 4단계로 안내한다. 기록 탭의 "튜토리얼 다시 보기"로 언제든 다시 연다.
+// 시작 안내: 설정에서 자동 표시를 끌 수 있으며 기록 탭에서도 다시 열 수 있다.
 (()=>{
 const KEY='spp_tutorial_done',ENABLED='spp_tutorial_enabled',$=id=>document.getElementById(id);
 const enabled=()=>{try{return localStorage.getItem(ENABLED)!=='off';}catch{return true;}};
@@ -8,6 +8,7 @@ const STEPS=[
  {at:()=>$('start'),t:'플레이 시작',d:'누르면 바로 AI와 한 경기. 처음엔 쉬움 난이도로 감을 잡아 보세요.'},
  {at:()=>document.querySelector('.timing-legend'),t:'치는 법',d:'공 주위 링이 줄어들다 라켓 크기 원과 딱 겹치는 순간, 손가락을 끌어 스윙하세요. 정확할수록 PERFECT.'},
  {at:()=>$('gear-status'),t:'탁구대와 공 특성',d:'네모 테두리 안에서 이번 경기의 탁구대와 공 특성을 확인할 수 있어요. 종류에 따라 공의 속도와 회전, 타격 감각이 달라집니다.'},
+ {at:()=>$('tabnav'),t:'하단 메뉴바',d:'모드에서는 경기 종류를, 성장에서는 스킬트리·강화·코디를 선택해요. 기록에서는 내 정보·퀘스트·업적·패치노트를, 소셜에서는 친구·랭킹·출석을 확인할 수 있어요. 열려 있는 탭을 다시 누르면 메뉴가 닫힙니다.'},
  {at:()=>$('settings-fab'),t:'튜토리얼 설정',d:'게임을 켤 때마다 튜토리얼이 표시됩니다. 보고 싶지 않으면 톱니바퀴 설정창에서 튜토리얼을 끄세요. 같은 곳에서 다시 켤 수 있어요.'}
 ];
 const css=document.createElement('style');css.textContent=`
