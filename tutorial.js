@@ -1,11 +1,14 @@
 // 첫 방문 튜토리얼: 처음 화면에서 한 번만 자리를 짚어 주며 4단계로 안내한다. 기록 탭의 "튜토리얼 다시 보기"로 언제든 다시 연다.
 (()=>{
-const KEY='spp_tutorial_done',$=id=>document.getElementById(id);
+const KEY='spp_tutorial_done',ENABLED='spp_tutorial_enabled',$=id=>document.getElementById(id);
+const enabled=()=>{try{return localStorage.getItem(ENABLED)!=='off';}catch{return true;}};
+const settings=$('game-settings');if(settings){const label=document.createElement('label'),button=document.createElement('button');button.type='button';const paint=()=>{button.textContent='튜토리얼 '+(enabled()?'켜짐 · 끄기':'꺼짐 · 켜기');button.setAttribute('aria-pressed',String(enabled()));};button.onclick=()=>{try{localStorage.setItem(ENABLED,enabled()?'off':'on');}catch{}paint();};paint();label.append(button);settings.append(label);}
 const STEPS=[
  {at:()=>document.querySelector('#char-pick [aria-checked="true"]'),t:'내 선수',d:'지금 고른 캐릭터예요. 위의 "캐릭터 변경"으로 다른 동호회원을 고를 수 있어요.'},
  {at:()=>$('start'),t:'플레이 시작',d:'누르면 바로 AI와 한 경기. 처음엔 쉬움 난이도로 감을 잡아 보세요.'},
  {at:()=>document.querySelector('.timing-legend'),t:'치는 법',d:'공 주위 링이 줄어들다 라켓 크기 원과 딱 겹치는 순간, 손가락을 끌어 스윙하세요. 정확할수록 PERFECT.'},
- {at:()=>$('tabnav'),t:'더 하고 싶을 때',d:'모드 · 성장 · 기록 · 소셜은 아래 탭에 모여 있어요. 같은 탭을 한 번 더 누르면 닫혀요.'}
+ {at:()=>$('gear-status'),t:'탁구대와 공 특성',d:'네모 테두리 안에서 이번 경기의 탁구대와 공 특성을 확인할 수 있어요. 종류에 따라 공의 속도와 회전, 타격 감각이 달라집니다.'},
+ {at:()=>$('settings-fab'),t:'튜토리얼 설정',d:'게임을 켤 때마다 튜토리얼이 표시됩니다. 보고 싶지 않으면 톱니바퀴 설정창에서 튜토리얼을 끄세요. 같은 곳에서 다시 켤 수 있어요.'}
 ];
 const css=document.createElement('style');css.textContent=`
 #tut-ring{position:fixed;z-index:200;pointer-events:none;border-radius:12px;box-shadow:0 0 0 2px #14e0ff,0 0 0 9999px rgba(5,9,26,.74);transition:top .35s cubic-bezier(.16,1,.3,1),left .35s cubic-bezier(.16,1,.3,1),width .35s cubic-bezier(.16,1,.3,1),height .35s cubic-bezier(.16,1,.3,1)}
@@ -59,6 +62,7 @@ let playTimer=null;
 const TIMING={t:'지금이 칠 타이밍!',d:'공이 내 쪽으로 왔어요. 링이 줄어들어 라켓 원과 겹치는 순간 손가락을 위로 끌어 치세요. 확인을 누르면 이어집니다.'};
 window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
  try{setMode('practice');begin();if(paused)pause();}catch{return;}
+ const gear=$('gear-status');if(gear){gear.style.outline='3px solid #14e0ff';gear.style.outlineOffset='5px';}
  const box=document.createElement('div');box.id='play-coach';box.setAttribute('aria-hidden','true');
  const card=document.createElement('div');card.id='play-card';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-labelledby','play-card-t');card.hidden=true;
  card.innerHTML='<i></i><h3 id="play-card-t"></h3><p></p><button type="button">확인</button>';document.body.append(box,card);
@@ -67,7 +71,7 @@ window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
  const ask=(p,tag)=>{open=true;paused=true;card.querySelector('i').textContent=tag;card.querySelector('h3').textContent=p.t;card.querySelector('p').textContent=p.d;card.hidden=false;btn.focus();};
  btn.onclick=()=>{card.hidden=true;open=false;if(st.step>=PLAY.length){stop();return;}paused=false;};
  const pill=()=>{box.textContent=`튜토리얼 ${st.step+1} / ${PLAY.length} · ${PLAY[st.step].t}`;};
- const stop=()=>{clearInterval(playTimer);playTimer=null;box.remove();card.remove();if(paused&&playing)paused=false;};
+ const stop=()=>{clearInterval(playTimer);playTimer=null;box.remove();card.remove();if(gear){gear.style.outline='';gear.style.outlineOffset='';}if(paused&&playing)paused=false;};
  pill();ask(PLAY[0],`1 / ${PLAY.length}`);
  playTimer=setInterval(()=>{if(!playing||mode!=='practice'){stop();return;}if(open)return;
   const o=ball?ball.owner:null;
@@ -78,11 +82,9 @@ window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
   if(PLAY[st.step].need(st)){st.step++;st.mark=st.hits;st.swMark=st.switches;
    if(st.step>=PLAY.length){let first=false;try{prog.q??={};first=!prog.q._playTut;prog.q._playTut=1;}catch{}
     if(first&&typeof gainCoins==='function')gainCoins(300,'경기 튜토리얼 완료');box.remove();
-    ask({t:'튜토리얼 완료',d:'이제 AI 대전에서 실력을 보여 주세요. 처음 화면은 ⌂ 버튼.'},'완료');card.classList.add('done');}
+    ask({t:'튜토리얼 완료',d:'이제 AI 대전에서 실력을 보여 주세요. 튜토리얼은 톱니바퀴 설정창에서 켜고 끌 수 있습니다.'},'완료');card.classList.add('done');}
    else{pill();ask(PLAY[st.step],`${st.step+1} / ${PLAY.length}`);}}},50);};
 // 첫 방문: 로그인 · 프롤로그가 끝나고 처음 화면이 보일 때 한 번.
-let seen=false;try{seen=!!localStorage.getItem(KEY);}catch{}
-if(seen)return;
-const wait=setInterval(()=>{if(typeof prog!=='undefined'&&prog.xp>0){clearInterval(wait);try{localStorage.setItem(KEY,'1');}catch{}return;}const ov=$('overlay');if(typeof playing!=='undefined'&&playing||!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
+const wait=setInterval(()=>{if(!enabled()){clearInterval(wait);return;}const ov=$('overlay');if(typeof playing!=='undefined'&&playing||!ov||ov.classList.contains('hidden')||getComputedStyle(ov).display==='none'||document.querySelector('dialog[open]')||document.body.classList.contains('prologue-open'))return;
  clearInterval(wait);setTimeout(()=>{if(!(typeof playing!=='undefined'&&playing))openTutorial();},600);},700);
 })();
