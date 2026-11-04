@@ -29,7 +29,7 @@ html body.tabnav #char-pick:not(.open)>[aria-checked="true"] .char-difficulty{fo
 html body.tabnav #char-pick:not(.open)>[aria-checked="true"]::after{display:none}
 html body.tabnav #char-pick:not(.open)>[aria-checked="true"]{outline:0!important}
 html body.tabnav #char-pick:not(.open)>[aria-checked="true"]:focus-visible canvas{box-shadow:0 0 0 3px #0b1226,0 0 0 5px #14e0ff,0 10px 24px rgba(0,0,0,.5)!important}
-html body #char-more{margin:10px auto 0;display:block;width:auto!important;min-height:40px;padding:0 18px;border-radius:999px;border:1px solid rgba(150,180,255,.24);background:#111a35;color:#eef3ff;font:700 14px inherit}
+html body #char-more{margin:12px auto 24px;display:block;width:min(100%,300px)!important;min-height:54px;padding:12px 24px;border-radius:14px;border:1px solid rgba(150,180,255,.4);background:linear-gradient(135deg,#20365a,#18244a);color:#eef3ff;font:800 18px/1.3 'Pretendard Variable',Pretendard,sans-serif;box-shadow:0 5px 16px #0003}
 #char-more:hover{background:#18244a}
 body.tabnav #overlay .start-card{padding-bottom:80px}
 body.tabnav #mail-alert,body.tabnav #friends-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 76px)}`;
@@ -54,7 +54,7 @@ sheet.onclick=e=>{const go=e.target.closest('[data-go]')?.dataset.go;if(!go)retu
 // 캐릭터는 고른 한 장만 보이고, 변경을 누르면 전체가 펼쳐진다. 고르면 다시 접힌다.
 const pick=$('char-pick'),more=document.createElement('button');more.type='button';more.id='char-more';more.textContent='캐릭터 변경';
 more.onclick=()=>{pick.classList.toggle('open');const on=pick.classList.contains('open');more.textContent=on?'접기':'캐릭터 변경';if(on)pick.scrollIntoView({behavior:'smooth',block:'start'});};
-pick.after(more);pick.addEventListener('click',e=>{if(e.target.closest('[data-char]')&&pick.classList.contains('open'))setTimeout(()=>more.click(),150);});
+pick.before(more);pick.addEventListener('click',e=>{if(e.target.closest('[data-char]')&&pick.classList.contains('open'))setTimeout(()=>more.click(),150);});
 // 새 알림(!)은 해당 탭 위 빨간 점으로 옮긴다.
 setInterval(()=>{if(typeof playing!=='undefined'&&playing){nav.hidden=true;sheet.hidden=true;return;}if(!sheet.hidden)rewardBadges();for(const t of TABS){if(!t[3])continue;const on=t[3].some(id=>rewardCount(id)>0||$(id)?.querySelector('b:not([hidden])'));const b=nav.querySelector(`[data-tab="${t[0]}"]`);if(on!==!!b.querySelector('i'))on?b.append(document.createElement('i')):b.querySelector('i').remove();}
  nav.hidden=!!$('overlay')&&getComputedStyle($('overlay')).display==='none';if(nav.hidden)sheet.hidden=true;},500);

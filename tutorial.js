@@ -2,7 +2,7 @@
 (()=>{
 const KEY='spp_tutorial_done',$=id=>document.getElementById(id);
 const STEPS=[
- {at:()=>document.querySelector('#char-pick [aria-checked="true"]'),t:'내 선수',d:'지금 고른 캐릭터예요. 아래 "캐릭터 변경"으로 다른 동호회원을 고를 수 있어요.'},
+ {at:()=>document.querySelector('#char-pick [aria-checked="true"]'),t:'내 선수',d:'지금 고른 캐릭터예요. 위의 "캐릭터 변경"으로 다른 동호회원을 고를 수 있어요.'},
  {at:()=>$('start'),t:'플레이 시작',d:'누르면 바로 AI와 한 경기. 처음엔 쉬움 난이도로 감을 잡아 보세요.'},
  {at:()=>document.querySelector('.timing-legend'),t:'치는 법',d:'공 주위 링이 줄어들다 라켓 크기 원과 딱 겹치는 순간, 손가락을 끌어 스윙하세요. 정확할수록 PERFECT.'},
  {at:()=>$('tabnav'),t:'더 하고 싶을 때',d:'모드 · 성장 · 기록 · 소셜은 아래 탭에 모여 있어요. 같은 탭을 한 번 더 누르면 닫혀요.'}
