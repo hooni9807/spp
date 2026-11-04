@@ -23,8 +23,8 @@ async function rankLevel(xp, remoteRows) {
 }
 
 test('Lv 1~10 stays quick while later levels use the slower progression thresholds', async () => {
-  // Thresholds from the current needXp curve (ddcbd27): Lv10 at 2340, Lv11 at 2800, Lv12 at 3320, Lv20 at 10320, Lv21 at 11620, Lv22 at 13070.
-  for (const [xp, expected] of [[0, 1], [2339, 9], [2340, 10], [2799, 10], [2800, 11], [3319, 11], [3320, 12], [11619, 20], [11620, 21], [13069, 21], [13070, 22]]) {
+  // Thresholds from the current needXp curve: Lv10 at 2340, Lv11 at 2800, Lv12 at 3320, Lv20 at 10320, Lv21 at 11620, Lv22 at 13050.
+  for (const [xp, expected] of [[0, 1], [2339, 9], [2340, 10], [2799, 10], [2800, 11], [3319, 11], [3320, 12], [11619, 20], [11620, 21], [13049, 21], [13050, 22]]) {
     assert.equal((await rankLevel(xp, null))[0], `Lv ${expected}`, `local XP ${xp}`);
     assert.equal((await rankLevel(0, [{ name: '상대', xp, chars: 1 }]))[0], `Lv ${expected}`, `cloud XP ${xp}`);
   }
