@@ -62,13 +62,13 @@ const chinaFire=fireUlt;fireUlt=function(u,x,y,ai=false,...rest){const result=ch
 // 받은 목록 · 칭호에서 빼고, 받았던 코인을 돌려받는다(0 아래로는 안 내려감). 코인은 업적마다 한 번만(rv_ 표시는 기기 간 동기화).
 // 다른 기기의 옛 기록이 다시 올라와도 매번 조건으로 다시 정리하므로 되살아나지 않는다.
 const WORLD_ACH=['worldFirst','worldChina','worldThree','worldFive','worldTen','worldFifteen','worldAll'];
-function revokeOldChinaAchievements(){try{const S=tS(),titles=typeof allTitles==='function'?allTitles():[];if(!titles.length)return;let coins=0,names=[];
- for(const id of WORLD_ACH){const t=titles.find(x=>x[0]===id);if(!t||t[3]())continue;
+function revokeAchievements(ids,why){try{const S=tS(),titles=typeof allTitles==='function'?allTitles():[];if(!titles.length)return;let coins=0,names=[];
+ for(const id of ids){const t=titles.find(x=>x[0]===id);if(!t||t[3]())continue;
   const claimed=(S.achClaim||'').split(',').filter(Boolean),had=claimed.includes(id),unl=(S.unl||'').split(',').filter(Boolean),hadTitle=unl.includes('title:'+id);
   if(!had&&!hadTitle)continue;
   S.achClaim=claimed.filter(x=>x!==id).join(',');S.unl=unl.filter(x=>x!=='title:'+id).join(',');if(prog.q?._t===id)delete prog.q._t;
   if(had&&!S['rv_'+id]){S['rv_'+id]=1;coins+=achievementCoinReward(id);names.push(t[1]);}}
  if(!names.length&&!coins)return;prog.coins=Math.max(0,(prog.coins||0)-coins);if(typeof refreshAchFx==='function')refreshAchFx();saveProg();
- toast(`중국 재도전으로 세계제패 업적 회수: ${names.join(' · ')}${coins?` · -${coins.toLocaleString()} 코인`:''}`,4.5);}catch{}}
+ toast(`${why} 업적 회수: ${names.join(' · ')}${coins?` · -${coins.toLocaleString()} 코인`:''}`,4.5);}catch{}}
 // 로그인 후 클라우드 기록이 합쳐질 시간을 두고(20초 뒤부터) 확인한다.
-setTimeout(()=>setInterval(()=>{if(typeof tS!=='function'||typeof playing==='undefined'||playing||!prog?.q)return;revokeOldChinaAchievements();},5000),20000);
+setTimeout(()=>setInterval(()=>{if(typeof tS!=='function'||typeof playing==='undefined'||playing||!prog?.q)return;revokeAchievements(WORLD_ACH,'중국 재도전으로 세계제패');revokeAchievements(['boss','bossAll'],'탁구 마왕 재도전으로 보스');try{const S=tS();if(S.maou&&!S.maou2&&!localStorage.getItem('maou-reset-notice')){localStorage.setItem('maou-reset-notice','1');toast('탁구 마왕이 리메이크됐어요! 예전 클리어 기록은 초기화됐으니 보스전에서 다시 도전해 보세요 😈',4.5);}}catch{}},5000),20000);   /* 조건이 다시 거짓이 된 업적만 회수 · 코인은 업적마다 한 번 */
