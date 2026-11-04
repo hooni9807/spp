@@ -3454,6 +3454,7 @@ if(tap==='short'&&P.incoming(ball)==='drive')tap='block';
 let smash=infd()?false:time<=smashUntil;const state=P.timing(ball);if((state==='wait'||state==='none')&&!secondDual)return;
 let motion=swingMemory&&time<=swingMemory.until?swingMemory:null;const dualSwing=!!(ball.dual&&ball.dualHit&&gesture?.dualTap&&gesture.stroke);if(!motion&&dualSwing){const g=gesture;motion={above:g.above,course:null,dir:g.dir,below:g.below,side:g.side,vx:paddle.vx,vy:paddle.vy,rise:(g.y-paddle.y)*cam.z,drop:(paddle.y-g.y)*cam.z,dx:(paddle.x-g.x)*cam.z,fromX:g.x,fromY:g.y,x:paddle.x,y:paddle.y,until:time+.05};}const R=RACKETS[racketType];
 if(!smash&&!tap&&motion&&ball.chance&&(motion.dir!=='down'||racketType==='defense'))smash=true;
+if(LOOKS[charType].lobber&&!infd()&&!tap&&motion&&motion.vy<0&&P.incoming(ball)==='smash')smash=false;
 const ninjaChance=LOOKS[charType].noDrive&&!!ball.chance&&!infd(),ninjaChanceTap=ninjaChance&&!!tap;
 if(ninjaChanceTap)smash=false;
 let ninjaSwing=false;if(LOOKS[charType].noDrive&&!smash&&!tap&&motion&&motion.dir!=='down'&&!infd()){tap=P.incoming(ball)==='drive'?'block':'short';ninjaSwing=true;}   /* 탈주닌자 맹타치: 드라이브 스윙도 쇼트로 */
