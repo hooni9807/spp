@@ -882,7 +882,7 @@ const ultPower=u=>(u.m.pw||1)*1.2+(u.m.sp||1)*.3+(u.m.cv||0)*.25+(u.m.dm||0)*4;
 for(const t of Object.keys(ULT_TRIG))ULTS.filter(u=>u.trig===t).sort((a,b)=>ultPower(a)-ultPower(b)||a.id.localeCompare(b.id)).forEach((u,k)=>{u.tier=k+1;if(u.tier===4){u.m={...u.m,dm:Math.max(.2,u.m.dm||0)};u.desc+=' · AI 리턴 추가 실수 20%';u.coach=`${u.name}! ${u.desc}`;}});
 const ALL_ULTS=[...ULTS];ULTS.splice(0,ULTS.length,...ULTS.filter(u=>u.tier===4));
 const doublesPartnerChoices=(ch=charType)=>[...new Set(UNLOCKABLE().concat(START_CHARS))].filter(k=>k!==ch&&charUnlocked(k)&&characterAvailable(k));
-const ultReq=()=>'',ultOk=u=>!!u&&ULTS.includes(u);
+const ultReq=()=>'',ultOk=u=>!!u&&ULTS.includes(u),ultPartnersFor=()=>[];
 const ULT_BY=Object.fromEntries(ALL_ULTS.map(u=>[u.id,u]));
 const ultReqBrief=(u,ch=charType)=>ultReq(u,ch);
 /* 모든 필살기는 발사 순간과 비행 중에 같은 계열의 효과를 남긴다. */
@@ -1853,7 +1853,7 @@ pill(`${trioName(k)} ${trioT.score[k]}`,st.x,ff.y-st.legLen-95*gs,k===1?'255,140
 function startServe(){if(mode==='trio'){trioServe();return;}if(net&&net.dbl){dblServe();return;}if(mode!=='doubles'||net){myServe()?holdServe():net?oppServe():serve();return;}const rot=serveRot();
 if(myServe()){if(rot){holdServe();ball.mateServe=true;myTurn='me';toast('파트너 서브 · 화면을 눌러 토스하세요',2.5);}else{holdServe();myTurn='mate';}}else{aiHitter=rot;foeTurn=rot^1;myTurn=rot?'mate':'me';serve();if(myTurn==='mate')toast('상대 서브 · 파트너로 받아요',1.4);}}
 // A locally controlled partner keeps a separate gauge and can still use its own tier-1 special.
-function mateUlt(b){const t=ultTrig(b);return ULTS.find(u=>u.tier===1&&u.trig===t&&ultAllowed(u,mateChar))||ULTS.find(u=>u.tier===1&&ultAllowed(u,mateChar));}
+function mateUlt(b){const t=ultTrig(b);return ULTS.find(u=>u.trig===t&&ultAllowed(u,mateChar))||ULTS.find(u=>ultAllowed(u,mateChar));}
 function rollGear(){gear=net?{table:TABLES[2],ball:BALLS[2]}:{table:TABLES[Math.random()*3|0],ball:BALLS[Math.random()*3|0]};const t=gear.table,b=gear.ball;Object.assign(TT,{blue:t.blue,edge:t.edge,side:t.side});Object.assign(P.EQUIP,{speed:(1+t.speed)*(1+b.speed),spin:(1+t.spin)*(1+b.spin),len:(1+t.len)*(1+b.len)});renderGearStatus();}
 function myServe(){if(mode==='cutman'||mode==='infdrive'||survival()||clickPrac())return false;const n=you+cpu;return (n>=20?n%2:Math.floor(n/2)%2)===(firstServeFlip?0:1);}
 let firstServeFlip=0;   /* AI전 · 연습 등 혼자 하는 경기: 경기마다 50%로 첫 서브를 내가 넣는다 (온라인은 방장 기준 그대로) */
