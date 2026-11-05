@@ -324,6 +324,7 @@ function incomingRetreat(b){if(!b||b.owner!=='ai'||b.held||b.serving||b.vy>=0)re
 // Spin the receiver has to deal with: every 1.0 of spin above SPIN_FREE adds SPIN_MISS to the chance the return fails.
 function spinMiss(b){return Math.max(0,Math.abs(b.spin||0)*EQUIP.spin-SPIN_FREE)*SPIN_MISS;}
 function counterSpinMissRate(inc,resp,quality,b){return inc==='drive'&&resp==='drive'&&spinMiss(b)>0?({GREAT:.05,GOOD:.1,LATE:.2}[quality]||0):0;}
+function counterSpinMissOutcome(roll){return roll<.7?'float':roll<.8?'netIn':roll<.9?'net':'out';}
 function normalShot(b){return !b.ult&&!b.aiSpecial&&!b.kill&&!b.lob&&!b.fake&&!b.curve&&!b.gamble&&!b.unreturn;}
 // A normal-ball return starts at the selected tier's advertised rate.  The
 // already-calculated chance still carries spin, pace and placement penalties,
@@ -407,7 +408,7 @@ for(;k>1.01;k-=.05){const vy=s.vy*k,F2=d/vy,vz=(.5*g*F2*F2-z)/F2,t=(1.37-y)/vy;i
 // A late hit pops the ball up: slower, higher, little spin, same landing course - a chance ball for the other side.
 function popup(s,y,z,forward=P_FLOAT){const spin=s.spin*.3,g=6+spin*.55,flight=(2.25-y)/forward;return {...s,vx:s.vx*forward/s.vy,vy:forward,vz:(.5*g*flight*flight-z)/flight,spin,side:0,chance:true};}
 // A wrong answer to the incoming ball: dump it into the net or send it long over the table.
-function miss(s,y,z,kind){const g=6+s.spin*.55;if(kind==='net'){const t=(1.37-y)/s.vy;return {...s,vz:(.04-z+.5*g*t*t)/t,miss:kind};}
+function miss(s,y,z,kind){const g=6+s.spin*.55;if(kind==='net'||kind==='netIn'){const t=(1.37-y)/s.vy,pass=kind==='netIn';return {...s,vz:((pass?.16:.04)-z+.5*g*t*t)/t,miss:pass?false:kind,netCord:pass?'one':undefined};}
 const vy=Math.max(s.vy,3.2),T=(3.5-y)/vy;return {...s,vy,vz:(.5*g*T*T-z)/T,miss:kind};}
 // Incoming / outgoing shot families and the matchup table.
 function incoming(b){const t=b.type;if(['cut','chop','phantom'].includes(t))return 'cut';if(['smash','thunder'].includes(t))return 'smash';if(t==='side')return 'spin';
@@ -430,7 +431,7 @@ function step(b,dt){b.vx+=b.side*dt*(b.curveK||.3);b.vz-=(6+b.spin*EQUIP.spin*.5
 // PvP rating: start 1000, win +10 / loss -10, each extra game in a streak adds 1 more (+11, +12 ... / -11, -12 ...).
 function nextRating(o,won){const streak=won?(o.streak>0?o.streak+1:1):(o.streak<0?o.streak-1:-1),delta=won?9+streak:-9+streak;
 return {rating:o.rating+delta,wins:o.wins+(won?1:0),losses:o.losses+(won?0:1),streak,delta};}
-root.PingPhysics={resetAiRouteRead,trackAiRouteRead,shortLeft,EQUIP,back,retreatAt,incomingRetreat,OFF_T,DEEP_M,DEEP_STEP,spinMiss,counterSpinMissRate,normalShot,returnChance,returnRoll,ULT_RETURN_RATE,ULT_RETURN_BY_TIER,edgeSave,netCord,HIT_PAST,perfectSpan,STROKE_SPEED,STANCE_PX,CUT_FROM_BELOW,retime,power,popup,nextRating,LEVELS,RETURN_BASE,clamp,classify,timing,aiChance,shot,planServe,miss,incoming,family,judge,aiReturn,aiRhythm,step};if(typeof module!=='undefined')module.exports=root.PingPhysics;
+root.PingPhysics={resetAiRouteRead,trackAiRouteRead,shortLeft,EQUIP,back,retreatAt,incomingRetreat,OFF_T,DEEP_M,DEEP_STEP,spinMiss,counterSpinMissRate,counterSpinMissOutcome,normalShot,returnChance,returnRoll,ULT_RETURN_RATE,ULT_RETURN_BY_TIER,edgeSave,netCord,HIT_PAST,perfectSpan,STROKE_SPEED,STANCE_PX,CUT_FROM_BELOW,retime,power,popup,nextRating,LEVELS,RETURN_BASE,clamp,classify,timing,aiChance,shot,planServe,miss,incoming,family,judge,aiReturn,aiRhythm,step};if(typeof module!=='undefined')module.exports=root.PingPhysics;
 })(typeof window==='undefined'?globalThis:window);
 </script><script>
 'use strict';
@@ -3496,9 +3497,9 @@ let flair=infd()?'inf':'',errWhy='';const shotOk=shot;   // 무한 드라이브:
 if(LOOKS[charType].pcv&&verdict==='ok'&&!special&&quality==='GOOD'){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='err';errWhy='퍼시벌은 GOOD 판정을 버티지 못했어요';}   // 퍼시벌: GREAT까지만 허용, GOOD은 넓어진 미스 구간
 if(ball.aiSpecial&&verdict==='ok'&&!special&&quality!=='PERFECT'&&Math.random()<.45){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='spec';}   // a 필살기 is hard to catch without PERFECT
 if(verdict==='ok'&&!special&&!flair&&quality!=='PERFECT'){const base=TIMING_SUCCESS[quality]??1,roll=Math.random(),JL=LOOKS[charType],bhBlk=JL.bhBlock&&playerSide*fhDir()<0&&(resp==='short'||resp==='block')&&(inc==='drive'||inc==='smash')&&(quality==='PERFECT'||quality==='GREAT')?JL.bhBlock:0,counterSpin=P.counterSpinMissRate(inc,resp,quality,ball)*Math.max(0,1-R_('defSpin'));
-if(counterSpin&&Math.random()<counterSpin){if(Math.random()<.8){shot={...P.popup(shot,ball.y,ball.z),chance:true};flair='spinFloat';}else{shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='spin';}}
+if(counterSpin&&Math.random()<counterSpin){const outcome=P.counterSpinMissOutcome(Math.random());if(outcome==='float'){shot={...P.popup(shot,ball.y,ball.z),chance:true};flair='spinFloat';}else{shot=P.miss(shot,ball.y,ball.z,outcome==='out'?'over':outcome);if(outcome==='net')shot.aiChanceMiss=true;flair='spin';}}
 else if(roll>base*lobK(ball)+bhBlk+runeSafe(resp,inc,quality)-runePress(resp)){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='timing';}
-else if(!counterSpin&&Math.random()<P.spinMiss(ball)*Math.max(0,1-R_('defSpin')-(ball.type==='serve'?R_('utSpinRead'):0))){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='spin';}}   // 강한 회전 맞드라이브: GREAT 5% · GOOD 10% · LATE 20%, 실패의 80%는 찬스볼
+else if(!counterSpin&&Math.random()<P.spinMiss(ball)*Math.max(0,1-R_('defSpin')-(ball.type==='serve'?R_('utSpinRead'):0))){shot=P.miss(shot,ball.y,ball.z,Math.random()<.5?'net':'over');flair='spin';}}   // 강한 회전 맞드라이브 미스: 찬스볼 70% · 네트 통과 10% · 네트 걸림 10% · 아웃 10%
 const kill=verdict==='ok'&&!special&&!flair&&shot.type==='smash'&&!!ball.chance;   // smashing a chance ball
 const cutShort=resp==='cut'&&ball.bounces===1&&P.shortLeft(ball)!==null,floatCut=false;
 // cutting a short back needs PERFECT timing; anything less floats it up
@@ -3589,6 +3590,7 @@ $('spin').textContent=shot.spin<0?'BACK SPIN':shot.side?'SIDE SPIN':shot.spin>0?
 fx.push({x:p.x,y:p.y,t:time,wall:special?performance.now():null,special:special&&ult.rgb,enh:verdict==='ok'&&!special?enhanceFxTier():0,orbit:verdict==='ok'&&!special?racketOrbit():''});pops.push({x:p.x,y:p.y,t:time,text:['gear','gearFloat','err','timing','spin','spinFloat','drunkMiss','fhFloat','bhFloat','gFloat','adamFake','overhit','tgNet','tgOut','tgFloat','spec'].includes(flair)?'MISS':verdict!=='ok'?(verdict==='net'?'NET':'OUT'):special?ult.en:quality,rgb:verdict!=='ok'||['gear','gearFloat','err','timing','spin','spinFloat','spec'].includes(flair)?'255,77,109':special?ult.rgb:{PERFECT:'125,255,178',GOOD:'255,209,102',LATE:'255,77,109'}[quality]});const hitPulse=special?950:shot.type==='smash'?760:490;impactAudio(special?'ultimate':shot.type,ult);if(touchInput)navigator.vibrate?.(hitPulse);if(verdict!=='ok'){toast(`${FAM[inc]} 공에 ${FAM[resp]} → ${verdict==='net'?'네트에 걸림':'테이블을 넘어감'}`,1.6);$('timing').textContent=verdict==='net'?'NET':'OVER';}
 else toast(flair==='spin'?`강한 회전에 밀렸어요… (회전 ${Math.abs(ball.spin||0).toFixed(1)})`:flair==='timing'?`타이밍 실수… ${quality}는 ${Math.round(TIMING_SUCCESS[quality]*100)}% 확률로 들어가요`:flair==='spec'?'상대 필살기! PERFECT가 아니면 받기 어려워요 ⚡':flair==='ptSmash'?'어머! 포핸드 드라이브가 스매싱으로! 💥 ×1.45 (평택임씨 5%)':flair==='jaetgi'?'공 재끼기! 🔥 상대가 받을 수 없어요 · 쵸레이~':flair==='minheePower'?'포핸드 강타! 💥 속도 · 회전 ×1.3 (민희쌤 20%)':flair==='tgNet'?'날먹세 서브에 걸려 네트! 🥅':flair==='tgOut'?'날먹세 서브에 밀려 아웃! 💨':flair==='tgFloat'?'날먹세 서브를 받다 공이 떴어요 ⚠ 상대 찬스볼':flair==='gearFloat'?`라켓 컨트롤 실수… 공이 떴어요 ⚠ 상대 스매시 찬스 (${BLADES[bladeType].name} + ${RUBBERS[rubberType].name})`:flair==='dragonDrive'?'용의 드라이브! 🐉 ×1.5':flair==='dragonSmash'?'용의 스매싱! 🐉 ×1.5':flair==='overhit'?'너무 세게 쳤어요… 💥 (송스타 포핸드 5%)':flair==='shortCut'?'짧은 커트! ✂️ 투바운드 · 상대가 드라이브하면 15% 실수':flair==='lob'?'로빙! 🎈 높이 띄웠어요 · 상대 실수를 노려요':flair==='backSmash'?'백스매시! 💥 공 속도 ×1.3 (빽종령 10%)':flair==='fhFloat'?'포핸드 실수… 공이 떴어요 ⚠ 상대 스매시 찬스 (빽종령 5%)':flair==='drunkMiss'?'딸꾹… 공이 붕 떴어요! 상대 스매시 찬스 (취기)':flair==='drunkPower'?'원샷 스매시! 🍺 ×2 · 상대 실수 +10%':flair==='pipsDrive'?'숏핌플에 상대 드라이브 회전이 실려 공이 날아갔어요…':flair==='pipsCut'?'숏핌플로 커트를 받다 공이 붕 떴어요… 찬스볼!':flair==='gear'?`실수… 라켓 컨트롤 (${BLADES[bladeType].name} + ${RUBBERS[rubberType].name})`:flair==='err'?(errWhy||'실수… 공이 빗나갔어요'):flair==='power'?`${SIDE_NAME[playerSide*fhDir()]} 강타! 💥 ${LOOKS[charType].nick}의 주무기`:kill?'찬스볼 강타! ⚡ 상대가 받기 어려워요':shot.chance?(floatCut?'쇼트를 커트로 넘기려면 PERFECT! 상대 찬스볼 ⚠':driveShortFloat?`짧은 공 드라이브 실수… 공이 떴어요 (${quality} ${quality==='GREAT'?3:7}%) · 상대 찬스볼`:'늦었어요 · 상대 찬스볼 ⚠'):cutShort?'쇼트를 커트로 깔끔하게 넘겼어요 ✓':(names[shot.type]||["SHOT","타구"])[1]+' · '+quality+(before<100&&charge===100?' · ✦ 필살기 충전 완료!':''),1.25);
 if(flair==='spinFloat')toast(`강한 회전에 밀려 공이 떴어요 · 상대 찬스 스매시 주의 (${quality})`,1.5);
+if(flair==='spin'&&shot.netCord)toast('강한 회전에 밀렸지만 네트를 맞고 넘어갔어요',1.5);
 $('coach').textContent=verdict!=='ok'?`${FAM[inc]} 공은 ${ANSWER[inc]}(으)로 넘길 수 있어요.`:special?ult.coach:charge===100?(ultSet().length?'필살기가 충전됐어요. 장착한 필살기는 상황이 맞으면 자동으로 나갑니다.':'필살기가 충전됐어요. 스킬트리에서 필살기를 장착하세요.'):GUIDE[shot.type]||'';
 }
 const TAP_BUFFER_MS=160;

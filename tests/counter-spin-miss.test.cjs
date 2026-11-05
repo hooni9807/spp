@@ -20,7 +20,14 @@ test('strong-spin counter-drive miss rates follow timing quality', () => {
   assert.equal(P.counterSpinMissRate('drive', 'drive', 'LATE', { spin: .6 }), 0);
 });
 
-test('counter-drive spin misses float 80 percent of the time', () => {
-  assert.match(html, /if\(counterSpin&&Math\.random\(\)<counterSpin\)\{if\(Math\.random\(\)<\.8\)/);
+test('counter-drive spin misses use the requested four-way outcome split', () => {
+  assert.equal(P.counterSpinMissOutcome(.6999), 'float');
+  assert.equal(P.counterSpinMissOutcome(.7), 'netIn');
+  assert.equal(P.counterSpinMissOutcome(.8), 'net');
+  assert.equal(P.counterSpinMissOutcome(.9), 'out');
+  const shot = P.miss({ vy: 3, vz: 0, spin: 1 }, -.3, .2, 'netIn');
+  assert.equal(shot.miss, false);
+  assert.equal(shot.netCord, 'one');
   assert.match(html, /flair='spinFloat'/);
+  assert.match(html, /if\(outcome==='net'\)shot\.aiChanceMiss=true/);
 });
