@@ -27,8 +27,8 @@ test('forehand long-pips return uses backhand chop even when spin reverses', () 
     assert.equal(ctx.shot.type, incoming === 'cut' ? 'loop' : 'cut');
   }
 });
-test('ordinary forehand cut keeps its motion when backhand conversion does not trigger', () => {
-  const ctx = swing('cut', .8);
+test('ordinary forehand cut keeps its motion when the 90% backhand conversion does not trigger', () => {
+  const ctx = swing('cut', .95);
   assert.equal(ctx.playerSide, 1);
   assert.equal(ctx.mySwing.type, 'cut');
 });
