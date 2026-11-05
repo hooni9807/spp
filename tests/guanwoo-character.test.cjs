@@ -6,6 +6,7 @@ assert.match(html,/guanwoo:\{name:'관우'.*chineseRubber:true,rpb:true/);
 assert.match(html,/\['guanwoo','guanwoo-face\.png'\]/);
 assert.match(html,/guanwoo:'cpen'/);
 assert.match(html,/NEW_CHARACTER_BADGES=\[[^\]]*'guanwoo'/);
+assert.match(html,/CHARACTER_ORDER=\[\s*'jersey'[\s\S]*'kumho','guanwoo','songstar'/);
 assert.match(html,/guanShortDrive.*P\.retime\(\{\.\.\.guanBaseShot,miss:false,chance:false\},ball\.y,ball\.z,\.6,1\.6\)/s);
 assert.match(html,/rpb:\[\[-18,30/);
 assert.match(html,/mySwing\.type=LOOKS\[charType\]\.rpb/);

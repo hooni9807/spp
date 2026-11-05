@@ -445,8 +445,8 @@ const RACKETS={
 // Shakehand = ALC carbon blade, Viscaria look: 157x150 mm near-round head, flared FL handle, 5 wood + 2 arylate-carbon plies
 shake:{name:'쉐이크핸드',skill:'백핸드 드라이브: 백핸드 쪽 드라이브 계열 속도 ×1.25',
 w:24.5,h:24.5,hw:10,hl:30,grip:'#c9c3b6',gripHi:'#e9e5dc',ply:'#5a554a55',wood:'#e9d4a8',flare:true,lens:'#3b3b3b',reach:1,power:1},
-cpen:{name:'중국식 펜홀더',skill:'빠른 쇼트: 쇼트 속도 ×1.25',boost:{short:1.25},w:24,h:26,hw:8,hl:15,grip:'#9c7a4c',reach:.93,power:1.03},
-jpen:{name:'일본식 펜홀더',skill:'포핸드 강타: 포핸드 드라이브 속도 ×1.15',w:19,h:28,hw:11,hl:19,grip:'#c9a46b',square:true,reach:.88,power:1.08},
+cpen:{name:'중국식 펜홀더',skill:'빠른 쇼트: 쇼트 속도 ×1.25',boost:{short:1.25},w:27,h:25,hw:9,hl:15,grip:'#956837',gripHi:'#d1a76a',wood:'#e1bc7c',reach:.93,power:1.03},
+jpen:{name:'일본식 펜홀더',skill:'포핸드 강타: 포핸드 드라이브 속도 ×1.15',w:22,h:28,hw:11,hl:21,grip:'#c59b61',gripHi:'#e0bc82',wood:'#e8c98f',square:true,reach:.88,power:1.08},
 defense:{name:'수비수 라켓',pips:true,perfect:.65,skill:'수비 특화: 백핸드는 항상 커트(CHOP) · 포핸드는 드라이브 · 스매시 · 커트 가능 · 드라이브는 양쪽 모두 커트로 받아낼 수 있음 · 스매시는 PERFECT 커트로 방어 (PERFECT 범위 65%) · 뜬 공은 스윙하면 스매시 · 백핸드 롱핌플',w:27,h:28.5,hw:10,hl:30,grip:'#b58c58',gripHi:'#e2c08a',tape:'#7a1f1f',reach:1.2,power:.85}};
 const BLACK='#1b1b1b',RED='#c8312f';
 // Character looks. 'jersey' is drawn from the user's photo: short tousled dark hair, black square glasses,
@@ -717,8 +717,7 @@ let maxDef=0;const myTtl=()=>TITLE_SET.some(t=>t[0]===prog.q?._t&&t[3]())?{ttl:p
    대상: 칭호(업적) · 필살기 티어 줄 · 필살기 슬롯 · 커스터마이징 잠금 아이템. 처음 실행 때는 이미 해금된 것을 조용히 기록만 해요. */
 let unlockQ=[],unlockBusy=false,unlockChecking=false;
 function unlockList(){const L=[];for(const t of allTitles())if(t[3]())L.push(['title:'+t[0],'업적 달성!',t[1],t[2]+' · 업적창에서 보상을 받으세요']);for(const t of TITLE_SET)if(t[3]())L.push(['ttl:'+t[0],'새 칭호!',t[1],t[2]+' · 칭호창에서 장착할 수 있어요']);
-const lv=progLevel();for(let n=2;n<=4;n++)if(lv>=ultTierLv(n))L.push(['ult:'+n,'새 필살기 해금!',`${n}티어 줄`,ULTS.filter(u=>u.tier===n).map(u=>u.name).join(' · ')]);
-for(const [n,l] of [[2,10],[3,20]])if(lv>=l)L.push(['slot:'+n,'필살기 슬롯 추가!',`${n}번째 슬롯`,'필살기를 하나 더 장착할 수 있어요']);
+const lv=progLevel();for(const [n,l] of [[2,10],[3,20]])if(lv>=l)L.push(['slot:'+n,'필살기 슬롯 추가!',`${n}번째 슬롯`,'필살기를 하나 더 장착할 수 있어요']);
 const lockedSets=FIT_COLLECTIONS.filter(c=>c.req),setItems=new Set(lockedSets.flatMap(c=>Object.entries(c.fit).map(([k,id])=>`${k==='top'||k==='bot'?k:'acc'}:${id}`)));for(const c of lockedSets)if(fitOk(c.req))L.push([`fit:set:${c.id}`,'새 코디 해금!',c.name,fitReqText(c.req)+' 달성 · 커스터마이징에서 한 벌로 입어 보세요']);
 for(const [kind,arr,ri,nm] of [['top',FIT_TOPS,3,1],['bot',FIT_BOTS,3,1],['acc',FIT_ACC,5,1]])for(const it of arr)if(it[ri]&&fitOk(it[ri])&&!setItems.has(`${kind}:${it[0]}`))L.push([`fit:${kind}:${it[0]}`,'새 코디 해금!',it[nm],fitReqText(it[ri])+' 달성 · 커스터마이징에서 입어 보세요']);
 return L;}
@@ -881,9 +880,10 @@ const TRIG_RGB={cut:'96,165,250',drive:'251,146,60',short:'74,222,128',lob:'250,
 /* 티어: 같은 발동 상황 4개를 효과 세기 순으로 1~4티어 · 3·4티어는 기술별 도움 동료와 복식 승리가 필요하다. */
 const ultPower=u=>(u.m.pw||1)*1.2+(u.m.sp||1)*.3+(u.m.cv||0)*.25+(u.m.dm||0)*4;
 for(const t of Object.keys(ULT_TRIG))ULTS.filter(u=>u.trig===t).sort((a,b)=>ultPower(a)-ultPower(b)||a.id.localeCompare(b.id)).forEach((u,k)=>{u.tier=k+1;if(u.tier===4){u.m={...u.m,dm:Math.max(.2,u.m.dm||0)};u.desc+=' · AI 리턴 추가 실수 20%';u.coach=`${u.name}! ${u.desc}`;}});
+const ALL_ULTS=[...ULTS];ULTS.splice(0,ULTS.length,...ULTS.filter(u=>u.tier===4));
 const doublesPartnerChoices=(ch=charType)=>[...new Set(UNLOCKABLE().concat(START_CHARS))].filter(k=>k!==ch&&charUnlocked(k)&&characterAvailable(k));
-const ultTierLv=t=>t===1?1:(t-1)*5,ultSoloProgress=(ch=charType)=>((prog.q??={})._soloUlt??={})[ch]??{},ultPartnersFor=()=>[],ultMoveWins=()=>[],ultReq=(u,ch=charType)=>{if(!u)return'';if(u.tier<3)return`Lv ${ultTierLv(u.tier)}`;return u.tier===3?'울트라 하드 이상 단식 승리':'울트라 익스트림 이상 단식 승리';},ultOk=(u,ch=charType)=>!!u&&(u.tier<3?progLevel()>=ultTierLv(u.tier):u.tier===3?!!ultSoloProgress(ch).uhard:!!ultSoloProgress(ch).uext),ultTiersAt=lv=>Math.min(4,1+Math.floor(lv/5));
-const ULT_BY=Object.fromEntries(ULTS.map(u=>[u.id,u]));
+const ultReq=()=>'',ultOk=u=>!!u&&ULTS.includes(u);
+const ULT_BY=Object.fromEntries(ALL_ULTS.map(u=>[u.id,u]));
 const ultReqBrief=(u,ch=charType)=>ultReq(u,ch);
 /* 모든 필살기는 발사 순간과 비행 중에 같은 계열의 효과를 남긴다. */
 const ULT_FX_KIND={ice:'star',leaf:'petal',water:'wave',dark:'mist',wing:'feather',arrow:'slash',moon:'ring',sun:'burst',drill:'spiral',fist:'ring',cross:'slash',meteor:'meteor',flame:'flame'};
@@ -1055,12 +1055,13 @@ case'leaf':g.beginPath();g.ellipse(12,12,4,9,.8,0,7);g.fill();g.strokeStyle=dk;g
 g.fillStyle='rgba(255,255,255,.22)';g.fillRect(2,2,20,7);return ULT_ICON[u.id]=c.toDataURL();}
 let ultTab='cut',ultSel=null;
 function renderUlts(){const ch=ultChar||charType,set=ultSet(ch),n=ultSlots();$('ul-head').textContent=`필살기 · ${LOOKS[ch].nick||LOOKS[ch].name}`+(ch===charType?' (선택 중)':'');
+const intro=document.querySelector('#ults>p:not(#ult-unlock)');if(intro)intro.innerHTML='게이지가 <b>100%</b>가 되면 상대 공에 맞는 4티어 필살기가 자동으로 발동합니다. 모든 필살기는 해금 조건 없이 바로 장착할 수 있습니다.';$('ult-unlock').hidden=true;
 {const sel=$('ult-char');sel.textContent='';for(const k of UNLOCKABLE().concat(START_CHARS).filter(charUnlocked)){const o=document.createElement('option');o.value=k;o.textContent=(LOOKS[k].nick||LOOKS[k].name)+(k===charType?' ✓':'');sel.append(o);}sel.value=ch;}
 $('ult-unlock').replaceChildren();
 $('ult-slots').innerHTML=[0,1,2].map(i=>{const u=ULT_BY[set[i]];return `<div class="ms-slot${i>=n?' lock':''}" data-slot="${i}">${i>=n?`<span>Lv ${i===1?10:20}</span>`:u?`<img src="${ultIcon(u)}" alt="${u.name}" draggable="false" data-from="${i}" data-drag="${u.id}"><em>${u.name}</em>`:'<span>빈 칸</span>'}<b>${i+1}</b></div>`;}).join('');
 const trigs=Object.keys(ULT_TRIG);(()=>{const q=(prog.q??={})._u??={};if((q[ch]||[]).some(k=>k&&!ultOk(ULT_BY[k],ch))){q[ch]=q[ch].map(k=>k&&ultOk(ULT_BY[k],ch)?k:null);saveProg(false);}})();
 $('ult-tabs').innerHTML='';
-const tiers=Array.from({length:Math.max(...ULTS.map(u=>u.tier))},(_,i)=>i+1);$('ult-list').innerHTML=`<div class="ms-grid" style="--n:${trigs.length}"><span></span>`+trigs.map(t=>`<span class="ms-th">${ULT_TRIG[t].replace('상대 ','')}</span>`).join('')+tiers.map(tr=>{const row=ULTS.filter(u=>u.tier===tr),open=row.every(u=>ultOk(u,ch));return `<span class="ms-tier${open?'':' lock'}">${tr}티어<small>${tr<3&&open?'':'기술별 동료 조건'}</small></span>`+trigs.map(t=>{const u=ULTS.find(v=>v.trig===t&&v.tier===tr),can=u&&ultOk(u,ch);return u?`<button type="button" class="ms-cell${can&&ultAllowed(u,ch)?'':' lock'}${set.includes(u.id)?' on':''}${ultSel===u.id?' sel':''}" data-sel="${u.id}"><img src="${ultIcon(u)}" alt="" draggable="false"${can&&ultAllowed(u,ch)?` data-drag="${u.id}"`:''}><small>${u.name}</small></button>`:'<span class="ms-cell empty"></span>';}).join('');}).join('')+'</div>';
+const tiers=[4];$('ult-list').innerHTML=`<div class="ms-grid" style="--n:${trigs.length}"><span></span>`+trigs.map(t=>`<span class="ms-th">${ULT_TRIG[t].replace('상대 ','')}</span>`).join('')+tiers.map(tr=>`<span class="ms-tier">${tr}티어</span>`+trigs.map(t=>{const u=ULTS.find(v=>v.trig===t),can=u&&ultAllowed(u,ch);return u?`<button type="button" class="ms-cell${can?'':' lock'}${set.includes(u.id)?' on':''}${ultSel===u.id?' sel':''}" data-sel="${u.id}"><img src="${ultIcon(u)}" alt="" draggable="false"${can?` data-drag="${u.id}"`:''}><small>${u.name}</small></button>`:'<span class="ms-cell empty"></span>';}).join('')).join('')+'</div>';
 {const u=ULT_BY[ultSel];$('ult-detail').innerHTML=u?`<img src="${ultIcon(u)}" alt=""><div><b>${u.name}</b> <i>${u.tier}티어 · ${ULT_TRIG[u.trig]}</i><small>${u.desc}</small></div>`+(ultOk(u,ch)?`<button type="button" data-eq="${u.id}">${set.includes(u.id)?'해제':'장착'}</button>`:`<span class="ms-lockmsg">${ultReqBrief(u,ch)}</span>`):'<small>필살기를 누르면 설명과 예상 장면이 나와요 · 아이콘을 슬롯으로 끌어서 장착</small>';}}
 function ultPut(id,slot){const ch=ultChar||charType;if(!ultAllowed(ULT_BY[id],ch))return toast(`${LOOKS[ch].nick}는 쇼트 · 커트 · 스매시 계열 필살기만 쓸 수 있어요`,2);if(!ultOk(ULT_BY[id],ch))return toast(`${ULT_BY[id].tier}티어 필살기는 ${ultReq(ULT_BY[id],ch)}에 해금돼요`,1.8);const q=(prog.q??={})._u??={},n=ultSlots(),set=(q[ch]??=[]).slice(0,n);for(let k=0;k<n;k++)if(set[k]===id)set[k]=null;
 if(slot==null){slot=[...Array(n).keys()].find(k=>!set[k]);if(slot==null)return toast('슬롯이 가득 찼어요 · 장착한 필살기를 슬롯 밖으로 끌어내거나 해제하세요 (Lv 10 · Lv 20에 슬롯 추가)',2.2);}
@@ -1092,7 +1093,7 @@ const AI_ULT_POWER={easy:0,hard:.55,extreme:.68,ultra:.78,uhard:.9,uext:1,unight
 const aiUltPower=()=>mode==='boss'?1:(AI_ULT_POWER[tierNow()]??.55);
 const AI_SPECIAL_CHARGE_SCALE=.7,aiSpecialChargeGain=dual=>(dual?13:10)*AI_SPECIAL_CHARGE_SCALE*aiPressure().charge*tourUltCharge()*(1-R_('utAntiSpecial'));
 function aiUltForTier(u){if(!u)return u;const k=aiUltPower(),m=u.m||{},blend=v=>v==null?v:1+(v-1)*k;return {...u,m:{...m,pw:blend(m.pw),sp:blend(m.sp),cv:(m.cv||0)*k,dm:(m.dm||0)*k},aiPower:k};}
-function rollAiUlts(){const [lo,hi]=mode==='boss'?[3,4]:AI_ULT_TIER[tierNow()]||[1,3],t=Object.keys(ULT_TRIG).sort(()=>Math.random()-.5).slice(0,3);return t.map(k=>{const L=ULTS.filter(u=>u.trig===k&&u.tier>=lo&&u.tier<=hi);return L[Math.random()*L.length|0].id;});}
+function rollAiUlts(){return Object.keys(ULT_TRIG).sort(()=>Math.random()-.5).slice(0,3).map(k=>ULTS.find(u=>u.trig===k).id);}
 function aiPickUlt(b){const set=aiUltSet.map(k=>ULT_BY[k]).filter(u=>u&&ultAllowed(u,aiChar)),t=ultTrig(b);return set.find(u=>u.trig===t)||null;}
 function randFit(){const pick=a=>a[Math.random()*a.length|0],f={top:pick(FIT_TOPS)[0],bot:pick(FIT_BOTS)[0]};for(const k of FIT_SLOTS){if(Math.random()<.45){const L=FIT_ACC.filter(a=>a[2]===k);if(L.length)f[k]=pick(L)[0];}}return f;}
 function showResult(won){const d=$('result');if(!d||net)return;const tourMatch=tournament?.state==='playing';if(tourMatch)finishTournament(won);const tierTxt=tourMatch?`🏆 ${tourEvent().name} · ${TOUR_LABELS[tournament.finishedRound]}${tourEvent().team&&tournament.series?` · 팀 ${tournament.series.my}:${tournament.series.ai}`:''} · ${TIERS[aiTier].name}`:mode==='match'?(rankOn||resRank?'🎖️ 랭크전':`AI 대전 · ${TIERS[aiTier].name}`):MODE_TEXT[mode]||modeText(mode);
@@ -2052,7 +2053,7 @@ function line(a,b,color,width=1){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(
 // handle so a crescent of wood shows, thin edge tape, glossy rubber, flared/straight handle with plies and a lens.
 // 'shake' follows the Viscaria ALC look: near-round 157x150 head, light-grey flared handle with vertical plies and an oval lens.
 function bladePath(R,inset=0){const w=R.w-inset,h=R.h-inset,nw=R.w*.36,p=new Path2D();
-if(R.square){p.roundRect(-w,-h,w*2,h*2,[w*.9,w*.9,w*.55,w*.55]);return p;}
+if(R.square){p.moveTo(-nw,R.h);p.lineTo(-w*.92,h*.72);p.lineTo(-w,-h*.62);p.quadraticCurveTo(-w,-h,-w*.62,-h);p.lineTo(w*.62,-h);p.quadraticCurveTo(w,-h,w,-h*.62);p.lineTo(w*.92,h*.72);p.lineTo(nw,R.h);p.closePath();return p;}
 p.moveTo(-nw,R.h);p.bezierCurveTo(-w*1.08,h*.72,-w*1.06,-h*.42,-w*.62,-h*.92);p.bezierCurveTo(-w*.3,-h*1.08,w*.3,-h*1.08,w*.62,-h*.92);p.bezierCurveTo(w*1.06,-h*.42,w*1.08,h*.72,nw,R.h);p.closePath();return p;}
 function racket(x,y,angle,type,face,scale=1,skin=null,showEnhanceFx=false,bossSkin=null){
 const R=RACKETS[type],H=R.h,hw=R.hw,y0=H*.72,y1=y0+R.hl,red=face===RED;
@@ -2063,8 +2064,8 @@ if(showEnhanceFx&&enhance>=10){const tier=enhanceFxTier(),cols={1:['114,205,255'
 const blade=bladePath(R);ctx.fillStyle=R.wood||'#e6cc98';ctx.fill(blade);
 ctx.save();ctx.clip(bladePath(R,1.2));const cut=H*(R.square?.66:.66);
 const rub=new Path2D();rub.moveTo(-R.w-3,-H-3);rub.lineTo(R.w+3,-H-3);rub.lineTo(R.w+3,cut-H*.05);rub.quadraticCurveTo(0,cut+H*.2,-R.w-3,cut-H*.05);rub.closePath();
-const gr=ctx.createLinearGradient(-R.w,-H,R.w*.6,H*.6);if(champion){gr.addColorStop(0,skinColors[0]);gr.addColorStop(.2,skinColors[1]);gr.addColorStop(.54,'#20140e');gr.addColorStop(.78,skinColors[2]);gr.addColorStop(1,skinColors[0]);}else{gr.addColorStop(0,red?'#e0484a':'#3a3a3a');gr.addColorStop(.45,red?'#c62a2c':'#1e1e1e');gr.addColorStop(1,red?'#a81f22':'#141414');}
-ctx.fillStyle=gr;ctx.fill(rub);if(champion){ctx.save();ctx.clip(rub);ctx.globalAlpha=.35;ctx.strokeStyle=skinColors[0];ctx.lineWidth=.7;for(let i=-5;i<7;i++){ctx.beginPath();ctx.moveTo(-R.w,i*7-H*.1);ctx.lineTo(R.w,i*7-H*.8);ctx.stroke();}ctx.restore();}
+const bareJpen=type==='jpen'&&!red&&!champion,gr=ctx.createLinearGradient(-R.w,-H,R.w*.6,H*.6);if(champion){gr.addColorStop(0,skinColors[0]);gr.addColorStop(.2,skinColors[1]);gr.addColorStop(.54,'#20140e');gr.addColorStop(.78,skinColors[2]);gr.addColorStop(1,skinColors[0]);}else{gr.addColorStop(0,red?'#e0484a':'#3a3a3a');gr.addColorStop(.45,red?'#c62a2c':'#1e1e1e');gr.addColorStop(1,red?'#a81f22':'#141414');}
+if(!bareJpen){ctx.fillStyle=gr;ctx.fill(rub);}else{ctx.save();ctx.clip(rub);const wood=ctx.createLinearGradient(-R.w,0,R.w,0);wood.addColorStop(0,'#c89b5e');wood.addColorStop(.5,'#f0d29a');wood.addColorStop(1,'#b9854b');ctx.fillStyle=wood;ctx.fillRect(-R.w-2,-H-2,R.w*2+4,H*2+4);ctx.strokeStyle='#8b623744';ctx.lineWidth=.65;for(let i=-5;i<=5;i++){ctx.beginPath();ctx.moveTo(i*5-4,-H);ctx.bezierCurveTo(i*5+2,-H*.45,i*5-3,H*.2,i*5+3,H*.72);ctx.stroke();}ctx.fillStyle='#b48650';ctx.fillRect(-R.w*.92,H*.4,R.w*1.84,H*.22);ctx.restore();}if(champion){ctx.save();ctx.clip(rub);ctx.globalAlpha=.35;ctx.strokeStyle=skinColors[0];ctx.lineWidth=.7;for(let i=-5;i<7;i++){ctx.beginPath();ctx.moveTo(-R.w,i*7-H*.1);ctx.lineTo(R.w,i*7-H*.8);ctx.stroke();}ctx.restore();}
 if(R.pips&&red){   // defender's backhand: long pimples (OX, no sponge) - rows of tall thin pips, matte, each with a shadow and a lit top
 if(!R.pipPaths){R.pipPaths=[[.35,.45,.85,'#6e1214'],[0,0,.75,'#d8393b'],[-.25,-.25,.28,'#ff9a8c']].map(([ox,oy,rr,col])=>{const p=new Path2D();   // built once, 3 fills per frame
 for(let py=-H,row=0;py<cut;py+=2.4,row++)for(let px=-R.w+(row%2)*1.2;px<R.w;px+=2.4){p.moveTo(px+ox+rr,py+oy);p.arc(px+ox,py+oy,rr,0,Math.PI*2);}return [p,col];});}
@@ -2084,8 +2085,8 @@ const hg=ctx.createLinearGradient(-b,0,b,0);hg.addColorStop(0,R.grip);hg.addColo
 ctx.save();ctx.clip(hp);ctx.strokeStyle=R.ply||'#7a5a3040';ctx.lineWidth=.6;for(const k of [-.55,-.2,.2,.55]){ctx.beginPath();ctx.moveTo(k*hw*.8,y0+6);ctx.lineTo(k*hw*.95,y1);ctx.stroke();}ctx.restore();
 ctx.strokeStyle='#00000030';ctx.lineWidth=.7;ctx.stroke(hp);
 if(R.lens){ctx.beginPath();ctx.ellipse(0,y0+9,hw*.36,4.6,0,0,Math.PI*2);ctx.fillStyle=R.lens;ctx.fill();ctx.strokeStyle='#c9a227';ctx.lineWidth=.8;ctx.stroke();}
-if(type==='jpen'){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.42,hw*.72,hw*.62,0,0,Math.PI*2);ctx.fillStyle='#c9a46b';ctx.fill();ctx.fillStyle='#a8834e70';for(const [px,py] of [[-2,-1],[1.5,1],[0,-2.5],[2.5,-2],[-1.5,2]]){ctx.fillRect(px,y0+R.hl*.42+py,.8,.8);}}
-if(type==='cpen'){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.55,hw*.55,hw*.45,0,0,Math.PI*2);ctx.fillStyle='#8f6a3f';ctx.fill();}
+if(type==='jpen'){ctx.fillStyle='#d4ad72';ctx.beginPath();ctx.roundRect(-hw*.82,y0-1,hw*1.64,R.hl*.7,2);ctx.fill();ctx.fillStyle='#9f7445';ctx.fillRect(-hw*.76,y0+R.hl*.63,hw*1.52,2);ctx.fillStyle='#a8834e70';for(const [px,py] of [[-3,-1],[2,1],[0,-3],[3,-2],[-2,3]])ctx.fillRect(px,y0+R.hl*.35+py,.9,.9);}
+if(type==='cpen'){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.55,hw*.68,hw*.5,0,0,Math.PI*2);ctx.fillStyle='#8f6337';ctx.fill();ctx.strokeStyle='#57391f';ctx.lineWidth=.7;ctx.stroke();}
 if(skin)grip(R,type,face===BLACK,skin,y0);
 ctx.restore();
 }
@@ -2100,10 +2101,10 @@ ctx.restore();
 function grip(R,type,fh,skin,y0){const hw=R.hw,pen=type==='jpen'||type==='cpen',f=(a,b,w)=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineWidth=w;ctx.stroke();};
 ctx.save();ctx.strokeStyle=skin;ctx.fillStyle=skin;ctx.lineCap='round';
 const knuckle=()=>{ctx.strokeStyle='#c99f7c';ctx.lineWidth=.6;for(const k of [0,1,2]){ctx.beginPath();ctx.arc(hw*.15,y0+(pen?3:5)+k*3.3,1.6,-1.2,1.2);ctx.stroke();}ctx.strokeStyle=skin;};
-if(pen){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.45,hw*.82,R.hl*.48,0,0,Math.PI*2);ctx.fill();
-if(fh){f([-hw*.75,y0+4],[-hw*.15,y0-4],3.4);f([hw*.8,y0+3],[hw*.2,y0-5],3.4);}   // thumb + index ring over the throat
-else if(type==='jpen')for(const k of [-1,0,1])f([k*2,y0],[k*R.w*.42,y0-R.h*.62],3);   // three fingers splayed flat on the back
-else{for(const k of [0,1,2]){ctx.beginPath();ctx.arc(R.w*.05,y0-R.h*.3-k*3.4,3.2,Math.PI*.55,Math.PI*1.75);ctx.lineWidth=3;ctx.stroke();}}   // curled, stacked
+if(pen){ctx.beginPath();ctx.ellipse(0,y0+R.hl*.5,hw*.78,R.hl*.44,0,0,Math.PI*2);ctx.fill();
+if(fh){f([-hw*.78,y0+5],[-hw*.12,y0-5],3.7);f([hw*.82,y0+4],[hw*.16,y0-6],3.7);ctx.strokeStyle='#d7ad8b';ctx.lineWidth=.7;for(const x of[-hw*.26,hw*.28]){ctx.beginPath();ctx.arc(x,y0-4,1.25,0,Math.PI);ctx.stroke();}ctx.strokeStyle=skin;}   // thumb and hooked index pinch the blade at the throat
+else if(type==='jpen'){for(const [k,a] of [[-1,-.22],[0,0],[1,.22]]){const x=k*R.w*.38;f([k*2,y0+1],[x,y0-R.h*.64],3.3);ctx.strokeStyle='#c99f7c';ctx.lineWidth=.65;ctx.beginPath();ctx.arc(x,y0-R.h*.64,1.35,a,Math.PI+a);ctx.stroke();ctx.strokeStyle=skin;}}   // Japanese penhold: three fingers spread flat over the bare wood back
+else{for(const [k,x] of [[0,-2.8],[1,.2],[2,3]]){ctx.beginPath();ctx.arc(x,y0-R.h*(.24+k*.13),3.4,Math.PI*.52,Math.PI*1.72);ctx.lineWidth=3.2;ctx.stroke();ctx.strokeStyle='#c99f7c';ctx.lineWidth=.6;ctx.beginPath();ctx.arc(x+1.2,y0-R.h*(.24+k*.13)-1.2,1.1,.2,Math.PI*1.1);ctx.stroke();ctx.strokeStyle=skin;}}   // Chinese penhold: three fingers curl and stack on the reverse rubber
 knuckle();}
 else{const hi=type==='defense'?1.45:1;ctx.beginPath();ctx.ellipse(0,y0+R.hl*.38,hw*.78,R.hl*.36,0,0,Math.PI*2);ctx.fill();
 if(fh)f([-hw*.7,y0+R.hl*.3],[hw*.05,y0-5*hi],3.6);   // thumb on the forehand rubber
@@ -3891,8 +3892,7 @@ guanwoo:['보통','#9fc2ff'],
 jersey:['쉬움','#8dffb8'],ajae:['쉬움','#8dffb8'],yunhwan:['쉬움','#8dffb8'],jongryeong:['쉬움','#8dffb8'],kumho:['보통','#9fc2ff'],minhee:['보통','#9fc2ff'],songstar:['보통','#9fc2ff'],seohyun:['보통','#9fc2ff'],chungdae:['보통','#9fc2ff'],aribeom:['보통','#9fc2ff'],leesin:['어려움','#ffd166'],drunk:['어려움','#ffd166'],ttalgak:['어려움','#ffd166'],adam:['어려움','#ffd166'],ninja:['보통','#9fc2ff'],pyeongtaek:['쉬움','#9fffc4'],sleepy:['어려움','#ffd166'],percival:['매우 어려움','#ff9fb0'],gambler:['매우 어려움','#ff9fb0'],glass:['매우 어려움','#ff9fb0'],pastor:['매우 어려움','#ff9fb0']};
 delete CHAR_DIFFICULTY.chungdae;
 const CHARACTER_ORDER=[
-'guanwoo',
-'jersey','ajae','yunhwan','jongryeong','pyeongtaek','minhee','jiseong','seohyun','kumho','songstar','ninja','aribeom','leesin','drunk','sleepy','ttalgak','adam','percival','gambler','glass','pastor','plain'];
+'jersey','ajae','yunhwan','jongryeong','pyeongtaek','minhee','jiseong','seohyun','kumho','guanwoo','songstar','ninja','aribeom','leesin','drunk','sleepy','ttalgak','adam','percival','gambler','glass','pastor','plain'];
 const charDifficulty=k=>CHAR_DIFFICULTY[k]||['보통','#9fc2ff'];
 {const style=document.createElement('style');style.textContent='#char-pick button{position:relative;flex-direction:column;gap:1px!important;padding:7px 4px!important}#char-pick .char-difficulty{flex-basis:auto;width:max-content;margin:-2px auto 0}#char-pick .char-new{position:absolute;top:4px;right:4px;padding:2px 4px;border-radius:5px;background:#ffd166;color:#351600;font:900 8px/1 var(--num,sans-serif);letter-spacing:.06em;box-shadow:0 1px 4px #0008;pointer-events:none}';document.head.append(style);}
 function renderCharPick(){document.querySelectorAll('#char-pick button').forEach(b=>{const k=b.dataset.char,lock=!charUnlocked(k),available=characterAvailable(k)&&!lock,[label,color]=charDifficulty(k);b.hidden=!characterAvailable(k);b.classList.toggle('locked',lock);drawFace(b.querySelector('canvas'),LOOKS[k]);let badge=b.querySelector('.char-difficulty');if(!badge){badge=document.createElement('small');badge.className='char-difficulty';badge.style.cssText='padding:2px 5px;border-radius:8px;background:#100d16;font-size:8px;white-space:nowrap';b.append(badge);}badge.textContent=label;badge.style.color=color;let fresh=b.querySelector('.char-new');const tag=k==='sleepy'?'리메이크':['ninja','songstar','drunk','gambler','kumho'].includes(k)?'리워크':NEW_CHARACTER_BADGES.includes(k)?'NEW':REMAKE_CHARACTERS.includes(k)?'REMAKE':'';if(tag){if(!fresh){fresh=document.createElement('span');fresh.className='char-new';b.append(fresh);}fresh.textContent=tag;}else fresh?.remove();b.dataset.tier=label;b.disabled=!available;b.setAttribute('aria-checked',available&&k===charType);b.setAttribute('aria-disabled',String(!available));b.title=(lock?'🔒 레벨업하면 해금 후보로 나와요 · ':'')+'난이도: '+label;});}

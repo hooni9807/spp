@@ -1,4 +1,41 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const http=require('http'),fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const { chromium } = require('playwright');
 
-(async()=>{const root=process.cwd(),server=http.createServer((req,res)=>{const u=new URL(req.url,'http://localhost'),f=path.join(root,u.pathname==='/'?'index.html':u.pathname);fs.readFile(f,(e,b)=>e?res.writeHead(404).end():res.end(b));});await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({executablePath:process.env.CHROME_PATH,headless:true});try{const page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}`);await page.waitForFunction(()=>document.getElementById('prologue-loading').hidden);const out=await page.evaluate(()=>{openUlts('jersey');const tiers=Object.fromEntries(Object.entries(ULT_TRIG).map(([trig])=>[trig,ULTS.filter(u=>u.trig===trig).map(u=>u.tier).sort((a,b)=>a-b)]));return {count:ULTS.length,trigs:Object.keys(ULT_TRIG),tiers,gridRows:document.querySelectorAll('#ult-list .ms-tier').length,any:ULTS.some(u=>u.trig==='any'||u.trig==='smash'),merged:ultTrig({type:'smash',chance:false,lob:false,z:.2}),unmatched:ultTrig({type:'side',chance:false,lob:false,z:.2})};});assert.equal(out.count,20);assert.deepEqual(out.trigs,['cut','drive','short','lob','serve']);for(const t of out.trigs)assert.deepEqual(out.tiers[t],[1,2,3,4]);assert.equal(out.gridRows,4);assert.equal(out.any,false);assert.equal(out.merged,'lob');assert.equal(out.unmatched,null);console.log('ultimate triggers merge floating balls and smashes and remove anytime');}finally{await browser.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+(async () => {
+  const root = process.cwd();
+  const server = http.createServer((req, res) => {
+    const u = new URL(req.url, 'http://localhost');
+    fs.readFile(path.join(root, u.pathname === '/' ? 'index.html' : u.pathname), (e, b) => e ? res.writeHead(404).end() : res.end(b));
+  });
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH, headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.goto(`http://127.0.0.1:${server.address().port}`);
+    await page.waitForFunction(() => document.getElementById('prologue-loading').hidden);
+    const out = await page.evaluate(() => {
+      openUlts('jersey');
+      return {
+        count: ULTS.length,
+        tiers: [...new Set(ULTS.map(u => u.tier))],
+        trigs: ULTS.map(u => u.trig).sort(),
+        rows: document.querySelectorAll('#ult-list .ms-tier').length,
+        locked: ULTS.some(u => !ultOk(u, 'jersey')),
+        unlockSummaryHidden: document.getElementById('ult-unlock').hidden
+      };
+    });
+    assert.equal(out.count, 5);
+    assert.deepEqual(out.tiers, [4]);
+    assert.deepEqual(out.trigs, ['cut', 'drive', 'lob', 'serve', 'short']);
+    assert.equal(out.rows, 1);
+    assert.equal(out.locked, false);
+    assert.equal(out.unlockSummaryHidden, true);
+    console.log('Only one unlocked tier-four ultimate row remains');
+  } finally {
+    await browser.close();
+    server.close();
+  }
+})().catch(e => { console.error(e); process.exitCode = 1; });
