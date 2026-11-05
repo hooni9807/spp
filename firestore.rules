@@ -211,6 +211,19 @@ service cloud.firestore {
         && request.resource.data.unlocked is list && request.resource.data.unlocked.size() <= 40
         && request.resource.data.at == request.time;
     }
+    // 캐릭터 전용 업적은 일반 진행도와 분리한다. 이름과 각 업적의 횟수·목표·달성 여부는 본인만 읽고 쓴다.
+    match /character_achievements/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
+        && request.resource.data.keys().hasOnly(['name', 'progress', 'completed', 'total', 'at'])
+        && request.resource.data.keys().hasAll(['name', 'progress', 'completed', 'total', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
+        && request.resource.data.progress is map && request.resource.data.progress.size() <= 40
+        && request.resource.data.total is int && request.resource.data.total >= 0 && request.resource.data.total <= 40
+        && request.resource.data.completed is int && request.resource.data.completed >= 0 && request.resource.data.completed <= request.resource.data.total
+        && request.resource.data.at == request.time;
+    }
     // Trophy ownership is mirrored separately so profile progress and collection data stay independent.
     match /trophies/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

@@ -1,0 +1,18 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8'),rules=fs.readFileSync('firestore.rules','utf8'),docs=fs.readFileSync('docs/ranking.md','utf8');
+assert.match(html,/doc\(db,'character_achievements',rankUid\),characterAchievementRow\(true\)/);
+assert.match(html,/getDoc\(rankFs\.doc\(db,'character_achievements',rankUid\)\)\.catch\(\(\)=>null\)/);
+assert.match(html,/function cloudQuestProgress\(\).*filter\(\(\[id\]\)=>!TECH_PROGRESS\[id\]\)/);
+assert.match(html,/function mergeCharacterAchievements\(data\)/);
+assert.match(rules,/match \/character_achievements\/\{uid\}/);
+assert.match(rules,/request\.resource\.data\.keys\(\)\.hasOnly\(\['name', 'progress', 'completed', 'total', 'at'\]\)/);
+assert.match(docs,/`character_achievements`/);
+const functions=['cloudQuestProgress','characterAchievementRow','mergeCharacterAchievements'].map(name=>html.match(new RegExp(`function ${name}\\([^\\n]+`))[0]).join('\n');
+const context={TECH_PROGRESS:{tech_a:['기술 A',10]},prog:{q:{tech_a:{n:3,t:0},win:{n:2,t:0}}},qTotal:id=>context.prog.q[id]?.n||0,myName:()=>'테스터',rankFs:{serverTimestamp:()=>99}};
+vm.createContext(context);vm.runInContext(functions,context);
+assert.deepEqual(JSON.parse(JSON.stringify(context.cloudQuestProgress())),{win:{n:2,t:0}});
+assert.deepEqual(JSON.parse(JSON.stringify(context.characterAchievementRow(false))),{name:'테스터',progress:{tech_a:{name:'기술 A',count:3,target:10,complete:false}},completed:0,total:1});
+assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:8}}}),true);
+assert.equal(context.prog.q.tech_a.n,8);
+assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:4}}}),false);
+console.log('Character achievements use their owner-only Firebase collection with legacy migration.');

@@ -13,7 +13,10 @@
 | `rally` | v4.04 이전의 최고 랠리 기록 (모든 모드가 섞여 있음, 그대로 읽어요) |
 | `wins` | AI전 승리 점수 · `boss` 보스 클리어 (점수 = (내 점수 − 보스가 핸디 위로 딴 점수) × 100 + 랠리, 핸디: 세종 4 · 갓융자 9) · `players` PvP 레이팅 · `arank` 랭크전 |
 | `levels` | 레벨 랭킹 · `progress` 진행도(본인만) · `settings` 설정(본인만) |
+| `character_achievements` | 캐릭터 전용 업적(본인만): 사용자 이름 · 업적별 누적 횟수 · 목표 · 달성 여부 · 전체 달성 수 |
 | `presence` | 접속 상태 · `rooms` 대기 방 · `inbox` 쪽지(받는 사람만) · `mail_reads` 쪽지 읽음 확인(보낸 사람만) |
+
+캐릭터 업적은 로그인할 때 기존 `progress.q` 기록과 비교해 더 큰 값을 사용하며, 이후 `character_achievements/{uid}`에 분리 저장합니다. 일반 퀘스트와 기타 진행값은 계속 `progress/{uid}`에 저장됩니다.
 
 ## 랭킹
 
