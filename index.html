@@ -3452,9 +3452,9 @@ if(ball.charmFailPending&&!ball.charmFailResolved){ball.charmFailResolved=true;b
 if(tap==='short'&&P.incoming(ball)==='drive')tap='block';
 let smash=infd()?false:time<=smashUntil;const state=P.timing(ball);if((state==='wait'||state==='none')&&!secondDual)return;
 let motion=swingMemory&&time<=swingMemory.until?swingMemory:null;const dualSwing=!!(ball.dual&&ball.dualHit&&gesture?.dualTap&&gesture.stroke);if(!motion&&dualSwing){const g=gesture;motion={above:g.above,course:null,dir:g.dir,below:g.below,side:g.side,vx:paddle.vx,vy:paddle.vy,rise:(g.y-paddle.y)*cam.z,drop:(paddle.y-g.y)*cam.z,dx:(paddle.x-g.x)*cam.z,fromX:g.x,fromY:g.y,x:paddle.x,y:paddle.y,until:time+.05};}const R=RACKETS[racketType];
-if(!smash&&!tap&&motion&&ball.chance&&(motion.dir==='up'||motion.vy< -55&&motion.rise>12||racketType==='defense'&&motion.dir==='down'))smash=true;
+if(!smash&&!tap&&motion&&ball.chance&&P.incoming(ball)!=='drive'&&(motion.dir==='up'||motion.vy< -55&&motion.rise>12||racketType==='defense'&&motion.dir==='down'))smash=true;
 if(LOOKS[charType].lobber&&!infd()&&!tap&&motion&&motion.vy<0&&P.incoming(ball)==='smash')smash=false;
-if(LOOKS[charType].lobber&&!infd()&&ball.chance&&!tap&&motion&&motion.vy<0&&(motion.side?motion.side==='right'?1:-1:playerSide)*fhDir()>0)smash=true;
+if(LOOKS[charType].lobber&&!infd()&&ball.chance&&P.incoming(ball)!=='drive'&&!tap&&motion&&motion.vy<0&&(motion.side?motion.side==='right'?1:-1:playerSide)*fhDir()>0)smash=true;
 const ninjaChance=LOOKS[charType].noDrive&&!!ball.chance&&!infd(),ninjaChanceTap=ninjaChance&&!!tap;
 if(ninjaChanceTap)smash=false;
 let ninjaSwing=false;if(LOOKS[charType].noDrive&&!smash&&!tap&&motion&&motion.dir!=='down'&&!infd()){tap=P.incoming(ball)==='drive'?'block':'short';ninjaSwing=true;}   /* 탈주닌자 맹타치: 드라이브 스윙도 쇼트로 */
@@ -3615,7 +3615,7 @@ const preN=0;   // 포터치 is decided while my ball flies over, so its ① rin
 if(!spk&&!dualNow&&!wasChance&&['drive','cut'].includes(kind)&&Math.random()<.65)kind=aiShot==='cut'?'drive':'cut';
 const aiTwoBounceCut=!wasChance&&!dualNow&&!spk&&kind==='cut'&&aiCutTwoBounce();
 ball.charmId=rollCharm(LOOKS[mode==='doubles'&&!net&&foeTurn?foe2Char:aiChar]);Object.assign(ball,P.aiReturn(spk?spk[1]:kind,ball.x,ball.y,sjF?Math.max(ball.z,.26):ball.z,speed*(spk?spk[2]*aiUltPower():1)*(P.incoming(ball)==='drive'&&kind==='drive'?1+.35*deep:1),(Math.random()-.5)*(infd()?.4:pracLike()?.5:L.aim*pressure.aim),(1+.08*Math.max(0,['easy','hard','extreme','ultra','uhard','uext','unight'].indexOf(tierNow()))+.05*Math.max(0,Object.keys(P.LEVELS).indexOf(dif)))*pressure.spin*(1+longPressure*pressure.longSpin),wasChance),{bounces:0,owner:'ai',retreat:0,chance:kind==='block',kill:wasChance&&kind==='smash',power:false,shadow:false,hellfire:false,lob:false,shortLob:false,lobEdge:false,hi:false,shortCut:false,defMiss:0,skill:null,dual:dualNow,pre:preN,preHit:earlyPre,pcv:false,easy:false,gamble:false,anyPerf:false,curve:0,fake:false,curveK:0,faultAt:0,quadNext:null,earlyPre:0,dualHit:false,aiSpecial:!!spk,ult:null,wasShort:false});
-if(aiTwoBounceCut)ball.aiTwoBounce=true;ball.maouBase=maouNoWeak()&&!spk?{v:Math.hypot(ball.vx,ball.vy),s:Math.abs(ball.spin||0),chance:!!ball.chance}:null;   /* 특성 적용 전 기준(단점 되돌리기용) */
+if(P.family(ball.type)==='drive'){ball.chance=false;ball.kill=false;}if(aiTwoBounceCut)ball.aiTwoBounce=true;ball.maouBase=maouNoWeak()&&!spk?{v:Math.hypot(ball.vx,ball.vy),s:Math.abs(ball.spin||0),chance:!!ball.chance}:null;   /* 특성 적용 전 기준(단점 되돌리기용) */
 if(aiCharmFail(LOOKS[mode==='doubles'&&!net&&foeTurn?foe2Char:aiChar],ball))toast('💔 AI 매혹범 매혹 실패 · 실수 (15%)',1.4);
 if(!spk&&!dualNow&&!wasChance&&['drive','cut'].includes(kind)){const rhythm=P.aiRhythm();Object.assign(ball,P.retime(ball,ball.y,ball.z,rhythm));ball.skill=rhythm<1?'AI 완급 조절 · 느린 커트/드라이브 🐢':'AI 완급 조절 · 빠른 커트/드라이브 ⚡';}
 if(LOOKS[aiChar].defender&&!spk&&!dualNow&&!infd()&&Math.random()<defenderFatigue(LOOKS[aiChar])){Object.assign(ball,P.miss(ball,ball.y,ball.z,Math.random()<.5?'net':'over'),{skill:`긴 랠리에 지친 AI 송스타의 수비 실수 (${Math.round(defenderFatigue(LOOKS[aiChar])*100)}%)`});}
