@@ -53,6 +53,7 @@ dialog.querySelector('#world-detail').insertAdjacentHTML('beforebegin','<p id="w
 const key=()=>`world-china-${typeof googleUser!=='undefined'&&googleUser?.uid||'local'}`;
 function saved(){try{const v=JSON.parse(localStorage.getItem(key()));return v&&v.live&&v.order?.length===7&&new Set(v.order).size===7&&v.order.every(n=>Number.isInteger(n)&&n>=0&&n<7)&&Number.isInteger(v.round)&&v.round>=0&&v.round<7&&v.my+v.ai===v.round&&v.my<4&&v.ai<4?v:null;}catch{return null;}}
 function persist(){try{if(chinaRun?.live)localStorage.setItem(key(),JSON.stringify({...chinaRun,character:charType}));else localStorage.removeItem(key());}catch{}}
+window.sppWorldPersistChina=persist;
 let flight=null,timer=0,selectedCountry=null;
 let mapZoom=1.1,pinchStart=0;
 function setMapZoom(next){mapZoom=Math.max(1,Math.min(3.2,next));mapCanvas.style.width=`${mapZoom*100}%`;}
@@ -74,6 +75,7 @@ function centerOnKorea(){const koreaX=811/1000;atlas.scrollLeft=Math.max(0,Math.
 function open(){stop();selectedCountry=null;setMapZoom(1.1);render();dialog.querySelectorAll('[data-region]').forEach(region=>region.classList.remove('selected'));if(!dialog.open)dialog.showModal();setTimeout(()=>{if(!dialog.open)return;const last=prog.q?._lastWorldCountry||store.get('last-world-country'),countries=typeof EURO_CUPS==='object'?Object.keys(EURO_CUPS):[],active=countries.filter(id=>typeof euroSaved==='function'&&euroSaved(id));const id=last&&(active.includes(last)||last==='china'&&saved())?last:active[0]||(saved()?'china':last);if(!id)return;const region=dialog.querySelector(`[data-region="${id}"],[data-country="${id}"]`);if(region)region.dispatchEvent(new MouseEvent('click',{bubbles:true}));else if(id!=='china'&&typeof euroMap==='function'&&countries.includes(id))euroMap(id);else if(id==='china')selectCountry(id);},0);}
 button.onclick=open;$('world-close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{stop();selectedCountry=null;});dialog.addEventListener('cancel',stop);
 window.sppWorldContinueChinaReady=()=>!!saved();
+window.sppWorldSavedChina=saved;
 // "이어하기"도 바로 경기를 재개하지 않는다.  다음 단식의 선수 명단을
 // 확인·변경한 뒤 시작할 수 있도록 항상 출전 명단 화면을 먼저 연다.
 window.sppWorldContinueChina=()=>{const s=saved();if(!s)return open();chinaRun=s;openChinaCup();};
@@ -82,7 +84,7 @@ function activateWorldRegion(id){selectCountry(id);}
 dialog.querySelectorAll('[data-region]').forEach(p=>{p.onpointerup=e=>{if(e.pointerType==='touch'&&pinchStart)return;worldPointerAt=performance.now();e.preventDefault();activateWorldRegion(p.dataset.region);};p.onclick=e=>{e.preventDefault();/* Some Android WebViews deliver only click for SVG paths.  Ignore the synthetic click following pointerup, but keep click-only selection usable. */if(performance.now()-worldPointerAt<520)return;activateWorldRegion(p.dataset.region);};p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activateWorldRegion(p.dataset.region);}};});
 const game=chinaGame;chinaGame=function(){const r=game();persist();return r;};
 onHome('pre',30,()=>{if(chinaRun)persist();});
-onResult('pre',30,c=>{c.chinaWas=chinaActive();});onResult('post',50,c=>{if(c.chinaWas){persist();if(chinaRun?.my===4)open();}});
+onResult('pre',30,c=>{c.chinaWas=chinaActive();});onResult('post',50,c=>{if(c.chinaWas)persist();});
 // A world-conquest run can be paused safely, or deliberately abandoned.
 // Keep those actions separate so a normal exit never destroys the saved series.
 const worldCampaignActive=()=>chinaActive()||(typeof euroActive==='function'&&euroActive()),worldExit=$('exit-btn'),normalExit=worldExit.onclick,worldForfeit=document.createElement('button');worldForfeit.type='button';worldForfeit.id='world-forfeit';worldForfeit.textContent='포기';worldForfeit.hidden=true;worldExit.after(worldForfeit);

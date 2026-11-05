@@ -79,3 +79,61 @@ const worldSceneStyle=document.createElement('style');worldSceneStyle.textConten
 @media(prefers-reduced-motion:reduce){.world-skill-scene *{animation:none!important}.world-skill-scene svg{opacity:.3}.world-scene-slash{display:none}}
 `;document.head.append(worldSceneStyle);
 PATCH_NOTES.unshift(['세계정복 국가별 필살기 연출','15개국에 벚꽃·용의 불꽃·빙정·번개·수목 파쇄·파도 등 전용 효과와 선수별 돌진·도약 모션을 추가했습니다. 모션 감소 설정을 지원합니다.']);
+
+// Bind campaign results to the match that actually started, rather than mutable
+// map/lineup state. A delayed or repeated result must never restart that single.
+let worldMatchSession=null,worldResultSession=null,worldResumeSnapshot=null;
+onBegin('pre',-100,()=>{worldResumeSnapshot=resumingSavedMatch?loadSave():null;});
+onBegin('post',100,()=>{
+ if(!playing)return;
+ let r=euroStarting?euroRun:chinaStarting?chinaRun:null,country=euroStarting?r?.country:chinaStarting?'china':worldResumeSnapshot?.worldCountry;
+ if(!r&&country){r=country==='china'?window.sppWorldSavedChina?.():euroSaved(country);if(r){if(country==='china')chinaRun=r;else euroRun=r;}}
+ worldMatchSession=r?{id:matchId,run:r,country,opponent:aiChar,round:r.round}:null;
+ if(r){if(country==='china')window.sppWorldPersistChina?.();else euroSave();}
+ worldResultSession=null;
+});
+{const save=saveRun;saveRun=function(...args){const v=save.apply(this,args);if(v&&worldMatchSession?.id===matchId){v.worldCountry=worldMatchSession.country;store.set('save',JSON.stringify(v));}return v;};}
+{const result=showResult;showResult=function(...args){
+ let s=worldMatchSession;
+ if(s?.id!==matchId&&!net&&mode==='match'&&aiChar.startsWith('china_')){
+  for(const country of ['china',...Object.keys(EURO_CUPS)]){const r=country==='china'?window.sppWorldSavedChina?.():euroSaved(country),op=r&&(country==='china'?'china_'+CHINA_PLAYERS[r.order[r.round]][0]:`china_${country}_${r.order[r.round]}`);if(r&&op===aiChar){s=worldMatchSession={id:matchId,run:r,country,opponent:op,round:r.round};break;}}
+ }
+ if(s?.id===matchId){
+  if(s.rendered){if(!$('result').open)$('result').showModal();return;}
+  aiChar=s.opponent;
+  if(s.country==='china')chinaRun=s.run;else euroRun=s.run;
+ }
+ const out=result.apply(this,args);
+ if(s?.id===matchId){s.rendered=true;worldResultSession=s;renderWorldResult(s);}
+ else{const b=$('result').querySelector('.world-save-exit');if(b)b.remove();$('result').querySelectorAll('.rs-grid [data-rs="close"]').forEach(b=>b.hidden=false);}
+ return out;
+};}
+function renderWorldResult(s){
+ const d=$('result'),r=s.run,name=s.country==='china'?'중국':EURO_CUPS[s.country].name;
+ d.querySelectorAll('.rs-grid [data-rs]').forEach(b=>b.hidden=b.dataset.rs!=='retry');
+ const next=d.querySelector('[data-rs="retry"]');next.textContent=r.live?'다음 경기하기':'다음 나라 선택하기';
+ let save=d.querySelector('.world-save-exit');if(!save){save=document.createElement('button');save.type='button';save.className='world-save-exit';d.querySelector('.rs-grid').append(save);}save.textContent='저장하고 나가기';
+ save.onclick=()=>{if(s.country==='china')window.sppWorldPersistChina?.();else euroSave();saveProg();d.close();goHome();worldResultSession=null;};
+ $('rs-title').textContent=r.my>=4?'세계제패 완료!':r.ai>=4?'세계제패 도전 종료':you>cpu?'단식 승리!':'단식 종료';
+ const line=document.createElement('li');line.textContent=`${name} · ${r.my} : ${r.ai} · ${r.round}단식 완료 · 7전 4선승`;$('rs-lines').prepend(line);
+}
+// Capture before the old per-country retry handlers, including completed series.
+window.addEventListener('click',e=>{
+ if(!e.target.closest?.('#result [data-rs="retry"]')||!worldResultSession)return;
+ e.preventDefault();e.stopImmediatePropagation();const s=worldResultSession,r=s.run;$('result').close();
+ if(r.live){if(s.country==='china'){chinaRun=r;openChinaCup();}else{euroRun=r;openEuroLineup(s.country);}}
+ else{$('world-open').click();if(s.country!=='china')euroMap(s.country);}
+},true);
+// Portrait selection opens this entrant's own build; closing it returns to the
+// lineup. Only the explicit single-start button begins the match.
+document.addEventListener('click',e=>{
+ const b=e.target.closest?.('[data-world-char],[data-china-char]');if(!b)return;
+ const ch=b.dataset.worldChar||b.dataset.chinaChar;
+ runeChar=ch;renderRunes();ultAfterRunes=true;if(!$('runes').open)$('runes').showModal();
+});
+// Include dynamically created dialogs as well as the initial document dialogs.
+function ensureDialogClose(d){
+ if(!d.open||d.querySelector('.dlg-x,.china-x,.world-lineup-x,[aria-label="닫기"],[aria-label="저장하고 닫기"]'))return;
+ const b=document.createElement('button');b.type='button';b.className='dlg-x universal-dialog-close';b.textContent='✕';b.setAttribute('aria-label','닫기');b.onclick=()=>{const close=d.querySelector('[id$="-close"],[id$="-x"]');if(close&&close!==b)close.click();else d.close();};d.prepend(b);
+}
+new MutationObserver(()=>document.querySelectorAll('dialog[open]').forEach(ensureDialogClose)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
