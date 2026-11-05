@@ -20,5 +20,5 @@ assert.match(retired,/setTimeout\(offerJekyllTransform,350\)/);
 assert.match(retired,/jekyllTransformed=true/);
 assert.match(html,/k==='sleepy'\?'리메이크'/);
 assert.match(html,/jiseongHero=\(\)=>qTotal\('tech_jiseong_comeback'\)>=100/);
-assert.match(retired,/cpu-you>=4&&jiseongHero\(\)\)\{you\+\+/);
+assert.match(retired,/cpu-you>=3\|\|cpu===10&&you===8/);
 console.log('Retired-mode rewards are absent and character technique achievements are tracked.');
