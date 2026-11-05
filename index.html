@@ -3068,12 +3068,13 @@ const cr=pose.crouch,stepping=st.feet?Math.max(...[-1,1].map(k=>st.feet[k].t<1?M
 const lean=P.clamp((pose.target.x-cx-side*40*s)/(70*s),-1,1);st.lean=lerp(st.lean||0,lean,.25);const ux=cx+st.lean*12*s;
 // Arm of fixed length (upper arm + forearm): the hand goes toward the racket target but never further than the arm reaches,
 // and the elbow bends when the target is close - the arm never stretches.
-const shoulder={x:ux+arm*15*s,y:hy-50*s*T},ang=armPose.angle,racketScale=s*.78,d=(R.h+R.hl*.55)*racketScale,L=ARM_LEN*s*T;
+const penGrip=type==='cpen'||type==='jpen';
+const shoulder={x:ux+arm*15*s,y:hy-50*s*T},ang=armPose.angle,racketScale=s*.78,d=(penGrip?R.h*.72+R.hl*.5:R.h+R.hl*.55)*racketScale,L=ARM_LEN*s*T;
 const want={x:armPose.target.x-Math.sin(ang)*d,y:armPose.target.y+Math.cos(ang)*d},adx=want.x-shoulder.x,ady=want.y-shoulder.y,alen=Math.hypot(adx,ady)||1,reach=Math.min(alen,L);
 const hand={x:shoulder.x+adx/alen*reach,y:shoulder.y+ady/alen*reach},tgt={x:hand.x+Math.sin(ang)*d,y:hand.y-Math.cos(ang)*d};
 st.ultHand=tgt;
 if(measureOnly)return tgt; // Preview trajectories meet the same clamped racket position as gameplay.
-const bend=Math.sqrt(Math.max(0,(L/2)**2-(reach/2)**2)),px=-ady/alen,py=adx/alen,flip=py<0?-1:1;   // elbow bends downward
+const bend=Math.sqrt(Math.max(0,(L/2)**2-(reach/2)**2)),px=-ady/alen,py=adx/alen,flip=penGrip?arm:(py<0?-1:1);   // Penhold elbows keep their bend side while crossing the torso.
 const elbow={x:(shoulder.x+hand.x)/2+px*bend*flip,y:(shoulder.y+hand.y)/2+py*bend*flip};
 const swingSleeve=()=>{volumeLimb(shoulder,elbow,look.longSleeve?look.sleeve:skin,9*s*(look.fat||1));volumeLimb(elbow,hand,look.armSleeve||(look.longSleeve?look.sleeve:skin),8*s*(look.fat||1));if(look.longSleeve)fitBentCloth(shoulder,elbow,hand,look.sleeve,s,10,7.8);else if(!look.bareArms)fitSleeve(shoulder,{x:lerp(shoulder.x,elbow.x,.48),y:lerp(shoulder.y,elbow.y,.48)},look.sleeve,s,10);volumeLimb({x:hand.x-1.5*s,y:hand.y-2*s},{x:hand.x+1.5*s,y:hand.y+2*s},skin,7*s);};
 const band=()=>{fitWrist(look,elbow,hand,s,'racket');if(look.wristband)line({x:lerp(elbow.x,hand.x,.7),y:lerp(elbow.y,hand.y,.7)},{x:lerp(elbow.x,hand.x,.88),y:lerp(elbow.y,hand.y,.88)},typeof look.wristband==='string'?look.wristband:'#ffffff',8.4*s);};
