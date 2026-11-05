@@ -87,7 +87,7 @@ onHome('pre',30,()=>{if(chinaRun)persist();});
 onResult('pre',30,c=>{c.chinaWas=chinaActive();});onResult('post',50,c=>{if(c.chinaWas)persist();});
 // A world-conquest run can be paused safely, or deliberately abandoned.
 // Keep those actions separate so a normal exit never destroys the saved series.
-const worldCampaignActive=()=>chinaActive()||(typeof euroActive==='function'&&euroActive()),worldExit=$('exit-btn'),normalExit=worldExit.onclick,worldForfeit=document.createElement('button');worldForfeit.type='button';worldForfeit.id='world-forfeit';worldForfeit.textContent='포기';worldForfeit.hidden=true;worldExit.after(worldForfeit);
+const worldCampaignActive=()=>chinaActive()||(typeof euroActive==='function'&&euroActive()),worldChargeMultiplier=()=>chinaActive()?1.5:typeof euroActive==='function'&&euroActive()?(euroRun.country==='japan'?1.35:1.2):1,worldExit=$('exit-btn'),normalExit=worldExit.onclick,worldForfeit=document.createElement('button');worldForfeit.type='button';worldForfeit.id='world-forfeit';worldForfeit.textContent='포기';worldForfeit.hidden=true;worldExit.after(worldForfeit);
 const worldHud=courtHud;courtHud=function(){worldHud();const active=worldCampaignActive();worldExit.textContent=active?'경기 중지':'나가기';worldForfeit.hidden=!active;};
 worldExit.onclick=()=>{if(!worldCampaignActive())return normalExit();if(confirm('경기를 중지하고 세계제패 진행 상황을 저장할까요?'))goHome();};
 worldForfeit.onclick=()=>{if(!worldCampaignActive()||!confirm('현재 세계제패를 포기할까요? 진행 중인 단식과 저장된 시리즈가 모두 사라집니다.'))return;if(chinaActive())chinaRun.live=false;if(typeof euroActive==='function'&&euroActive()){euroRun.live=false;euroSave?.();}goHome();toast('세계제패를 포기했습니다.',1.8);};
