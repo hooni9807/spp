@@ -15,7 +15,7 @@ const techniqueHit=hit;
 hit=function(...args){
  const before=lastHit;techniqueHit(...args);
  if(lastHit===before||!ball||ball.owner!=='you'||ball.miss||ball.held)return;
- const key=charType==='songstar'&&ball.type==='cut'?'tech_songstar_cut':charType==='kumho'&&ball.lob?'tech_kumho_lob':charType==='ninja'&&['short','block'].includes(ball.type)?'tech_ninja_short':charType==='yunhwan'&&ball.type==='cut'?'tech_yunhwan_cut':charType==='leesin'&&ball.power?'tech_leesin_power':charType==='seohyun'&&ball.type==='drive'?'tech_seohyun_drive':charType==='adam'&&ball.fake?'tech_adam_fake':charType==='minhee'&&(ball.power||ball.kill)?'tech_minhee_power':'';
+ const key=charType==='songstar'&&ball.type==='cut'?'tech_songstar_cut':charType==='kumho'&&ball.lob?'tech_kumho_lob':charType==='ninja'&&['short','block'].includes(ball.type)?'tech_ninja_short':charType==='leesin'&&ball.power?'tech_leesin_power':charType==='seohyun'&&ball.type==='drive'?'tech_seohyun_drive':charType==='adam'&&ball.fake?'tech_adam_fake':charType==='minhee'&&(ball.power||ball.kill)?'tech_minhee_power':'';
  if(key&&playing&&!pracNoQuest())qMatch[key]=(qMatch[key]||0)+1;
 };
 
@@ -47,7 +47,7 @@ openPyeongtaekPick=function(){
 };
 if(ptButton)ptButton.onclick=openPyeongtaekPick;
 
-PATCH_NOTES.unshift(['캐릭터 기술 업적 · 칭호','증강 탁구와 복식 전용 업적·칭호를 제거하고, 송스타 수비 커트·금호관장 로빙·맹타치 쇼트 등 캐릭터 고유 기술 업적 8종과 칭호 3종을 추가했습니다.'],['복식 종료 · 단식 통합','복식 모드와 증강 탁구를 비활성화했습니다. 단체전은 모두 단식으로 진행하며, 3티어 필살기는 울트라 하드, 4티어는 울트라 익스트림 이상 단식 승리로 해금됩니다.']);
+PATCH_NOTES.unshift(['캐릭터 기술 업적 · 칭호','증강 탁구와 복식 전용 업적·칭호를 제거하고, 송스타 수비 커트·금호관장 로빙·맹타치 쇼트 등 플레이 가능한 캐릭터의 고유 기술 업적 7종과 칭호 3종을 추가했습니다.'],['복식 종료 · 단식 통합','복식 모드와 증강 탁구를 비활성화했습니다. 단체전은 모두 단식으로 진행하며, 3티어 필살기는 울트라 하드, 4티어는 울트라 익스트림 이상 단식 승리로 해금됩니다.']);
 
 const renderSinglesTournament=renderTournament;
 renderTournament=function(){
