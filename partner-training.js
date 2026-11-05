@@ -9,6 +9,7 @@ const ultCopy=document.querySelector('#ults>p');
 if(ultCopy)ultCopy.innerHTML='게이지가 <b>100%</b>가 되면 다음 타격에, 상대 공 종류에 맞는 <b>장착 필살기</b>가 자동 발동합니다.<br><b>슬롯</b> Lv1 1칸 · Lv10 2칸 · Lv20 3칸 ｜ <b>해금</b> 1티어 Lv1 · 2티어 Lv5 · 3티어 울트라 하드 단식 승리 · 4티어 울트라 익스트림 이상 단식 승리';
 if(mode==='doubles')setMode('match');
 for(const id of ['dbl','dbl20','doublesHarmony']){const at=TITLES.findIndex(t=>t[0]===id);if(at>=0)TITLES.splice(at,1);}
+for(const id of ['doubles','online2','aug']){const at=MODE_STATS.findIndex(m=>m[0]===id);if(at>=0)MODE_STATS.splice(at,1);}
 
 const pt=TOUR_EVENTS.find(e=>e.id==='pyeongtaek');
 if(pt){pt.name='평택 3인 단체전';pt.teamSize=3;pt.formats=['1단식','2단식','3단식'];}
