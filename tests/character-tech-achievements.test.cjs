@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('index.html','utf8'),retired=fs.readFileSync('partner-training.js','utf8');
+for(const id of ['tech_songstar_cut','tech_kumho_lob','tech_ninja_short','tech_yunhwan_cut','tech_leesin_power','tech_seohyun_drive','tech_adam_fake','tech_minhee_power'])assert.match(html,new RegExp(id));
+for(const id of ['augFirst','aug10','aug25','augSyn5','augRainbow','augSnow','augPick100'])assert.doesNotMatch(html,new RegExp(`TITLES\\.push\\([^\\n]*${id}`));
+for(const id of ['tt_aug','tt_auggod','tt_snow'])assert.doesNotMatch(html,new RegExp(`\\['${id}'`));
+assert.match(retired,/const techniqueHit=hit/);
+assert.match(retired,/charType==='songstar'&&ball\.type==='cut'/);
+assert.match(retired,/charType==='kumho'&&ball\.lob/);
+assert.match(retired,/charType==='ninja'&&\['short','block'\]\.includes\(ball\.type\)/);
+console.log('Retired-mode rewards are absent and character technique achievements are tracked.');
