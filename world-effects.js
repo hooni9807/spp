@@ -101,10 +101,11 @@ function worldReturnGuard(b){
  const original={...b},g=6+(b.spin||0)*P.EQUIP.spin*.55;
  if(!(g>0)||!(b.y>1.37))return false;
  const desired=P.clamp(b.x+b.vx*Math.max(.2,(b.y-.7)/Math.max(1,-b.vy)),-.5,.5);
- for(const curve of [1,.5,0])for(const pace of [Math.min(6,Math.max(2,-original.vy)),5,4,3,2.2])for(const target of [.65,.85,1]){
-  const t=(b.y-target)/pace;if(!(t>0))continue;
+ const pace=Math.max(2,-original.vy);
+ for(const curve of [1,.5,0])for(const speed of [pace,pace*.9,pace*.8,pace*.7,6,5,4,3,2.2])for(const target of [.65,.85,1]){
+  const t=(b.y-target)/speed;if(!(t>0))continue;
   const side=(original.side||0)*curve,k=original.curveK||.3;
-  const candidate={...original,vy:-pace,vz:(.5*g*t*(t+1/60)-b.z)/t,side,vx:(desired-b.x-.5*side*k*t*(t+1/60))/t};
+  const candidate={...original,vy:-speed,vz:(.5*g*t*(t+1/60)-b.z)/t,side,vx:(desired-b.x-.5*side*k*t*(t+1/60))/t};
   if(valid(candidate)){Object.assign(b,{vx:candidate.vx,vy:candidate.vy,vz:candidate.vz,side});return true;}
  }
  return false;

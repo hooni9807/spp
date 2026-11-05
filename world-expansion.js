@@ -1,5 +1,5 @@
 // Fictional squads. National strength is game tuning, not a live ranking feed.
-PATCH_NOTES.unshift(['세계정복 난이도 상향','15개국 전체의 공속·회전 배율을 기존보다 각각 10% 높였습니다. 국가별 전술과 선수 패시브는 유지됩니다.']);
+PATCH_NOTES.unshift(['세계제패 난이도 상향','상대 타구의 속도·회전 배율: 중국 평균 ×2, 일본 ×1.8, HELL+ ×1.6, HELL ×1.5, HELL- ×1.4. 강한 타구의 착지 보정도 개선했습니다.']);
 const WORLD_EXPANSION={
  russia:{name:'러시아',color:'#89bcf0',lang:'ru-RU',hello:'Привет!',call:'Отлично!',theme:'빙정 역습',speed:1.166,spin:1.298,xy:[730,115],names:['미하일','아리나','레프','소피야','키릴','베라','안톤'],skills:['빙정 파쇄','눈보라 회전','동토 반격','서리 장벽','백야 돌진','빙하 분열','극지 폭풍'],motion:[18,-22,.16],shape:'M150 5V145M80 25L220 125M220 25L80 125M130 25L150 5L170 25M130 125L150 145L170 125'},
  taiwan:{name:'대만',color:'#67d8e0',lang:'zh-TW',hello:'你好!',call:'好球!',theme:'초고속 교차 공격',speed:1.254,spin:1.364,xy:[808,260],names:['린위','천하오','쉬안','웨이팅','쯔닝','이천','자룽'],skills:['청풍 교차','옥빛 나선','번개 쇼트','산맥 반격','해협 돌파','회오리 연타','천등 유성'],motion:[42,-10,.24],shape:'M10 120L95 20L155 100L230 10L290 90M20 140L110 40L170 120L250 30'},
@@ -36,12 +36,10 @@ Object.entries(WORLD_EXPANSION).forEach(([id,c],n)=>{
  c.names.forEach((name,i)=>{const key=`china_${id}_${i}`,p=euroPortrait(id,n+7,i),im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(p.svg);FACES[key]=im;LOOKS[key]={name,nick:name,boss:true,worldPlayer:true,split:true,face:key,faceFit:{h:40,b:22,cx:.5},nationalKit:id,shirt:c.color,sleeve:EURO_KITS[id].trim,collar:'#f5f1de',pants:'#172437',shorts:true,tee:true,skin:p.skin,hair:p.hair,skinShade:'#986f56',stanceK:.9+i*.04,crouchK:.05+i*.015};});
 });
 onAiShot('pre',20,a=>{let {kind,speed,aim,spin}=a;if(euroActive()&&WORLD_EXPANSION[euroRun.country]){const i=euroRun.order[euroRun.round];if(i===0){kind='drive';aim=.15;}if(i===1){aim=(rally%2?1:-1)*.55;spin*=1.12;}if(i===2){kind='block';speed*=1.08;}if(i===3){kind='cut';spin*=1.16;speed*=.9;}if(i===4)aim=(rally%2?1:-1)*.64;if(i===5&&kind==='smash')speed*=1.12;if(i===6)speed*=1+Math.min(.1,rally*.005);}Object.assign(a,{kind,speed,aim,spin});});
-const WORLD_TIER_TUNING={
- china:[1.12,1.08],japan:[1.09,1.06],
- germany:[.92,.94],sweden:[.92,.94],france:[.92,.94],romania:[.92,.94],portugal:[.92,.94],austria:[.92,.94],
- russia:[1.04,1.03],taiwan:[1.04,1.03],india:[1.04,1.03],brazil:[1.04,1.03],usa:[1.04,1.03],singapore:[1.04,1.03],nigeria:[1.04,1.03],
- canada:[1.07,1.05],argentina:[1.07,1.05],australia:[1.07,1.05],southafrica:[1.07,1.05],mexico:[1.07,1.05],greenland:[1.07,1.05]
-};
+const WORLD_TARGET_POWER={'HELL-':1.4,HELL:1.5,'HELL+':1.6,'HELL++':1.8,'HELL+++':2};
+const WORLD_TIER_TUNING=Object.fromEntries(Object.entries(EURO_CUPS).map(([id,c])=>{const target=WORLD_TARGET_POWER[WORLD_DIFFICULTY[id]];return[id,[target/c.speed,target/c.spin]];}));
+const chinaAverage=(i)=>CHINA_PLAYERS.reduce((sum,p)=>sum+p[i],0)/CHINA_PLAYERS.length;
+WORLD_TIER_TUNING.china=[2/chinaAverage(4),2/chinaAverage(5)];
 onAiShot('pre',10,a=>{const id=euroActive()?euroRun.country:chinaActive()?'china':null,tune=WORLD_TIER_TUNING[id];if(tune){a.speed*=tune[0];a.spin*=tune[1];}});
 const expansionArt=euroEffectArt;euroEffectArt=function(id,i){const c=WORLD_EXPANSION[id];if(!c)return expansionArt(id,i);return `<svg viewBox="0 0 300 150" aria-hidden="true"><g transform="rotate(${(i-3)*5} 150 75)"><path d="${c.shape}"/>${Array.from({length:i+2},(_,j)=>`<circle cx="${35+j*230/(i+1)}" cy="${30+(j%3)*40}" r="${3+i}"/>`).join('')}</g></svg>`;};
 const expansionKit=drawNationalKit;drawNationalKit=function(g,look,x,y,h,s){expansionKit(g,look,x,y,h,s);const c=WORLD_EXPANSION[look.nationalKit];if(!c)return;g.save();g.translate(x,y);g.scale(s,h/64);g.strokeStyle=EURO_KITS[look.nationalKit].trim;g.lineWidth=3;const n=Object.keys(WORLD_EXPANSION).indexOf(look.nationalKit);for(let j=0;j<3;j++){g.beginPath();g.moveTo(-29,22+j*10);g.lineTo((n%3-1)*18,12+j*10);g.lineTo(29,22+j*10+(n%2)*8);g.stroke();}g.restore();};
