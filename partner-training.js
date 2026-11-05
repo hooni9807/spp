@@ -26,13 +26,14 @@ function addJekyllGauge(n){if(charType!=='sleepy'||jekyllTransformed||jekyllRead
 function offerJekyllTransform(){if(!playing||charType!=='sleepy'||!jekyllReady||jekyllTransformed)return;paused=true;release();jekyllScene.hidden=false;jekyllScene.classList.remove('transforming');jekyllScene.querySelector('button').disabled=false;jekyllScene.querySelector('strong').textContent='하이범 변신 준비';}
 jekyllScene.querySelector('button').onclick=()=>{const button=jekyllScene.querySelector('button');button.disabled=true;jekyllScene.classList.add('transforming');jekyllScene.querySelector('strong').textContent='하이범 각성';beep(180);setTimeout(()=>{jekyllTransformed=true;jekyllReady=false;me.jk=-1;me.taunt='하이범';me.tauntT=time;syncJekyllGauge();jekyllScene.hidden=true;jekyllScene.classList.remove('transforming');paused=false;toast('하이범 변신 완료 · 공격 ×1.65 · 수비 구제 8%',2.2);beep(760);},matchMedia('(prefers-reduced-motion: reduce)').matches?250:1650);};
 onBegin('post',85,()=>{jekyllGauge=0;jekyllReady=false;jekyllTransformed=false;jekyllScene.hidden=true;syncJekyllGauge();});
-onPoint('post',85,c=>{if(c.player)addJekyllGauge(15);if(jekyllReady)setTimeout(offerJekyllTransform,350);});
+onPoint('pre',90,c=>{if(!net&&c.player&&charType==='jiseong'&&cpu-you>=4&&jiseongHero()){you++;c.reason+=' · 역전의 용사 보너스 1점';}});
+onPoint('post',85,c=>{if(c.player)addJekyllGauge(7);if(jekyllReady)setTimeout(offerJekyllTransform,350);});
 
 const techniqueHit=hit;
 hit=function(...args){
  const before=lastHit,incoming=ball&&P.family(ball.type),fore=playerSide*fhDir(),blind=charType==='leesin'&&time>=blindT&&time-blindT<leesinBlindDuration(),chance=!!ball?.chance,serving=!!ball?.serving,fullDrunk=(window.drunkStack||0)>=7,behind=cpu-you>=3,hyde=charType==='sleepy'&&jk(LOOKS[charType])<0;techniqueHit(...args);
  if(lastHit===before||!ball||ball.owner!=='you'||ball.miss||ball.held)return;
- addJekyllGauge(8+(ball.pf?4:0));
+ addJekyllGauge(4+(ball.pf?2:0));
  const key=charType==='jersey'&&fore<0&&ball.power?'tech_jersey_backpower':charType==='leesin'&&blind?'tech_leesin_sense':charType==='percival'&&ball.pf?'tech_percival_perfect':charType==='drunk'&&fullDrunk&&ball.pf&&ball.power?'tech_drunk_oneshot':charType==='minhee'&&ball.unreturnWhy?.startsWith('공 재끼기')?'tech_minhee_jaetgi':charType==='seohyun'&&incoming==='drive'&&P.family(ball.type)==='drive'?'tech_seohyun_counter':charType==='jongryeong'&&fore<0&&incoming==='drive'&&ball.type==='smash'?'tech_jongryeong_smash':charType==='kumho'&&ball.lob?'tech_kumho_lob':charType==='songstar'&&ball.type==='cut'?'tech_songstar_cut':charType==='jiseong'&&behind&&ball.power?'tech_jiseong_comeback':charType==='pyeongtaek'&&chance&&ball.type==='smash'?'tech_pyeongtaek_chance':charType==='ninja'&&['short','block'].includes(ball.type)?'tech_ninja_short':charType==='gambler'&&ball.gamble?'tech_gambler_jackpot':charType==='ttalgak'&&serving?'tech_ttalgak_serve':hyde&&ball.power?'tech_sleepy_hyde':'';
  if(key&&playing&&!pracNoQuest())qMatch[key]=(qMatch[key]||0)+1;
 };
@@ -65,7 +66,7 @@ openPyeongtaekPick=function(){
 };
 if(ptButton)ptButton.onclick=openPyeongtaekPick;
 
-PATCH_NOTES.unshift(['지킬앤 하이범 변신 리워크','성공 타구 +8, PERFECT 추가 +4, 득점 +15로 게이지를 채웁니다. 100%가 된 랠리 종료 후 변신 버튼을 누르면 전용 장면과 함께 하이범으로 영구 변신합니다. 지킬은 공격 −35%와 수비 구제 15%, 하이범은 공격 ×1.65와 수비 구제 8%가 적용됩니다.'],['캐릭터 기술 업적 · 칭호','복식·증강 전용 보상을 제거하고 선택 가능한 캐릭터 15명의 고유 기술 업적을 추가했습니다. 아재범은 기존 히든 업적을 유지하며, 결과창 하단에서 이번 경기 누적 횟수를 확인할 수 있습니다.'],['복식 종료 · 단식 통합','복식 모드와 증강 탁구를 비활성화했습니다. 단체전은 모두 단식으로 진행하며, 3티어 필살기는 울트라 하드, 4티어는 울트라 익스트림 이상 단식 승리로 해금됩니다.']);
+PATCH_NOTES.unshift(['김치성 · 역전의 용사','김치성의 열세 강공 100회 업적을 달성하면 4점 이상 뒤진 상태의 득점이 2점으로 계산됩니다.'],['지킬앤 하이범 변신 리메이크','성공 타구 +4, PERFECT 추가 +2, 득점 +7로 게이지를 채워 보통 총점 9~10점 전후에 변신합니다. 100%가 된 랠리 종료 후 변신 버튼을 누르면 전용 장면과 함께 하이범으로 영구 변신하며, 캐릭터 선택창에 리메이크 딱지를 표시합니다. 지킬은 공격 −35%와 수비 구제 15%, 하이범은 공격 ×1.65와 수비 구제 8%가 적용됩니다.'],['캐릭터 기술 업적 · 칭호','복식·증강 전용 보상을 제거하고 선택 가능한 캐릭터 15명의 고유 기술 업적을 추가했습니다. 아재범은 기존 히든 업적을 유지하며, 결과창 하단에서 이번 경기 누적 횟수를 확인할 수 있습니다.'],['복식 종료 · 단식 통합','복식 모드와 증강 탁구를 비활성화했습니다. 단체전은 모두 단식으로 진행하며, 3티어 필살기는 울트라 하드, 4티어는 울트라 익스트림 이상 단식 승리로 해금됩니다.']);
 
 const renderSinglesTournament=renderTournament;
 renderTournament=function(){
