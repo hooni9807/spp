@@ -12,6 +12,7 @@ function swing(incoming, random = .4) {
     flair: null, shot: { type: 'cut', spin: -1 }, playerSide: 1, fhDir: () => 1,
     rally: 2, me: {}, inc: incoming, quality: 'PERFECT', time: 10, ball: { type: incoming },
     bhFakeUntil: -1, defenderFatigue: () => 0, shortCutShot: () => null, toast: () => {},
+    techDone: () => false,
     Math: Object.assign(Object.create(Math), { random: () => random }),
     P: { family: () => 'cut', power: s => s, popup: s => s }, mySwing: {},
   };
