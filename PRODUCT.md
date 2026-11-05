@@ -19,7 +19,7 @@ A club in-joke turned into a real game: real club members as playable characters
 
 ## Operating Context
 - Entry: KakaoTalk link → prologue → Google login (required) → main screen. KakaoTalk / LINE in-app browsers are redirected to the system browser for Google login.
-- Main loop: pick character → skill tree → 필살기 loadout → mode (AI 대전 by difficulty, 랭크전, 보스전, 복식, 3인, 연습, 온라인 1:1/복식/3인) → match → result popup (XP bar, retry / difficulty / mode / character).
+- Main loop: pick character → skill tree → 필살기 loadout → mode (AI 대전 by difficulty, 랭크전, 보스전, 3인, 연습, 온라인 1:1/3인) → match → result popup (XP bar, retry / difficulty / mode / character).
 - Progression: levels (tiered XP curve), character unlocks, skill tree (30 points per character), 56 필살기 in 8 tiers, 칭호 (achievements), quests, outfit customisation, unlock notes.
 - Social: Firebase rankings, friends, online rooms, chat, offline messages.
 

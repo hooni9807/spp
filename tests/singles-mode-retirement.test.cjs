@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('index.html','utf8'),retired=fs.readFileSync('partner-training.js','utf8');
+assert.match(html,/function singlesUltWin\(won\)/);
+assert.match(html,/u\.tier===3\?'울트라 하드 이상 단식 승리':'울트라 익스트림 이상 단식 승리'/);
+assert.match(retired,/querySelector\('\[data-mode="doubles"\]'\)\?\.remove\(\)/);
+assert.match(retired,/querySelector\('\[data-stage\]'\)\?\.remove\(\)/);
+assert.match(retired,/pt\.formats=\['1단식','2단식','3단식'\]/);
+assert.match(retired,/setMode\('match'\);begin\(theirs\)/);
+assert.doesNotMatch(retired,/setMode\('doubles'\)/);
+console.log('Doubles and augment entries retire; ultimate unlocks and team tournament use singles.');
