@@ -2136,6 +2136,9 @@ chop:[[46,-44,1.3,.35,1],[40,38,.95,.8,.1],[12,72,.5,1,-.75]],
 smash:[[58,-30,1.4,.35,1],[40,-38,.5,.35,0],[-30,30,-.7,.6,-1]],
 side:[[60,6,1.3,.5,.8],[32,0,.45,.5,0],[-26,2,-.35,.4,-.8]],
 chiquita:[[-10,24,-1.25,.65,-.3],[18,-4,-.2,.5,0],[46,-52,.8,.3,.5]]};
+const PEN_DRIVES={
+jpen:[[25,54,1.85,.86,.8],[39,11,.95,.58,.15],[23,-58,.35,.34,-.7]],
+cpen:[[12,48,1.65,.8,.65],[38,8,.8,.55,.1],[48,-48,.1,.36,-.55]]};
 // 휴고범's signature: sits deeper into the backswing, turns the hips harder and finishes high over the head.
 const HUGO_STROKES={
 loop:[[50,62,1.45,.92,1.25],[46,12,.8,.78,.4],[-12,-74,-.6,.2,-1.25]],
@@ -2161,8 +2164,8 @@ const STROKE_SETS={hugo:HUGO_STROKES,lee:LEE_STROKES,minhee:MINHEE_STROKES};
 STROKES.crescent=STROKES.loop;STROKES.lightning=STROKES.drive;STROKES.thunder=STROKES.smash;STROKES.phantom=STROKES.chop;
 const lerp=(a,b,t)=>a+(b-a)*t,ease=t=>1-(1-t)*(1-t);
 // since = seconds after contact. prep (0..1, while the finger is still drawing) walks backswing -> just before contact.
-function strokePose(type,since,side,s,shoulder,target,angle,crouch,look={},amp=1,dirX=0,prep=null,T=1){
-const k=look.strokes&&STROKE_SETS[look.strokes]?.[type]||STROKES[type];if(!k||prep==null&&(since<0||since>.8))return {target,angle,crouch,twist:0};
+function strokePose(type,since,side,s,shoulder,target,angle,crouch,look={},amp=1,dirX=0,prep=null,T=1,racketKind='shake'){
+const k=look.strokes&&STROKE_SETS[look.strokes]?.[type]||((type==='drive'||type==='loop'||type==='lower')&&PEN_DRIVES[racketKind])||STROKES[type];if(!k||prep==null&&(since<0||since>.8))return {target,angle,crouch,twist:0};
 const at=f=>({x:shoulder.x+side*f[0]*s,y:shoulder.y+f[1]*s*T,a:side*f[2],c:f[3],w:f[4]}),B=at(k[0]),C=at(k[1]),F0=at(k[2]),F={...F0,x:C.x+(F0.x-C.x)*amp+dirX*16*s,y:C.y+(F0.y-C.y)*amp},R={x:target.x,y:target.y,a:angle,c:crouch,w:0};
 const mix=(A,Z,t)=>({target:{x:lerp(A.x,Z.x,t),y:lerp(A.y,Z.y,t)},angle:lerp(A.a,Z.a,t),crouch:lerp(A.c,Z.c,t),twist:lerp(A.w,Z.w,t)});
 if(prep!=null)return prep<.35?mix(R,B,ease(prep/.35)):mix(B,C,(prep-.35)/.65*.85);   // drawing: backswing, then into the stroke
@@ -3047,7 +3050,7 @@ if(look.legK&&st.legLen&&!person._leg){const l0=st.legLen,cut=l0*(1-look.legK);p
 if(look.fat&&!person._fat){const L0=line;person._fat=1;line=(a,b,c,w=1)=>L0(a,b,c,w*look.fat);try{return person(st,hipY,target,angle,look,s,type,face,side,stroke,since,prep,measureOnly);}finally{line=L0;person._fat=0;}}   /* 냄섭: 팔다리를 굵게 */
 const arm=look.lefty?(hipY>H*.5?-1:1):side,T=st.tall||1,R=RACKETS[type],skin=look.skin||'#f2cda8',pants=look.pants,ultOffset=ultBodyOffset(st,side,s),x=st.x+ultOffset.x,moving=P.clamp(Math.abs(st.vx)/160,0,1),dir=Math.sign(st.vx)||1;
 hipY+=ultOffset.y;
-const pose=strokePose(stroke,since,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T),armPose=look.lateArm?strokePose(stroke,since-.18,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T):pose;
+const pose=strokePose(stroke,since,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T,type),armPose=look.lateArm?strokePose(stroke,since-.18,side,s,{x:x+arm*15*s,y:hipY-50*s*T+st.crouch*18*s},target,angle,st.crouch,look,st.amp??1,st.dirX||0,prep,T,type):pose;
 ultMotionPose(pose,st.ultMove,side,s);
 const cheer=st.cheerT!=null&&time-st.cheerT<1.2?Math.abs(Math.sin((time-st.cheerT)*8)):-1;   // won the point: jump with both arms up
 // Pre-serve routine: inspect the racket, bounce the ball, rehearse, then settle for the toss.
