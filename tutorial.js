@@ -53,6 +53,8 @@ window.openTutorial=()=>{if(document.getElementById('tut-card'))return;i=0;
  addEventListener('resize',place);addEventListener('keydown',key);show();};
 // 경기 튜토리얼: 연습장에서 AI가 보내는 공을 받아 넘기며 단계별로 배운다. 내 타구 성공 = 공 주인이 AI에서 나로 바뀐 순간.
 const PLAY=[
+ {t:'서브 ① 클릭해서 토스',d:'내 서브로 연습합니다. 확인을 누른 뒤 탁구대 화면을 한 번 클릭하거나 터치해 공을 위로 띄우세요. 토스하면 다시 멈추고 다음 동작을 알려 드립니다.',need:s=>s.tossed},
+ {t:'서브 ② 스윙해서 넘기기',d:'공을 띄웠습니다! 확인을 누르면 공이 다시 움직입니다. 공이 내려올 때 손가락이나 마우스를 위로 끌어 스윙하세요. 클릭은 토스, 드래그는 스윙입니다.',need:s=>s.served},
  {t:'링에 맞춰 스윙',d:'공 주위 링이 줄어들어 라켓 원과 겹칠 때, 손가락을 위로 끌어 쳐 보세요.',need:s=>s.hits>=1},
  {t:'포핸드와 백핸드',d:'공이 몸 오른쪽이면 포핸드, 왼쪽이면 백핸드로 자동으로 바뀌어요. 3번 더 넘겨 보세요.',need:s=>s.hits>=4},
  {t:'좌우로 흔들기',d:'같은 쪽만 치면 AI가 읽어요. 왼쪽과 오른쪽을 번갈아 보내 보세요.',need:s=>s.switches>=s.swMark+2},
@@ -62,22 +64,29 @@ let playTimer=null;
 // 설명은 경기를 멈춘 채 띄우고, 확인을 누르면 사라지며 경기가 이어진다(공을 가리지 않게). 진행 중에는 구석에 작은 진행 표시만.
 const TIMING={t:'지금이 칠 타이밍!',d:'공이 내 쪽으로 왔어요. 링이 줄어들어 라켓 원과 겹치는 순간 손가락을 위로 끌어 치세요. 확인을 누르면 이어집니다.'};
 window.openPlayTutorial=()=>{if(playTimer||typeof begin!=='function')return;
- try{setMode('practice');begin();if(paused)pause();}catch{return;}
+ try{setMode('practice');begin();if(!playing)return;holdServe();if(paused)pause();}catch{return;}
  const gear=$('gear-status');if(gear){gear.style.outline='3px solid #14e0ff';gear.style.outlineOffset='5px';}
  const box=document.createElement('div');box.id='play-coach';box.setAttribute('aria-hidden','true');
  const card=document.createElement('div');card.id='play-card';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-labelledby','play-card-t');card.hidden=true;
  card.innerHTML='<i></i><h3 id="play-card-t"></h3><p></p><button type="button">확인</button>';document.body.append(box,card);
- const st={step:0,hits:0,switches:0,side:null,mark:0,swMark:0,owner:null,timed:false},btn=card.querySelector('button');
+ const st={step:0,hits:0,switches:0,side:null,mark:0,swMark:0,owner:null,timed:false,tossed:false,served:false},btn=card.querySelector('button');
+ // Freeze immediately at the real toss, so a quick swipe cannot bypass its
+ // explanation between polling frames. Keep the normal game input handlers.
+ const originalToss=toss,tutorialToss=function(...args){const out=originalToss.apply(this,args);if(st.step===0&&ball?.held&&ball.tossed){st.tossed=true;paused=true;}return out;};toss=tutorialToss;
  let open=false;
- const ask=(p,tag)=>{open=true;paused=true;card.querySelector('i').textContent=tag;card.querySelector('h3').textContent=p.t;card.querySelector('p').textContent=p.d;card.hidden=false;btn.focus();};
+ const ask=(p,tag)=>{open=true;paused=true;release();card.querySelector('i').textContent=tag;card.querySelector('h3').textContent=p.t;card.querySelector('p').textContent=p.d;card.hidden=false;btn.focus();};
  btn.onclick=()=>{card.hidden=true;open=false;if(st.step>=PLAY.length){stop();return;}paused=false;};
  const pill=()=>{box.textContent=`튜토리얼 ${st.step+1} / ${PLAY.length} · ${PLAY[st.step].t}`;};
- const stop=()=>{clearInterval(playTimer);playTimer=null;box.remove();card.remove();if(gear){gear.style.outline='';gear.style.outlineOffset='';}if(paused&&playing)paused=false;};
+ const stop=()=>{clearInterval(playTimer);playTimer=null;if(toss===tutorialToss)toss=originalToss;box.remove();card.remove();if(gear){gear.style.outline='';gear.style.outlineOffset='';}if(paused&&playing)paused=false;};
  pill();ask(PLAY[0],`1 / ${PLAY.length}`);
  playTimer=setInterval(()=>{if(!playing||mode!=='practice'){stop();return;}if(open)return;
   const o=ball?ball.owner:null;
+  if(st.step===1){
+   st.served=!!(ball&&o==='you'&&!ball.held&&ball.serving);
+   if(ball?.held&&!ball.tossed){st.step=0;st.tossed=false;pill();ask({t:'다시 토스해 보세요',d:'스윙 전에 공이 내려갔어요. 확인을 누르고 화면을 한 번 눌러 다시 토스하세요. 이어서 내려오는 공을 스윙하면 됩니다.'},`1 / ${PLAY.length}`);return;}
+  }
   // 첫 공: AI 공이 내 쪽에서 한 번 튀고 다가올 때 멈추고 타이밍을 알려 준다.
-  if(!st.timed&&st.step===0&&o==='ai'&&!ball.serving&&ball.bounces>=1&&ball.y<.9){st.timed=true;ask(TIMING,'타이밍');return;}
+  if(!st.timed&&st.step===2&&o==='ai'&&!ball.serving&&ball.bounces>=1&&ball.y<.9){st.timed=true;ask(TIMING,'타이밍');return;}
   if(o==='you'&&st.owner==='ai'&&!ball.serving){st.hits++;const side=ball.aiRouteLabel?(ball.aiRouteLabel==='왼쪽'?'L':'R'):(ball.x+(ball.vx||0)*.4<0?'L':'R');if(st.side&&side!==st.side)st.switches++;st.side=side;}
   st.owner=o;
   if(PLAY[st.step].need(st)){st.step++;st.mark=st.hits;st.swMark=st.switches;
