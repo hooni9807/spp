@@ -26,6 +26,7 @@ assert.match(html,/jhro:charType==='jiseong'&&jiseongHero\(\)/);
 assert.match(html,/jongryeong:\{[^\n]*fhBackhand:\.7/);
 assert.match(html,/Math\.random\(\)<LOOKS\[charType\]\.fhBackhand/);
 assert.match(html,/let chopFh=fh&&Math\.random\(\)<\.9/);
+assert.match(html,/Math\.max\(\.8,1-\.025\*\(me\.chopN\|\|0\)\)/);
 assert.match(retired,/m\?\.t==='J'/);
 assert.match(retired,/net\.opp\.jhro/);
 console.log('Retired-mode rewards are absent and character technique achievements are tracked.');
