@@ -10,7 +10,7 @@ assert.match(retired,/charType==='songstar'&&ball\.type==='cut'/);
 assert.match(retired,/charType==='kumho'&&ball\.lob/);
 assert.match(retired,/charType==='ninja'&&\['short','block'\]\.includes\(ball\.type\)/);
 assert.match(html,/id='rs-tech-progress'|el\.id='rs-tech-progress'/);
-assert.match(html,/leesinSense\(\)\?1\.85:1\.5/);
+assert.match(html,/leesinSense\(\)\?1\.6:1\.5/);
 assert.match(html,/sense\?\.075:\.05/);
 assert.match(html,/glass:\{[^\n]*disabled:true/);
 assert.match(retired,/jekyllGauge=Math\.min\(100,jekyllGauge\+n\)/);

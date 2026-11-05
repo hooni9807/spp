@@ -14,5 +14,9 @@ test('Jekyll permanently changes face after local or PVP transformation', () => 
   assert.equal(vm.runInNewContext('faceImg(look)', context), hyde);
   context.jekyllTransformed=false;context.charType='other';context.aiChar='sleepy';context.net={opp:{ch:'sleepy',jh:true}};
   assert.equal(vm.runInNewContext('faceImg(look)', context), hyde);
-  assert.match(html, /look\.jekyll&&\(FACES\.jh\|\|loadFace\('jh'\)\)/);
+  assert.doesNotMatch(html, /const jh=look\.jekyll/);
+  context.net=null;context.foe={jekyllTransformed:false};context.you=8;context.cpu=6;
+  assert.equal(vm.runInNewContext('faceImg(look)',context),jekyll);
+  context.foe.jekyllTransformed=true;
+  assert.equal(vm.runInNewContext('faceImg(look)',context),hyde);
 });

@@ -82,6 +82,32 @@ PATCH_NOTES.unshift(['세계정복 국가별 필살기 연출','15개국에 벚�
 
 // Bind campaign results to the match that actually started, rather than mutable
 // map/lineup state. A delayed or repeated result must never restart that single.
+// Validate after every country/trait/ultimate multiplier, using the live Euler
+// integrator at supported frame steps. Re-plan only physically invalid shots.
+function worldReturnLanding(b,dt=1/60){
+ const q={...b};let crossed=q.y<=1.37,netOk=!crossed;
+ for(let i=0;i<Math.ceil(4/dt);i++){
+  const y=q.y,z=q.z;P.step(q,dt);
+  if(!crossed&&q.y<=1.37){crossed=true;netOk=z+(q.z-z)*(1.37-y)/(q.y-y)>=.22;}
+  if(q.z<=0&&q.vz<0)return {x:q.x,y:q.y,ok:crossed&&netOk&&q.y>.16&&q.y<1.18&&Math.abs(q.x)<.68};
+ }
+ return {ok:false};
+}
+function worldReturnGuard(b){
+ if(!worldCampaignActive()||!b||b.owner!=='ai'||b.vy>=0||b.serving||b.miss||b.unreturn||b.aiChanceMiss)return false;
+ const valid=v=>[1/60,1/120,1/240].every(dt=>worldReturnLanding(v,dt).ok);
+ if(valid(b))return false;
+ const original={...b},g=6+(b.spin||0)*P.EQUIP.spin*.55;
+ if(!(g>0)||!(b.y>1.37))return false;
+ const desired=P.clamp(b.x+b.vx*Math.max(.2,(b.y-.7)/Math.max(1,-b.vy)),-.5,.5);
+ for(const curve of [1,.5,0])for(const pace of [Math.min(6,Math.max(2,-original.vy)),5,4,3,2.2])for(const target of [.65,.85,1]){
+  const t=(b.y-target)/pace;if(!(t>0))continue;
+  const side=(original.side||0)*curve,k=original.curveK||.3;
+  const candidate={...original,vy:-pace,vz:(.5*g*t*(t+1/60)-b.z)/t,side,vx:(desired-b.x-.5*side*k*t*(t+1/60))/t};
+  if(valid(candidate)){Object.assign(b,{vx:candidate.vx,vy:candidate.vy,vz:candidate.vz,side});return true;}
+ }
+ return false;
+}
 let worldMatchSession=null,worldResultSession=null,worldResumeSnapshot=null;
 onBegin('pre',-100,()=>{worldResumeSnapshot=resumingSavedMatch?loadSave():null;});
 onBegin('post',100,()=>{
