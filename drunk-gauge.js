@@ -25,7 +25,7 @@ const anchor=()=>{const c=document.getElementById('court'),x=typeof me==='object
 const paint=()=>{const s=window.drunkStack;g.querySelectorAll('.bar i').forEach((e,i)=>e.classList.toggle('f',i<s));g.querySelector('.n').textContent=s>=MAX?'만취':s;g.classList.toggle('max',s>=MAX);};
 // 내 서브 순간(index.html serve 코드)에서 부른다: 한 잔 마시고 취기 +1, 잔마다 짧게 흔들림.
 window.drunkSip=()=>{if(!isDrunk()||typeof net!=='undefined'&&net&&net.trio)return;window.drunkStack=Math.min(MAX,window.drunkStack+1);paint();
- window.drunkKickT=typeof time==='number'?time:0;   /* 잔마다 0.9초 흔들림. 화면 흔들림을 끄면 취기 모션도 생략한다. */
+ window.drunkKickT=typeof time==='number'?time:0;   /* 취기는 캐릭터 특성: 모션 감소 설정에서는 35% 강도로 유지한다. */
  const a=anchor();if(!a)return;document.getElementById('drunk-sip')?.remove();const e=document.createElement('div');e.id='drunk-sip';e.innerHTML=MUG;
  e.style.left=a.r.left+(a.x+26)*a.k+'px';e.style.top=a.r.top+(typeof H==='number'?H*.6:a.r.height*.6)*a.k+'px';document.body.append(e);setTimeout(()=>e.remove(),1200);
  if(window.drunkStack>=MAX&&typeof toast==='function')toast('만취! 🍺 화면이 흔들려요 · 취권 최대 ×1.6 · PERFECT면 원샷 스매시',2);};
