@@ -24,7 +24,7 @@ const extraRegions=[
  ['india','인도','M635 217L675 231L695 250L675 291L659 279L645 247Z',662,260],
  ['brazil','브라질','M224 252L269 248L296 281L282 321L259 343L239 318L231 286L214 272Z',258,291],
  ['usa','미국','M106 137L165 144L216 137L246 156L224 180L190 180L176 201L150 185L122 180Z',173,166],
- ['singapore','싱가포르','M704 298L712 298L714 303L706 304Z',756,341],
+ ['singapore','싱가포르','M697 291L719 291L722 307L700 310Z',756,341],
  ['nigeria','나이지리아','M466 250L489 248L495 271L477 280L464 267Z',445,290]
 ];
 const map=dialog.querySelector('.world-atlas>svg'),land=map.querySelector('g'),labels=map.querySelectorAll('g')[1],svgNS='http://www.w3.org/2000/svg';
@@ -85,7 +85,7 @@ window.sppWorldSavedChina=saved;
 // 확인·변경한 뒤 시작할 수 있도록 항상 출전 명단 화면을 먼저 연다.
 window.sppWorldContinueChina=()=>{const s=saved();if(!s)return open();chinaRun=s;openChinaCup();};
 let worldPointerAt=0;
-function activateWorldRegion(id){selectCountry(id);}
+function activateWorldRegion(id){if(typeof EURO_CUPS==='object'&&EURO_CUPS[id])euroMap(id);else selectCountry(id);}
 dialog.querySelectorAll('[data-region]').forEach(p=>{p.onpointerup=e=>{if(e.pointerType==='touch'&&pinchStart)return;worldPointerAt=performance.now();e.preventDefault();activateWorldRegion(p.dataset.region);};p.onclick=e=>{e.preventDefault();/* Some Android WebViews deliver only click for SVG paths.  Ignore the synthetic click following pointerup, but keep click-only selection usable. */if(performance.now()-worldPointerAt<520)return;activateWorldRegion(p.dataset.region);};p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activateWorldRegion(p.dataset.region);}};});
 const game=chinaGame;chinaGame=function(){const r=game();persist();return r;};
 onHome('pre',30,()=>{if(chinaRun)persist();});

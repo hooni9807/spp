@@ -2,6 +2,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const html=fs.readFileSync('index.html','utf8'),rules=fs.readFileSync('firestore.rules','utf8'),docs=fs.readFileSync('docs/ranking.md','utf8');
 assert.match(html,/doc\(db,'character_achievements',rankUid\),characterAchievementRow\(true\)/);
 assert.match(html,/getDoc\(rankFs\.doc\(db,'character_achievements',rankUid\)\)\.catch\(\(\)=>null\)/);
+assert.match(html,/getDoc\(rankFs\.doc\(db,'achievements',rankUid\)\)\.catch\(\(\)=>null\)/);
 assert.match(html,/function cloudQuestProgress\(\).*filter\(\(\[id\]\)=>!TECH_PROGRESS\[id\]\)/);
 assert.match(html,/function mergeCharacterAchievements\(data\)/);
 assert.match(rules,/match \/character_achievements\/\{uid\}/);
@@ -14,5 +15,6 @@ assert.deepEqual(JSON.parse(JSON.stringify(context.cloudQuestProgress())),{win:{
 assert.deepEqual(JSON.parse(JSON.stringify(context.characterAchievementRow(false))),{name:'테스터',progress:{tech_a:{name:'기술 A',count:3,target:10,complete:false}},completed:0,total:1});
 assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:8}}}),true);
 assert.equal(context.prog.q.tech_a.n,8);
-assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:4}}}),false);
-console.log('Character achievements use their owner-only Firebase collection with legacy migration.');
+assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:4}}}),true);
+assert.equal(context.prog.q.tech_a.n,4);
+console.log('Firebase achievement counts are authoritative in both directions.');

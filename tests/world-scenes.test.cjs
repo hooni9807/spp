@@ -23,7 +23,10 @@ const path = require('node:path');
      invalid:layer.innerHTML.includes('undefined'), split:layer.querySelectorAll('[class^="world-split-"]').length};
    });
    clearWorldScene();
-   return {total:WORLD_COUNTRY_TOTAL, scenes, cleared:!document.querySelector('.world-skill-scene'),
+   const singapore=document.querySelector('[data-region="singapore"]');
+   singapore.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'touch'}));
+   const singaporePlayable=/싱가포르 제패/.test(document.getElementById('world-detail').textContent)&&!!document.getElementById('euro-depart');
+   return {total:WORLD_COUNTRY_TOTAL, scenes, cleared:!document.querySelector('.world-skill-scene'),singaporePlayable,singaporeTarget:singapore.getAttribute('d'),
     squads:distantSquads.map(([id]) => ({id, faces:Object.keys(FACES).filter(k=>k.startsWith('china_'+id+'_')).length,
      map:!!document.querySelector('[data-region="'+id+'"]'), active:WORLD_ACTIVE_COUNTRIES.includes(id)})),
     shapes:new Set(distantSquads.map(([id])=>WORLD_EXPANSION[id].shape)).size};
@@ -32,6 +35,8 @@ const path = require('node:path');
   assert.equal(result.scenes.length,22);
   assert.equal(result.shapes,6);
   assert(result.cleared);
+  assert(result.singaporePlayable);
+  assert.equal(result.singaporeTarget,'M697 291L719 291L722 307L700 310Z');
   for(const scene of result.scenes){assert.equal(scene.count,1);assert.equal(scene.country,scene.id);assert(!scene.invalid);if(['brazil','japan'].includes(scene.id))assert.equal(scene.split,2);}
   for(const squad of result.squads){assert.equal(squad.faces,7);assert(squad.map);assert(squad.active);}
   await page.emulateMedia({reducedMotion:'reduce'});
