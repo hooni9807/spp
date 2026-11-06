@@ -3,12 +3,13 @@ const html=fs.readFileSync('index.html','utf8');
 const world=fs.readFileSync('world-expansion.js','utf8');
 const tuning=world.slice(world.indexOf('const WORLD_TARGET_POWER='),world.indexOf("onAiShot('pre',10"));
 const countries={japan:['HELL++',1.298,1.474],hongkong:['HELL++',1.32,1.45],germany:['HELL-',1.2375,1.276],russia:['HELL',1.166,1.298],greenland:['HELL+',1.25,1.48]};
-const c={EURO_CUPS:Object.fromEntries(Object.entries(countries).map(([id,[,speed,spin]])=>[id,{speed,spin}])),WORLD_DIFFICULTY:Object.fromEntries(Object.entries(countries).map(([id,[level]])=>[id,level])),CHINA_PLAYERS:[[0,0,0,0,1.4,1.6],[0,0,0,0,1.6,2.4]]};
+let saved=0;const c={EURO_CUPS:Object.fromEntries(Object.entries(countries).map(([id,[,speed,spin]])=>[id,{speed,spin}])),WORLD_DIFFICULTY:Object.fromEntries(Object.entries(countries).map(([id,[level]])=>[id,level])),CHINA_PLAYERS:[[0,0,0,0,1.4,1.6],[0,0,0,0,1.6,2.4]],chinaRun:null,euroSave:()=>saved++,window:{sppWorldPersistChina:()=>saved++}};
 vm.createContext(c);
-vm.runInContext(tuning+';globalThis.tuning=WORLD_TIER_TUNING',c);
-for(const [id,[level,speed,spin]] of Object.entries(countries)){const target={'HELL-':1.4,HELL:1.5,'HELL+':1.6,'HELL++':1.8}[level];assert.ok(Math.abs(c.tuning[id][0]*speed-target)<1e-9);assert.ok(Math.abs(c.tuning[id][1]*spin-target)<1e-9);}
+vm.runInContext(tuning+';globalThis.tuning=WORLD_TIER_TUNING;globalThis.variation=worldPlayerVariation',c);
+for(const [id,[level,speed,spin]] of Object.entries(countries)){const target={'HELL-':1.4,HELL:1.5,'HELL+':1.6,'HELL++':1.8}[level];assert.ok(Math.abs(c.tuning[id][0]*speed*1.05-target)<1e-9);assert.ok(Math.abs(c.tuning[id][1]*spin*1.04-target)<1e-9);}
 assert.ok(Math.abs(c.tuning.china[0]*1.5-2)<1e-9);
 assert.ok(Math.abs(c.tuning.china[1]*2-2)<1e-9);
+const run={country:'japan',order:[3,1,6,0,5,2,4],round:0};const first=c.variation(run);assert.equal(saved,1);assert.strictEqual(c.variation(run),first);for(const axis of [0,1]){assert.ok(run.power.every(v=>Math.abs(v[axis])<=.2));assert.ok(Math.abs(run.power.reduce((n,v)=>n+v[axis],0))<1e-9,'seven players keep the country average');}run.round=1;assert.strictEqual(c.variation(run),run.power[1]);assert.equal(saved,1);
 const physics=html.slice(html.indexOf('const EQUIP={speed:1,spin:1,len:1};'),html.indexOf('// Spin the receiver has to deal with:'));
 const timing={net:null,charType:'jersey',FAST_REF:3,SPIN_FREE:.6,clamp:(x,a,b)=>Math.min(b,Math.max(a,x)),back:()=>.18};
 vm.createContext(timing);
