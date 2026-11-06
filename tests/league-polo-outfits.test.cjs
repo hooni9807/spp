@@ -5,7 +5,7 @@ for(const color of ['black','blue','purple','red','pink']){
  assert.match(html,new RegExp(`\\{id:'league_${color}',name:'리그 콘테스트`));
  assert.match(html,new RegExp(`league_${color}:\\{villain:1\\}`));
 }
-assert.match(html,/cornilleau_league:'코닐리우 리그전'/);
+assert.match(html,/cornilleau_league:'코늴리리아 리그전'/);
 assert.match(html,/q\.k==='league_polo'/);
 assert.match(html,/case 'league_polo':ctx\.fillStyle=q\.a;/);
 assert.match(html,/ctx\.lineTo\(ux\+12\*s,top\+th\*\.12\)/);
