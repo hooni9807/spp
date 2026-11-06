@@ -5,6 +5,6 @@ assert.match(source,/tech_guanwoo_short:\['관우 투바운드 드라이브',100
 assert.match(source,/charType==='guanwoo'&&guanShortDrive\)\{questHit\('guanShortDrive'\);questHit\('tech_guanwoo_short'\)/);
 assert.match(source,/charType==='guanwoo'&&guanDrive&&playerSide\*fhDir\(\)<0\)questHit\('guanRpbDrive'\)/);
 assert.match(source,/if\(verdict==='ok'&&!shot\.miss&&!shot\.chance/);
-assert.match(source,/const speed=techDone\('tech_guanwoo_short'\)\?\.7:\.6/);
+assert.match(source,/const speed=techDone\('tech_guanwoo_short'\)\?1\.2:\.6/);
 assert.match(source,/charType==='guanwoo'\?GUAN_QUESTS:\[\]/);
 console.log('Guanwoo quests and achievement wiring verified');
