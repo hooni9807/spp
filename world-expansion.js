@@ -1,6 +1,7 @@
 // Fictional squads. National strength is game tuning, not a live ranking feed.
-PATCH_NOTES.unshift(['세계제패 난이도 상향','상대 타구의 속도·회전 배율: 중국 평균 ×2, 일본 ×1.8, HELL+ ×1.6, HELL ×1.5, HELL- ×1.4. 강한 타구의 착지 보정도 개선했습니다.']);
+PATCH_NOTES.unshift(['세계제패 홍콩 추가·상위 국가 해금','홍콩 HELL++ 7전 4선승을 추가했습니다. 일본은 HELL- 1·HELL 2·HELL+ 2개국, 중국은 HELL+ 3개국에 일본·홍콩 우승까지 필요합니다.'],['세계제패 난이도 상향','상대 타구의 속도·회전 배율: 중국 평균 ×2, 일본 ×1.8, HELL+ ×1.6, HELL ×1.5, HELL- ×1.4. 강한 타구의 착지 보정도 개선했습니다.']);
 const WORLD_EXPANSION={
+ hongkong:{name:'홍콩',color:'#ef6f84',lang:'zh-HK',hello:'你好!',call:'好波!',theme:'빅토리아 항구의 속공',speed:1.32,spin:1.45,xy:[784,259],names:['카이만','호이람','츠힌','윙칭','자룽','메이이','천록'],skills:['항구의 섬광','비단 회전','쌍돛 교차','네온 역습','해협 돌파','야경 스매시','빅토리아 폭풍'],motion:[45,-22,.28],shape:'M15 135Q80 65 150 125T285 45M20 115Q90 25 150 85T280 15M150 20L150 140'},
  russia:{name:'러시아',color:'#89bcf0',lang:'ru-RU',hello:'Привет!',call:'Отлично!',theme:'빙정 역습',speed:1.166,spin:1.298,xy:[730,115],names:['미하일','아리나','레프','소피야','키릴','베라','안톤'],skills:['빙정 파쇄','눈보라 회전','동토 반격','서리 장벽','백야 돌진','빙하 분열','극지 폭풍'],motion:[18,-22,.16],shape:'M150 5V145M80 25L220 125M220 25L80 125M130 25L150 5L170 25M130 125L150 145L170 125'},
  taiwan:{name:'대만',color:'#67d8e0',lang:'zh-TW',hello:'你好!',call:'好球!',theme:'초고속 교차 공격',speed:1.254,spin:1.364,xy:[808,260],names:['린위','천하오','쉬안','웨이팅','쯔닝','이천','자룽'],skills:['청풍 교차','옥빛 나선','번개 쇼트','산맥 반격','해협 돌파','회오리 연타','천등 유성'],motion:[42,-10,.24],shape:'M10 120L95 20L155 100L230 10L290 90M20 140L110 40L170 120L250 30'},
  india:{name:'인도',color:'#efa54d',lang:'hi-IN',hello:'नमस्ते!',call:'शाबाश!',theme:'회전과 템포 변주',speed:1.21,spin:1.452,xy:[662,260],names:['아르준','디야','비크람','아샤','로한','미라','카비르'],skills:['금빛 차크라','연꽃 회전','몬순 드라이브','계단식 반격','태양 돌파','공작의 궤도','여명 원무'],motion:[24,-14,.38],shape:'M150 15A60 60 0 1 1 149 15M150 35A40 40 0 1 0 151 35M90 75H210M150 15V135'},
@@ -43,7 +44,7 @@ WORLD_TIER_TUNING.china=[2/chinaAverage(4),2/chinaAverage(5)];
 onAiShot('pre',10,a=>{const id=euroActive()?euroRun.country:chinaActive()?'china':null,tune=WORLD_TIER_TUNING[id];if(tune){a.speed*=tune[0];a.spin*=tune[1];}});
 const expansionArt=euroEffectArt;euroEffectArt=function(id,i){const c=WORLD_EXPANSION[id];if(!c)return expansionArt(id,i);return `<svg viewBox="0 0 300 150" aria-hidden="true"><g transform="rotate(${(i-3)*5} 150 75)"><path d="${c.shape}"/>${Array.from({length:i+2},(_,j)=>`<circle cx="${35+j*230/(i+1)}" cy="${30+(j%3)*40}" r="${3+i}"/>`).join('')}</g></svg>`;};
 const expansionKit=drawNationalKit;drawNationalKit=function(g,look,x,y,h,s){expansionKit(g,look,x,y,h,s);const c=WORLD_EXPANSION[look.nationalKit];if(!c)return;g.save();g.translate(x,y);g.scale(s,h/64);g.strokeStyle=EURO_KITS[look.nationalKit].trim;g.lineWidth=3;const n=Object.keys(WORLD_EXPANSION).indexOf(look.nationalKit);for(let j=0;j<3;j++){g.beginPath();g.moveTo(-29,22+j*10);g.lineTo((n%3-1)*18,12+j*10);g.lineTo(29,22+j*10+(n%2)*8);g.stroke();}g.restore();};
-$('world-map').querySelector('footer').textContent='게임용 단순화 지도 · 21개 지역 · 지역별 7전 4선승';
+$('world-map').querySelector('footer').textContent='게임용 단순화 지도 · 22개 지역 · 지역별 7전 4선승';
 document.querySelector('[data-region="greenland"]').setAttribute('d','M300 40L370 30L355 100L320 120Z');
 PATCH_NOTES.unshift(['그린란드 제패','빙하·오로라 테마 선수 7명과 극광 빙하 연출을 추가했습니다. 7전 4선승으로 도전할 수 있습니다.']);
 PATCH_NOTES.unshift(['세계정복 7개국 확장','러시아·대만·인도·브라질·미국·싱가포르·나이지리아에 신규 선수 49명과 국가별 기술·연출을 추가했습니다.']);
@@ -111,12 +112,13 @@ worldPortraitAtlas.onload=()=>{
   const c=document.createElement('canvas');c.width=192;c.height=192;
   const [top,bottom]=heads[i][row],height=bottom-top,scale=192/Math.max(cw,height);
   c.getContext('2d').drawImage(worldPortraitAtlas,i*cw,top,cw,height,(192-cw*scale)/2,(192-height*scale)/2,cw*scale,height*scale);
-  const im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:4,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=c.toDataURL('image/png');
+  const im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:13,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=c.toDataURL('image/png');
  }});worldPortraitsReady=true;
 };
 worldPortraitAtlas.src='assets/world/portraits.png';
+for(let i=0;i<7;i++){const key=`china_hongkong_${i}`,im=new Image();im.onload=()=>{FACES[key]=im;LOOKS[key].faceFit={h:58,b:13,cx:.5};document.querySelectorAll(`img[data-world-face="${key}"]`).forEach(el=>el.src=im.src);};im.src=`assets/world/hongkong/${i}.png`;FACES[key]=im;}
 PATCH_NOTES.unshift(['세계정복 선수 얼굴 교체','21개 지역 선수 147명의 얼굴을 반실사 캐리커처로 교체했습니다.']);
 PATCH_NOTES.unshift(['세계정복 국가별 유니폼','21개 지역 선수의 경기복 색상·무늬를 구분했습니다. 일부 지역은 공식 복제본이 아닌 게임 전용 디자인입니다.']);
 // Remember actual match entry, not map browsing, and restore through the map's own click handlers.
-{for(const c of Object.values(EURO_CUPS)){c.speed*=1.05;c.spin*=1.04;}const map=euroMap;euroMap=function(id){map(id);if(!worldEntryAllowed(id,false)){const b=$('euro-depart');if(b)b.textContent=`다른 나라 ${worldEntryRequirement(id)}개국 제패 후 도전 가능`;}};}
+{for(const c of Object.values(EURO_CUPS)){c.speed*=1.05;c.spin*=1.04;}const map=euroMap;euroMap=function(id){map(id);if(!worldEntryAllowed(id,false)){const b=$('euro-depart');if(b)b.textContent=worldEntryProgress(id)?`도전 조건 · ${worldEntryProgress(id).text}`:`다른 나라 ${worldEntryRequirement(id)}개국 제패 후 도전 가능`;}};}
 {const startEurope=euroGame;euroGame=function(...args){if(euroRun?.country){prog.q??={};prog.q._lastWorldCountry=euroRun.country;saveProg();}return startEurope.apply(this,args);};const startChina=chinaGame;chinaGame=function(...args){prog.q??={};prog.q._lastWorldCountry='china';saveProg();return startChina.apply(this,args);};document.addEventListener('click',e=>{if(!e.target.closest?.('#world-open'))return;setTimeout(()=>{const map=$('world-map');if(!map?.open)return;const id=prog.q?._lastWorldCountry||(typeof euroRun!=='undefined'&&euroRun?.country)||Object.keys(EURO_CUPS).find(k=>euroSaved(k));if(!id)return;const region=map.querySelector(`[data-region="${id}"],[data-country="${id}"]`);if(region)region.dispatchEvent(new MouseEvent('click',{bubbles:true}));},0);});}

@@ -28,14 +28,14 @@ const path = require('node:path');
      map:!!document.querySelector('[data-region="'+id+'"]'), active:WORLD_ACTIVE_COUNTRIES.includes(id)})),
     shapes:new Set(distantSquads.map(([id])=>WORLD_EXPANSION[id].shape)).size};
   });
-  assert.equal(result.total,21);
-  assert.equal(result.scenes.length,21);
+  assert.equal(result.total,22);
+  assert.equal(result.scenes.length,22);
   assert.equal(result.shapes,6);
   assert(result.cleared);
   for(const scene of result.scenes){assert.equal(scene.count,1);assert.equal(scene.country,scene.id);assert(!scene.invalid);if(['brazil','japan'].includes(scene.id))assert.equal(scene.split,2);}
   for(const squad of result.squads){assert.equal(squad.faces,7);assert(squad.map);assert(squad.active);}
   await page.emulateMedia({reducedMotion:'reduce'});
   assert.equal(await page.evaluate(()=>{showWorldScene('china');return document.querySelectorAll('.world-scene-particle').length;}),0);
-  console.log('20 national scenes, 35 new portraits, map targets, cleanup and reduced motion verified');
+  console.log('22 national scenes, 7 Hong Kong portraits, map targets, cleanup and reduced motion verified');
  } finally {await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

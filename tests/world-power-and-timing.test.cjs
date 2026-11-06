@@ -2,7 +2,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const html=fs.readFileSync('index.html','utf8');
 const world=fs.readFileSync('world-expansion.js','utf8');
 const tuning=world.slice(world.indexOf('const WORLD_TARGET_POWER='),world.indexOf("onAiShot('pre',10"));
-const countries={japan:['HELL++',1.298,1.474],germany:['HELL-',1.2375,1.276],russia:['HELL',1.166,1.298],greenland:['HELL+',1.25,1.48]};
+const countries={japan:['HELL++',1.298,1.474],hongkong:['HELL++',1.32,1.45],germany:['HELL-',1.2375,1.276],russia:['HELL',1.166,1.298],greenland:['HELL+',1.25,1.48]};
 const c={EURO_CUPS:Object.fromEntries(Object.entries(countries).map(([id,[,speed,spin]])=>[id,{speed,spin}])),WORLD_DIFFICULTY:Object.fromEntries(Object.entries(countries).map(([id,[level]])=>[id,level])),CHINA_PLAYERS:[[0,0,0,0,1.4,1.6],[0,0,0,0,1.6,2.4]]};
 vm.createContext(c);
 vm.runInContext(tuning+';globalThis.tuning=WORLD_TIER_TUNING',c);

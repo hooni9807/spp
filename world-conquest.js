@@ -1,6 +1,7 @@
 // World tour hub. Only China has a playable roster at launch.
 (()=>{
-const WORLD_DIFFICULTY={china:'HELL+++',japan:'HELL++',germany:'HELL-',sweden:'HELL-',france:'HELL-',romania:'HELL-',portugal:'HELL-',austria:'HELL-',korea:'준비 중',taiwan:'HELL',india:'HELL',brazil:'HELL',usa:'HELL',russia:'HELL',europe:'준비 중',singapore:'HELL',nigeria:'HELL',canada:'HELL+',argentina:'HELL+',australia:'HELL+',southafrica:'HELL+',mexico:'HELL+',greenland:'HELL+'};
+const WORLD_DIFFICULTY={china:'HELL+++',japan:'HELL++',hongkong:'HELL++',germany:'HELL-',sweden:'HELL-',france:'HELL-',romania:'HELL-',portugal:'HELL-',austria:'HELL-',korea:'준비 중',taiwan:'HELL',india:'HELL',brazil:'HELL',usa:'HELL',russia:'HELL',europe:'준비 중',singapore:'HELL',nigeria:'HELL',canada:'HELL+',argentina:'HELL+',australia:'HELL+',southafrica:'HELL+',mexico:'HELL+',greenland:'HELL+'};
+window.WORLD_DIFFICULTY=WORLD_DIFFICULTY;
 const difficulty=id=>WORLD_DIFFICULTY[id]||'준비 중';
 chinaButton.remove();
 const button=document.createElement('button');button.id='world-open';button.type='button';button.textContent='세계제패';$('tournament-open').after(button);
@@ -18,6 +19,7 @@ const extraRegions=[
  ['romania','루마니아','M509 167L529 165L537 176L525 184L510 180Z',590,185],
  ['portugal','포르투갈','M438 178L444 178L443 197L437 199Z',375,212],
  ['austria','오스트리아','M482 166L501 163L510 169L501 175L483 174Z',565,230],
+ ['hongkong','홍콩','M774 249L788 248L791 265L779 271L770 261Z',776,291],
  ['taiwan','대만','M797 242L803 247L802 264L796 272L794 260Z',820,283],
  ['india','인도','M635 217L675 231L695 250L675 291L659 279L645 247Z',662,260],
  ['brazil','브라질','M224 252L269 248L296 281L282 321L259 343L239 318L231 286L214 272Z',258,291],
@@ -63,7 +65,7 @@ atlas.addEventListener('touchmove',event=>{if(event.touches.length!==2||!pinchSt
 atlas.addEventListener('touchend',()=>{pinchStart=0;},{passive:true});
 setMapZoom(1.1);
 function stop(){stopWorldTakeoff();clearTimeout(timer);flight?.cancel();flight=null;$('world-plane').hidden=true;$('world-route').setAttribute('visibility','hidden');document.querySelectorAll('.world-route-start,.world-route-end').forEach(el=>el.setAttribute('visibility','hidden'));}
-function render(country='china'){const done=!!tS().chinaCup2,record=worldConquestRow?.(),count=record?.count||0;dialog.querySelector('[data-region="china"]').classList.toggle('conquered',done);$('world-progress').textContent=`정복 완료 ${count} / ${WORLD_COUNTRY_TOTAL||8}`;const names={china:'중국',japan:'일본',europe:'유럽 연합팀',russia:'러시아',...Object.fromEntries(extraRegions.map(([id,name])=>[id,name]))};const s=saved();$('world-detail').innerHTML=country==='china'?`<h3>중국 제패 · ${done?'정복 완료':'도전 가능'}</h3><p>난이도 ${difficulty('china')} · 11점 단식 · 7전 4선승<br>출전 선수: ${LOOKS[charType].nick} · 점선 경로를 확인한 뒤 출발 버튼을 눌러 주세요.</p><div class="euro-roster">${CHINA_PLAYERS.map(p=>`<figure><img src="${FACES['china_'+p[0]].src}" alt="${p[1]}"><figcaption>${p[1]}<small>${p[2]}</small></figcaption></figure>`).join('')}</div><button id="world-depart">${s?`중국 대회 이어하기 ${s.my}:${s.ai}`:done?'중국으로 다시 출발':'중국으로 출발하기'}</button>`:`<h3>${names[country]} · ${difficulty(country)}</h3><p>전용 선수단 준비 중입니다. 현재는 중국에 출전할 수 있습니다.</p>`;if($('world-depart')){$('world-depart').onclick=depart;if(!worldEntryAllowed('china',false))$('world-depart').textContent='다른 나라 8개국 제패 후 도전 가능';}}
+function render(country='china'){const done=!!tS().chinaCup2,record=worldConquestRow?.(),count=record?.count||0;dialog.querySelector('[data-region="china"]').classList.toggle('conquered',done);$('world-progress').textContent=`정복 완료 ${count} / ${WORLD_COUNTRY_TOTAL||8}`;const names={china:'중국',japan:'일본',europe:'유럽 연합팀',russia:'러시아',...Object.fromEntries(extraRegions.map(([id,name])=>[id,name]))};const s=saved();$('world-detail').innerHTML=country==='china'?`<h3>중국 제패 · ${done?'정복 완료':'도전 가능'}</h3><p>난이도 ${difficulty('china')} · 11점 단식 · 7전 4선승<br>출전 선수: ${LOOKS[charType].nick} · 점선 경로를 확인한 뒤 출발 버튼을 눌러 주세요.</p><div class="euro-roster">${CHINA_PLAYERS.map(p=>`<figure><img src="${FACES['china_'+p[0]].src}" alt="${p[1]}"><figcaption>${p[1]}<small>${p[2]}</small></figcaption></figure>`).join('')}</div><button id="world-depart">${s?`중국 대회 이어하기 ${s.my}:${s.ai}`:done?'중국으로 다시 출발':'중국으로 출발하기'}</button>`:`<h3>${names[country]} · ${difficulty(country)}</h3><p>전용 선수단 준비 중입니다. 현재는 중국에 출전할 수 있습니다.</p>`;if($('world-depart')){$('world-depart').onclick=depart;if(!worldEntryAllowed('china',false))$('world-depart').textContent='도전 조건 · '+worldEntryProgress('china').text;}}
 function arrive(){stop();dialog.close();setTimeout(()=>{const s=saved();if(s)chinaRun=s;openChinaCup();},0);}
 function depart(){if(!worldEntryAllowed('china'))return;if(!loginGate()||playing||net)return;stop();let arrived=false;const arrive=()=>{if(arrived)return;arrived=true;stop();dialog.close();setTimeout(()=>{const s=saved();if(s)chinaRun=s;openChinaCup();},0);};const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?100:4000;
  // Set the transition timer first.  A drawing/animation API failure on a specific

@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('index.html','utf8'),start=html.indexOf('function worldEntryRequirement(id)'),end=html.indexOf('/* 뜬 공 AI 처리율:',start);
+const source=html.slice(start,end),world=fs.readFileSync('world-conquest.js','utf8');
+const difficulty=vm.runInNewContext('('+world.match(/const WORLD_DIFFICULTY=(\{[^;]+\});/)[1]+')');
+const state={},context={WORLD_DIFFICULTY:difficulty,tS:()=>state,conquestCount:()=>0,toast:()=>{}};vm.createContext(context);vm.runInContext(source,context);
+const ok=id=>context.worldEntryAllowed(id,false),win=id=>{state['world_'+id]=1;};
+assert.equal(ok('japan'),false);assert.equal(ok('china'),false);
+win('germany');win('taiwan');win('india');win('canada');assert.equal(ok('japan'),false,'HELL+ needs two countries');
+win('australia');assert.equal(ok('japan'),true);assert.equal(ok('china'),false);
+win('mexico');assert.equal(ok('china'),false,'Japan and Hong Kong must also be won');
+win('japan');assert.equal(ok('china'),false);win('hongkong');assert.equal(ok('china'),true);
+console.log('PASS Japan and China require the exact difficulty groups and both HELL++ clears');

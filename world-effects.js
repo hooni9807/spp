@@ -16,6 +16,7 @@ const WORLD_SCENES={
  singapore:{name:'난초 분수',color:'#ffa9ca',kind:'drop',move:'rise',art:'M10 140Q80 0 150 140Q220 0 290 140M65 140Q110 25 150 140Q190 25 235 140M150 135Q85 65 150 20Q215 65 150 135Z'},
  nigeria:{name:'녹빛 독수리',color:'#80edb0',kind:'leaf',move:'drive',art:'M150 135L100 65L10 15L55 95L150 145L245 95L290 15L200 65ZM10 130L60 115L110 130L160 115L210 130L290 115'}
 };
+WORLD_SCENES.hongkong={name:'네온 항구의 속공',color:'#ef6f84',kind:'spark',move:'dash',art:WORLD_EXPANSION.hongkong.shape};
 const worldParticleShapes={petal:'M0 -8Q12 -6 6 3Q0 12 -6 3Q-12 -6 0 -8',leaf:'M-8 8Q-12 -8 8 -8Q12 8 -8 8',ice:'M0 -9L7 0L0 9L-7 0Z',star:'M0 -10L3 -3L10 0L3 3L0 10L-3 3L-10 0L-3 -3Z',spark:'M-2 -12L5 -3L0 0L3 12L-5 2L0 -2Z',drop:'M0 -10Q14 7 0 10Q-14 7 0 -10',flame:'M0 -12Q10 -2 5 9Q-10 10 -6 -3Q-3 4 0 -12',lantern:'M-6 -9H6L9 -3V6L6 9H-6L-9 6V-3Z'};
 for(const [id,kind,move] of [['canada','leaf','spin'],['argentina','star','sweep'],['australia','drop','rise'],['southafrica','spark','drive'],['mexico','petal','dash']]){const c=WORLD_EXPANSION[id];WORLD_SCENES[id]={name:c.theme,color:c.color,kind,move,art:c.shape};}
 PATCH_NOTES.unshift(['세계정복 20개국','캐나다·아르헨티나·호주·남아프리카공화국·멕시코 선수 35명과 국가별 연출을 추가했습니다.']);
@@ -161,7 +162,7 @@ document.addEventListener('click',e=>{
 });
 // Include dynamically created dialogs as well as the initial document dialogs.
 function ensureDialogClose(d){
- if(!d.open||d.querySelector('.dlg-x,.china-x,.world-lineup-x,[aria-label="닫기"],[aria-label="저장하고 닫기"]'))return;
+ if(d.id==='auth-gate'||!d.open||d.querySelector('.dlg-x,.china-x,.world-lineup-x,[aria-label$="닫기"]'))return;
  const b=document.createElement('button');b.type='button';b.className='dlg-x universal-dialog-close';b.textContent='✕';b.setAttribute('aria-label','닫기');b.onclick=()=>{const close=d.querySelector('[id$="-close"],[id$="-x"]');if(close&&close!==b)close.click();else d.close();};d.prepend(b);
 }
 new MutationObserver(()=>document.querySelectorAll('dialog[open]').forEach(ensureDialogClose)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
