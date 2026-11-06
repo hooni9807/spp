@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert');
 const html=fs.readFileSync('index.html','utf8'),retired=fs.readFileSync('partner-training.js','utf8');
-const ids=['tech_jersey_backpower','tech_leesin_sense','tech_percival_perfect','tech_drunk_oneshot','tech_minhee_jaetgi','tech_seohyun_counter','tech_jongryeong_smash','tech_kumho_lob','tech_songstar_cut','tech_jiseong_comeback','tech_pyeongtaek_chance','tech_ninja_short','tech_gambler_jackpot','tech_ttalgak_serve','tech_sleepy_hyde'];
+const ids=['tech_jersey_backpower','tech_leesin_sense','tech_percival_perfect','tech_drunk_oneshot','tech_minhee_jaetgi','tech_seohyun_jaetgi','tech_jongryeong_smash','tech_kumho_lob','tech_songstar_cut','tech_jiseong_comeback','tech_pyeongtaek_chance','tech_ninja_short','tech_gambler_jackpot','tech_ttalgak_serve','tech_sleepy_hyde'];
 for(const id of ids)assert.match(html,new RegExp(id));
 for(const id of ['tech_yunhwan_cut','tech_adam_fake','tech_glass_perfect','tech_leesin_power','tech_seohyun_drive','tech_minhee_power'])assert.doesNotMatch(html,new RegExp(id));
 for(const id of ['augFirst','aug10','aug25','augSyn5','augRainbow','augSnow','augPick100'])assert.doesNotMatch(html,new RegExp(`TITLES\\.push\\([^\\n]*${id}`));
@@ -36,7 +36,7 @@ assert.match(html,/tech_pyeongtaek_chance:\['평택임씨 찬스 스매시',100\
 assert.match(html,/tech_gambler_jackpot:\['도박사 대박 타구',100\]/);
 assert.match(html,/tech_sleepy_hyde:\['하이범 승리',50\]/);
 assert.match(html,/tech_jersey_backpower:\{atkBh:\.1\}/);
-assert.match(html,/tech_percival_perfect:\{utPerfect:\.03\}/);
+assert.match(html,/tech_percival_perfect:\{utPerfect:\.01\}/);
 assert.match(html,/tech_ttalgak_serve:\{atkServe:\.1\}/);
 assert.match(html,/techDone\('tech_songstar_cut'\).*\.025.*Math\.min\(4,rally-1\)/);
 assert.match(html,/techDone\('tech_kumho_lob'\).*shot\.miss.*Math\.random\(\)<\.1/);
