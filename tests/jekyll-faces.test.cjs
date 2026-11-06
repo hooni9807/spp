@@ -19,4 +19,8 @@ test('Jekyll permanently changes face after local or PVP transformation', () => 
   assert.equal(vm.runInNewContext('faceImg(look)',context),jekyll);
   context.foe.jekyllTransformed=true;
   assert.equal(vm.runInNewContext('faceImg(look)',context),hyde);
+  context.dressed={...look,shirt:'#fff',jekyllForm:-1};context.foe.jekyllTransformed=false;
+  assert.equal(vm.runInNewContext('faceImg(dressed)',context),hyde);
+  context.dressed.jekyllForm=1;context.foe.jekyllTransformed=true;
+  assert.equal(vm.runInNewContext('faceImg(dressed)',context),jekyll);
 });
