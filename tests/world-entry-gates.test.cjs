@@ -3,7 +3,7 @@ const html=fs.readFileSync('index.html','utf8'),start=html.indexOf('function wor
 const source=html.slice(start,end),world=fs.readFileSync('world-conquest.js','utf8');
 const difficulty=vm.runInNewContext('('+world.match(/const WORLD_DIFFICULTY=(\{[^;]+\});/)[1]+')');
 const state={},context={WORLD_DIFFICULTY:difficulty,tS:()=>state,conquestCount:()=>0,toast:()=>{}};vm.createContext(context);vm.runInContext(source,context);
-const ok=id=>context.worldEntryAllowed(id,false),win=id=>{state['world_'+id]=1;};
+const ok=id=>{const result=context.worldEntryAllowed(id,false);if(id==='japan'){assert.equal(context.worldEntryAllowed('hongkong',false),result);assert.equal(context.worldEntryProgress('hongkong').text,context.worldEntryProgress('japan').text);}return result;},win=id=>{state['world_'+id]=1;};
 assert.equal(ok('japan'),false);assert.equal(ok('china'),false);
 win('germany');win('taiwan');win('india');win('canada');assert.equal(ok('japan'),false,'HELL+ needs two countries');
 win('australia');assert.equal(ok('japan'),true);assert.equal(ok('china'),false);
