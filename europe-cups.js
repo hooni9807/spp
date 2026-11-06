@@ -48,7 +48,22 @@ function euroMap(id){const c=EURO_CUPS[id],s=euroSaved(id),level=typeof WORLD_DI
 function euroColors(){let total=tS().chinaCup2?1:0;for(const [id,c] of Object.entries(EURO_CUPS)){const done=!!tS()['world_'+id],p=document.querySelector(`[data-region="${id}"]`);p.style.fill=done?c.color:'';p.setAttribute('aria-label',c.name+(done?' 정복 완료':' 도전 가능'));total+=done?1:0;}$('world-progress').textContent=`정복 완료 ${total} / ${typeof WORLD_COUNTRY_TOTAL!=='undefined'?WORLD_COUNTRY_TOTAL:Object.keys(EURO_CUPS).length+1}`;}
 let euroFlight=null,euroTimer=0;
 function euroCancel(){stopWorldTakeoff();clearTimeout(euroTimer);euroFlight?.cancel();euroFlight=null;$('world-plane').hidden=true;}
-function euroTravel(id){if(!worldEntryAllowed(id))return;if(!loginGate()||playing||net)return;euroCancel();const c=EURO_CUPS[id],plane=$('world-plane');drawFace(plane.querySelector('canvas'),LOOKS[euroSaved(id)?.character||charType]);plane.hidden=false;$('world-route').setAttribute('d',`M811 201Q650 40 ${c.xy[0]} ${c.xy[1]}`);$('world-route').setAttribute('visibility','visible');document.querySelectorAll('.world-route-start,.world-route-end').forEach(el=>el.setAttribute('visibility','visible'));$('world-detail').innerHTML=`<h3>${c.name}으로 출발합니다</h3><p>대한민국에서 출발해 점선을 따라 이동 중이에요.</p><button id="euro-skip">건너뛰기</button>`;const arrive=()=>{euroCancel();$('world-map').close();setTimeout(()=>openEuroLineup(id),0);};$('euro-skip').onclick=arrive;const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?100:4000;euroFlight=plane.animate([{left:'81.1%',top:'41.9%'},{left:'65%',top:'10%',offset:.5},{left:c.xy[0]/10+'%',top:c.xy[1]/4.8+'%'}],{duration,fill:'forwards'});playWorldTakeoff();euroTimer=setTimeout(arrive,duration);}
+function euroTravel(id){
+ if(!EURO_CUPS[id]||!worldEntryAllowed(id)||!prepareWorldDeparture())return;
+ euroCancel();const c=EURO_CUPS[id];let arrived=false;
+ const arrive=()=>{if(arrived)return;arrived=true;euroCancel();$('world-map').close();setTimeout(()=>openEuroLineup(id),0);};
+ const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?100:4000;
+ // Reaching the lineup cannot depend on optional sound/canvas/animation APIs.
+ euroTimer=setTimeout(arrive,duration+120);
+ try{
+  const plane=$('world-plane'),route=$('world-route');if(!plane||!route)throw new Error('world flight elements missing');
+  const face=plane.querySelector('canvas');if(face)drawFace(face,LOOKS[euroSaved(id)?.character||charType]||LOOKS.jersey);
+  plane.hidden=false;route.setAttribute('d',`M811 201Q650 40 ${c.xy[0]} ${c.xy[1]}`);route.setAttribute('visibility','visible');
+  document.querySelectorAll('.world-route-start,.world-route-end').forEach(el=>el.setAttribute('visibility','visible'));
+  $('world-detail').innerHTML=`<h3>${c.name} 경기장으로 출발합니다</h3><p>대한민국에서 출발해 점선을 따라 이동 중이에요.</p><button id="euro-skip">건너뛰기</button>`;$('euro-skip').onclick=arrive;
+  euroFlight=plane.animate([{left:'81.1%',top:'41.9%'},{left:'65%',top:'10%',offset:.5},{left:c.xy[0]/10+'%',top:c.xy[1]/4.8+'%'}],{duration,fill:'forwards'});playWorldTakeoff();
+ }catch(error){console.warn('세계제패 이동 연출을 생략합니다.',error);}
+}
 document.addEventListener('click',e=>{const region=e.target.closest?.('[data-country],[data-region]'),id=region&&(region.dataset.country||region.dataset.region);if(region&&$('world-map').contains(region)&&EURO_CUPS[id]){euroCancel();e.preventDefault();e.stopImmediatePropagation();euroMap(id);}if(e.target.closest?.('#world-open'))setTimeout(euroColors,0);},true);
 // The map owns selection.  A second tap on the already selected playable
 // country emits this event, so travel never starts accidentally on first tap.
