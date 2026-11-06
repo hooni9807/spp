@@ -1,0 +1,17 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8'),rules=fs.readFileSync('firestore.rules','utf8');
+assert.match(html,/doc\(db,'achievements',rankUid\),achievementRecord\(true\)/);
+assert.match(rules,/match \/achievements\/\{uid\}/);
+const source=html.match(/function achievementRecord\([^\n]+/)[0];
+const context={TECH_PROGRESS:{tech_test:['기술',10]},allTitles:()=>[['lv10','레벨업','레벨 10',()=>false],['tour_x','대회','우승',()=>true]],qTotal:()=>4,myName:()=>'테스터',progLevel:()=>7,enhanceLevel:()=>0,tS:()=>({}),isTournamentTitle:()=>false,achClaimed:()=>false,rankFs:{serverTimestamp:()=>99}};
+vm.createContext(context);vm.runInContext(source,context);
+const row=context.achievementRecord(true);
+assert.equal(row.name,'테스터');
+assert.equal(row.total,3);
+assert.equal(row.completed,1);
+assert.deepEqual(JSON.parse(JSON.stringify(row.progress.lv10)),{name:'레벨업',type:'general',condition:'레벨 10',count:7,target:10,complete:false,claimed:false});
+assert.equal(row.progress.tech_test.type,'character');
+assert.equal(row.progress.tech_test.count,4);
+assert.equal(row.progress.tour_x.type,'tournament');
+assert.equal(row.at,99);
+console.log('All achievement categories are mirrored to the owner document.');

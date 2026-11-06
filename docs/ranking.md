@@ -24,6 +24,7 @@
 |---|---|
 | `progress`, `settings` | 개인 진행도와 설정 |
 | `character_achievements` | 캐릭터 전용 업적 누적 횟수와 달성 상태 |
+| `achievements` | UID별 전체 업적: 유저 이름, 업적 종류, 조건, 진행 횟수·목표, 달성·보상 수령 상태 |
 | `attendance_records`, `attendance_leaderboard` | 개인 출석 기록과 공개 출석왕 순위 |
 | `trophies` | 보유 지역 트로피 정보 |
 | `world_conquest`, `tournament_progress` | 세계제패와 지역 대회 공개 진행도 |
