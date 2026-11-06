@@ -18,6 +18,8 @@ assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:8}}}),t
 assert.equal(context.prog.q.tech_a.n,8);
 assert.equal(context.mergeCharacterAchievements({progress:{tech_a:{count:4}}}),true);
 assert.equal(context.prog.q.tech_a.n,4);
+assert.equal(context.mergeAchievementRecord({progress:{tech_a:{count:9}}}),false);
+assert.equal(context.prog.q.tech_a.n,4);
 assert.equal(context.mergeAchievementRecord({progress:{ajaeBold:{complete:true}}}),true);
 assert.equal(context.prog.q._s.ajaeBold,1);
 assert.equal(context.mergeAchievementRecord({progress:{ajaeBold:{complete:false}}}),true);
