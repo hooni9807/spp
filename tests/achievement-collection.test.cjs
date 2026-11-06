@@ -3,15 +3,16 @@ const html=fs.readFileSync('index.html','utf8'),rules=fs.readFileSync('firestore
 assert.match(html,/doc\(db,'achievements',rankUid\),achievementRecord\(true\)/);
 assert.match(rules,/match \/achievements\/\{uid\}/);
 const source=html.match(/function achievementRecord\([^\n]+/)[0];
-const context={TECH_PROGRESS:{tech_test:['기술',10]},allTitles:()=>[['lv10','레벨업','레벨 10',()=>false],['tour_x','대회','우승',()=>true]],qTotal:()=>4,myName:()=>'테스터',progLevel:()=>7,enhanceLevel:()=>0,tS:()=>({}),isTournamentTitle:()=>false,achClaimed:()=>false,rankFs:{serverTimestamp:()=>99}};
+const context={TECH_PROGRESS:{tech_test:['기술',10]},HIDDEN_ACHIEVEMENTS:[['secretTest','힌트','달성 조건','효과']],allTitles:()=>[['lv10','레벨업','레벨 10',()=>false],['tour_x','대회','우승',()=>true]],qTotal:()=>4,myName:()=>'테스터',progLevel:()=>7,enhanceLevel:()=>0,tS:()=>({}),isTournamentTitle:()=>false,achClaimed:()=>false,rankFs:{serverTimestamp:()=>99}};
 vm.createContext(context);vm.runInContext(source,context);
 const row=context.achievementRecord(true);
 assert.equal(row.name,'테스터');
-assert.equal(row.total,3);
+assert.equal(row.total,4);
 assert.equal(row.completed,1);
 assert.deepEqual(JSON.parse(JSON.stringify(row.progress.lv10)),{name:'레벨업',type:'general',condition:'레벨 10',count:7,target:10,complete:false,claimed:false});
 assert.equal(row.progress.tech_test.type,'character');
 assert.equal(row.progress.tech_test.count,4);
 assert.equal(row.progress.tour_x.type,'tournament');
+assert.deepEqual(JSON.parse(JSON.stringify(row.progress.secretTest)),{name:'히든 업적 1',type:'hidden',condition:'힌트',effect:'비공개',count:0,target:1,complete:false,claimed:false});
 assert.equal(row.at,99);
 console.log('All achievement categories are mirrored to the owner document.');
