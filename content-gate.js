@@ -71,6 +71,9 @@ window.contentGate.sync=sync;setInterval(sync,1500);setTimeout(sync,300);
 #arena-pick>p{margin:0 0 16px;font-size:13.5px;color:#93a4cc}
 #arena-pick .opt{display:block;width:100%;text-align:left;margin:0 0 10px;padding:14px 16px;border:1px solid #2a3a6a;border-radius:14px;background:#111a35;color:#eef3ff;font:inherit;cursor:pointer}
 #arena-pick .opt:hover{background:#18244a}
+#arena-pick .arena-space{border-color:#b4a4ef88;background:radial-gradient(ellipse at top right,#8763a855,transparent 65%),linear-gradient(120deg,#153347,#29204c)}
+#arena-pick .arena-space b{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#d8f8ff}
+#arena-pick .arena-space b span{padding:3px 7px;border-radius:6px;background:#e4d3ff;color:#362050;font-size:10px;letter-spacing:.06em}
 #arena-pick .opt:focus-visible{outline:2px solid #14e0ff;outline-offset:2px}
 #arena-pick .opt b{display:block;font-size:17px;font-weight:800}
 #arena-pick .opt small{display:block;margin-top:3px;font-size:12.5px;color:#93a4cc}
@@ -95,8 +98,8 @@ html body #boss-pick [data-boss="boss"]{position:relative}
 html body #boss-pick [data-boss="boss"]::after{content:'REMAKE';position:absolute;top:-6px;right:-4px;padding:2px 4px;border-radius:5px;background:#ffd166;color:#351600;font:900 8px/1 var(--num,sans-serif);letter-spacing:.06em;pointer-events:none}
 #boss-events button.cleared{border-color:#6fe6b0;background:linear-gradient(135deg,#193d3b,#29224c)}`;document.head.append(css);
 const dlg=document.createElement('dialog');dlg.id='arena-pick';dlg.setAttribute('aria-labelledby','arena-title');document.body.append(dlg);
-const openArena=()=>{const t=tourOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="x">닫기</button>`;
- dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();b.dataset.go==='boss'?openBoss():$('tournament-open')?.click();});
+const openArena=()=>{const t=tourOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="opt arena-space" data-go="space"><b>🪐 우주전쟁 <span>NEW</span></b><small>지구 대표 3명 · 행성 대표단과 3전 2선승</small></button><button type="button" class="x">닫기</button>`;
+ dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();if(b.dataset.go==='boss')openBoss();else if(b.dataset.go==='space')window.sppSpaceConquest?.open();else $('tournament-open')?.click();});
  dlg.showModal();dlg.querySelector('.opt').focus();};
 // 보스전도 대회처럼 팝업 명단에서 고르고 바로 시작한다. 명단은 기존 보스 선택(#boss-pick) 버튼을 그대로 읽는다.
 const REMAKE_BOSSES=['boss'];   // 리메이크된 보스: 명단에 REMAKE 딱지
