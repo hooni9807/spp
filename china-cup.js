@@ -72,3 +72,4 @@ function revokeAchievements(ids,why){try{const S=tS(),titles=typeof allTitles===
  toast(`${why} 업적 회수: ${names.join(' · ')}${coins?` · -${coins.toLocaleString()} 코인`:''}`,4.5);}catch{}}
 // 로그인 후 클라우드 기록이 합쳐질 시간을 두고(20초 뒤부터) 확인한다.
 setTimeout(()=>setInterval(()=>{if(typeof tS!=='function'||typeof playing==='undefined'||playing||!prog?.q)return;revokeAchievements(WORLD_ACH,'중국 재도전으로 세계제패');revokeAchievements(['boss','bossAll'],'탁구 마왕 재도전으로 보스');try{const S=tS();if(S.maou&&!S.maou2&&!localStorage.getItem('maou-reset-notice')){localStorage.setItem('maou-reset-notice','1');toast('탁구 마왕이 리메이크됐어요! 예전 클리어 기록은 초기화됐으니 보스전에서 다시 도전해 보세요 😈',4.5);}}catch{}},5000),20000);   /* 조건이 다시 거짓이 된 업적만 회수 · 코인은 업적마다 한 번 */
+window.addEventListener('load',()=>{const s=document.createElement('script');s.src='space-conquest.js?v=2';document.head.append(s);},{once:true});
