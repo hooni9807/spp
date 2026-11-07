@@ -10,6 +10,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   await p.waitForFunction(()=>document.getElementById('space-conquest').open);
   assert.equal(await p.locator('#space-conquest').count(),1);
   assert.equal(await p.locator('[data-planet]').count(),7);assert.equal(await p.locator('.sw-opponents figure').count(),3);
+  assert.deepEqual(await p.locator('.sw-planets em').allTextContents(),Array(7).fill('???'));
   await p.screenshot({path:'/tmp/space-war-mobile.png'});
   const layout=await p.evaluate(()=>({width:$('space-conquest').clientWidth,scroll:$('space-conquest').scrollWidth,team:[...document.querySelectorAll('[data-space-slot]')].map(s=>s.value)}));
   assert(layout.scroll<=layout.width+1);assert.equal(new Set(layout.team).size,3);
@@ -17,6 +18,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   assert(await p.locator('.sw-launch').isDisabled());
   await p.evaluate(team=>{const s=document.querySelectorAll('[data-space-slot]');s.forEach((el,i)=>el.value=team[i]);s[0].dispatchEvent(new Event('change'));},layout.team);
   await p.click('.sw-launch');
+  assert.equal(await p.evaluate(()=>aiTier),'unight');
+  assert.equal(await p.locator('#mode-label').textContent(),'우주전쟁 · ???');
+  assert.equal(await p.evaluate(()=>P.returnRoll({type:'drive',owner:'you',defMiss:.3},'unight',.2)),.97);
+  assert.equal(await p.evaluate(()=>P.returnRoll({type:'smash',owner:'you',ult:'phoenix',ultTier:4},'unight',.2)),.9);
   for(let i=0;i<2;i++){
    const entry=await p.evaluate(()=>({char:charType,foe:aiChar,round:sppSpaceConquest.run.round}));assert.equal(entry.char,layout.team[i]);assert.equal(entry.foe,'space_mars_'+i);assert.equal(entry.round,i);
    await p.evaluate(()=>{you=11;cpu=6;playing=false;showResult(true);showResult(true);});

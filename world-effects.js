@@ -95,7 +95,7 @@ function worldReturnLanding(b,dt=1/60){
  return {ok:false};
 }
 function worldReturnGuard(b){
- const campaign=chinaActive()||euroActive();
+ const campaign=chinaActive()||euroActive()||!!window.sppSpaceConquest?.active?.();
  if(!campaign||!b||b.owner!=='ai'||b.vy>=0||b.serving||b.miss||b.unreturn||b.aiChanceMiss)return false;
  const valid=v=>[1/60,1/120,1/240].every(dt=>worldReturnLanding(v,dt).ok);
  if(valid(b))return false;
