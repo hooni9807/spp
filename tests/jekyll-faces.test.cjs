@@ -3,7 +3,7 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const html = fs.readFileSync('index.html', 'utf8');
-test('Jekyll permanently changes face after local or PVP transformation', () => {
+test('Jekyll changes face with the local or PVP transformation state', () => {
   const jekyll = {complete:true, naturalWidth:1}, hyde = {complete:true, naturalWidth:1};
   const look={face:'sleepy',jekyll:true},context = {you:0,cpu:0,FACES:{sleepy:jekyll,hyde},LOOKS:{sleepy:look,other:{}},charType:'sleepy',aiChar:'other',jekyllTransformed:false,net:null,look};
   const jk = html.slice(html.indexOf('function jk('), html.indexOf('function napTick()'));
