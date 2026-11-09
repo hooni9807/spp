@@ -3,13 +3,13 @@
 if(window.sppSpaceConquest)return;
 const RULES={tier:'unight',label:'???',normalReturn:.97,ultimateReturn:.90,power:2.5};
 const PLANETS=[
- {id:'mars',name:'화성',sub:'붉은 모래의 결투',color:'#ff9671',tier:'unight',return:.97,style:'drive',names:['아레스','루브라','포보스'],skills:['붉은 유성 드라이브','모래폭풍 커브','포보스 스매시']},
- {id:'jupiter',name:'목성',sub:'대적점의 폭풍',color:'#e9bf87',tier:'unight',return:.97,style:'side',names:['제피르','이오','가니메데'],skills:['대적점 회전','이오 플릭','중력 스매시']},
- {id:'saturn',name:'토성',sub:'고리를 가르는 궤적',color:'#ffe6a1',tier:'unight',return:.97,style:'cut',names:['크로노스','타이탄','레아'],skills:['고리 커트','타이탄 방어','레아 카운터']},
- {id:'neptune',name:'해왕성',sub:'푸른 심해의 반격',color:'#71baff',tier:'unight',return:.97,style:'cut',names:['넵투누스','트리톤','네레이드'],skills:['심해 하회전','해류 커브','푸른 파도 스매시']},
- {id:'proxima',name:'프록시마 b',sub:'가장 가까운 별의 사절',color:'#d09cff',tier:'unight',return:.97,style:'side',names:['프록스','센타우리','알파'],skills:['적색 왜성 커브','광속 리시브','알파 드라이브']},
- {id:'kepler',name:'케플러-22b',sub:'녹색 성운의 수호자',color:'#76e1bf',tier:'unight',return:.97,style:'defend',names:['케이론','베르다','루멘'],skills:['성운 수비','에메랄드 커트','루멘 반격']},
- {id:'trappist',name:'트라피스트-1e',sub:'일곱 별의 마지막 관문',color:'#ff8bc0',tier:'unight',return:.97,style:'mix',names:['트리아','에코','오리온'],skills:['항성풍 커브','에코 커트','오리온 스매시']}
+ {id:'mars',name:'화성',sub:'붉은 모래의 결투',color:'#ff9671',tier:'unight',return:.97,style:'drive',fx:'meteor',ci:'shatter',ults:['meteor','phoenix','sunflare'],names:['아레스','루브라','포보스'],skills:['붉은 유성 드라이브','모래폭풍 커브','포보스 스매시']},
+ {id:'jupiter',name:'목성',sub:'대적점의 폭풍',color:'#e9bf87',tier:'unight',return:.98,style:'side',fx:'drill',ci:'vortex',ults:['twister','blitz','thunderc'],names:['제피르','이오','가니메데'],skills:['대적점 회전','이오 플릭','중력 스매시']},
+ {id:'saturn',name:'토성',sub:'고리를 가르는 궤적',color:'#ffe6a1',tier:'unight',return:.98,style:'cut',fx:'ring',ci:'frame',ults:['eclipse','mirror','bladerx'],names:['크로노스','타이탄','레아'],skills:['고리 커트','타이탄 방어','레아 카운터']},
+ {id:'neptune',name:'해왕성',sub:'푸른 심해의 반격',color:'#71baff',tier:'unight',return:.98,style:'cut',fx:'water',ci:'split',ults:['tsunami','tide','frostloop'],names:['넵투누스','트리톤','네레이드'],skills:['심해 하회전','해류 커브','푸른 파도 스매시']},
+ {id:'proxima',name:'프록시마 b',sub:'가장 가까운 별의 사절',color:'#d09cff',tier:'unight',return:.99,style:'side',fx:'star',ci:'rays',ults:['rocket','radiant','lunar'],names:['프록스','센타우리','알파'],skills:['적색 왜성 커브','광속 리시브','알파 드라이브']},
+ {id:'kepler',name:'케플러-22b',sub:'녹색 성운의 수호자',color:'#76e1bf',tier:'unight',return:.99,style:'defend',fx:'shard',ci:'shatter',ults:['dragon','hawk','feather'],names:['케이론','베르다','루멘'],skills:['성운 수비','에메랄드 커트','루멘 반격']},
+ {id:'trappist',name:'트라피스트-1e',sub:'일곱 별의 마지막 관문',color:'#ff8bc0',tier:'unight',return:.99,style:'mix',fx:'mist',ci:'vortex',ults:['banana','flick','eclipse'],names:['트리아','에코','오리온'],skills:['항성풍 커브','에코 커트','오리온 스매시']}
 ];
 const $=id=>document.getElementById(id);
 let selected='mars',run=null,starting=false;
@@ -79,7 +79,7 @@ function render(){
  const chars=unlockedCharacters().filter(k=>LOOKS[k]),draft=live?[...run.team]:[...new Set([charType,...chars])].filter(k=>chars.includes(k)).slice(0,3);
  dialog.style.setProperty('--space-accent',p.color);
  dialog.innerHTML='<button type="button" class="space-x" aria-label="닫기">✕</button>'+
- '<header class="sw-header"><small>EARTH DELEGATION · GALACTIC CUP</small><h2 id="space-title">우주전쟁</h2><p>지구 대표 3명, 우리 은하의 행성 대표단에 도전하다.</p><div class="sw-tags"><span>3인 단체전</span><span>3전 2선승</span><span>캐릭터 중복 출전 불가</span><span>난이도 ???</span><span>일반 리턴 97% · 필살기 리턴 90%</span></div></header>'+
+ '<header class="sw-header"><small>EARTH DELEGATION · GALACTIC CUP</small><h2 id="space-title">우주전쟁</h2><p>지구 대표 3명, 우리 은하의 행성 대표단에 도전하다.</p><div class="sw-tags"><span>3인 단체전</span><span>3전 2선승</span><span>캐릭터 중복 출전 불가</span><span>난이도 ???</span><span>일반 리턴 97~99% · 필살기 리턴 90%</span></div></header>'+
  '<section class="sw-earth"><span aria-hidden="true">🌍</span><div><small>YOUR HOME · 지구 대표팀</small><b>다음 승부는 지구의 이름으로.</b><p>각 단식은 11점 · 2점 차 승리. 두 경기를 먼저 이기면 행성전 승리입니다.</p></div><strong>'+PLANETS.filter(cleared).length+'<small>/ '+PLANETS.length+' 행성 승리</small></strong></section>'+
  '<section><h3>01 <span>도전할 행성</span></h3><div class="sw-planets">'+PLANETS.map(q=>'<button type="button" data-planet="'+q.id+'" aria-pressed="'+(q.id===selected)+'" style="--planet:'+q.color+'"><i class="sw-orb '+(q.id==='saturn'?'ringed':'')+'" aria-hidden="true"></i><b>'+q.name+'</b><small>'+q.sub+'</small><em>'+(RULES.label+(cleared(q)?' · ✓ 승리 기록':''))+'</em></button>').join('')+'</div></section>'+
  '<section class="sw-delegation"><div class="sw-section-heading"><h3>02 <span>'+p.name+' 대표단</span></h3><small>'+p.sub+'</small></div><div class="sw-opponents">'+p.names.map((n,i)=>'<figure><span>0'+(i+1)+' · '+(i+1)+'단식</span><img src="'+FACES[opponent(p,i)].src+'" alt="'+n+'"><figcaption>'+n+'<small>'+p.skills[i]+'</small></figcaption></figure>').join('')+'</div></section>'+
@@ -114,7 +114,7 @@ function game(){
  setCharacter(r.team[r.round]);aiTier=RULES.tier;setMode('match');starting=true;
  try{begin(opponent(p,r.round));}finally{starting=false;}
  if(!playing)return;
- aiFit=null;nightmareDomainEnd();aiCharge=100;save();
+ aiFit=null;nightmareDomainEnd();aiCharge=100;aiUltSet=[...new Set([p.ults[r.round],...rollAiUlts(),...rollAiUlts()])].slice(0,3);save();
  $('cpu-name').textContent=p.name+' · '+p.names[r.round]+' · '+(r.round+1)+'단식 · '+r.my+':'+r.ai;
  $('mode-label').textContent='우주전쟁 · '+RULES.label;
  toast('우주전쟁 · 지구 '+r.my+' : '+r.ai+' '+p.name+' · '+(r.round+1)+'단식',2.5);
@@ -122,7 +122,10 @@ function game(){
 onBegin('pre',25,()=>{if(!starting){save();run=null;}});
 onHome('pre',25,save);
 const normalRecord=rankRecord;rankRecord=function(...args){const record=normalRecord.apply(this,args);if(active()||run?.last===matchId&&aiChar.startsWith('space_'))record.event=true;return record;};
-const normalReturn=P.returnRoll;P.returnRoll=function(b,t,c,bonus=0){const rate=normalReturn(b,t,c,bonus);if(!active())return rate;return b?.ult?RULES.ultimateReturn:RULES.normalReturn;};
+const normalReturn=P.returnRoll;P.returnRoll=function(b,t,c,bonus=0){const rate=normalReturn(b,t,c,bonus);if(!active())return rate;return b?.ult?RULES.ultimateReturn:planet(run.planet).return;};
+const normalSpaceUlt=aiUltForTier;aiUltForTier=function(u){const out=normalSpaceUlt(u);if(!active()||!out)return out;const p=planet(run.planet),rgb=p.color.match(/[\da-f]{2}/gi).map(v=>parseInt(v,16)).join(',');return {...out,name:p.skills[run.round],rgb,glow:p.color,fx:p.fx,ci:p.ci};};
+function spaceUltEffect(p,name){document.querySelector('.space-ult-effect')?.remove();const e=document.createElement('div');e.className='space-ult-effect '+p.id;e.style.setProperty('--space-ult',p.color);e.setAttribute('role','status');e.innerHTML='<i></i><b>'+name+'</b><small>'+p.name+' 대표 필살기</small>';document.body.append(e);setTimeout(()=>e.remove(),1700);}
+const normalSpaceFireUlt=fireUlt;fireUlt=function(u,x,y,ai=false,...rest){if(ai&&active())spaceUltEffect(planet(run.planet),u.name);return normalSpaceFireUlt(u,x,y,ai,...rest);};
 onAiShot('pre',45,a=>{
  if(!active())return;const p=planet(run.planet),style=run.round===2?'drive':p.style;
  if(style==='side'){a.kind='side';a.spin*=1.4;}
@@ -135,7 +138,7 @@ onAiShot('pre',45,a=>{
 onResult('pre',45,c=>{
  const r=run;if(!r||(!active()&&r.last!==matchId))return;c.spaceWar=r;
  if(r.last===matchId)return;r.last=matchId;c.won?r.my++:r.ai++;r.round++;
- if(r.my>=2||r.ai>=2||r.round>=3){r.live=false;if(r.my>=2){tS()['spaceWar_'+r.planet]=(tS()['spaceWar_'+r.planet]||0)+1;saveProg();}}
+ if(r.my>=2||r.ai>=2||r.round>=3){r.live=false;if(r.my>=2){tS()['spaceWar_'+r.planet]=(tS()['spaceWar_'+r.planet]||0)+1;saveProg();const p=planet(r.planet),record={...rankRecord(false),id:'space_'+matchId,event:false,rmode:'boss',level:BOSS_LABEL.space,boss:(r.my===2&&r.ai===0?200:100)+Math.min(99,matchBest),bossDetail:r.my+':'+r.ai+' · '+p.name};localRank(record);remoteRank(record).catch(()=>{});}}
  save();
 });
 onResult('post',95,c=>{
@@ -181,6 +184,8 @@ const style=document.createElement('style');style.textContent=String.raw`
 #space-conquest footer button{min-height:48px;padding:0 16px;border-radius:10px;font:800 13px inherit}.sw-back{background:#19243c;color:#ccdcf6;border:1px solid #758db447}.sw-launch{flex:1;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(110deg,#8ce8f3,#bdabff);color:#081629;border:0}.sw-launch:disabled{opacity:.4}
 #space-conquest .sw-fiction{margin:12px 26px 18px;font-size:9px;color:#7689ae}
 #space-conquest button:focus-visible,#space-conquest select:focus-visible{outline:2px solid #bcf0ff;outline-offset:3px}
+.space-ult-effect{position:fixed;inset:0;z-index:90;display:grid;place-content:center;text-align:center;pointer-events:none;overflow:hidden;color:#fff;background:radial-gradient(circle at 50% 52%,color-mix(in srgb,var(--space-ult) 42%,transparent),#030611d9 52%,#01030be8);animation:spaceUltIn 1.65s ease-out both}.space-ult-effect i{position:absolute;inset:8%;border:3px solid var(--space-ult);border-radius:50%;box-shadow:0 0 28px var(--space-ult),inset 0 0 38px var(--space-ult);animation:spaceUltOrbit 1.25s cubic-bezier(.2,.8,.2,1) both}.space-ult-effect b{position:relative;font-size:clamp(28px,8vw,64px);letter-spacing:-.06em;text-shadow:0 0 20px var(--space-ult),0 4px 0 #081020}.space-ult-effect small{position:relative;margin-top:8px;color:#dbeaff;font-weight:800}.space-ult-effect.mars i{border-radius:0;transform:rotate(-18deg) skewX(-16deg)}.space-ult-effect.jupiter i,.space-ult-effect.trappist i{border-style:dashed}.space-ult-effect.saturn i{inset:27% 4%;transform:rotate(-12deg)}.space-ult-effect.neptune i{border-width:8px 0}.space-ult-effect.proxima i{border-radius:12%;transform:rotate(45deg)}.space-ult-effect.kepler i{border-radius:0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}@keyframes spaceUltIn{0%{opacity:0}12%,72%{opacity:1}100%{opacity:0}}@keyframes spaceUltOrbit{0%{transform:scale(.15) rotate(-35deg);opacity:0}45%{opacity:1}100%{transform:scale(1.28) rotate(18deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.space-ult-effect,.space-ult-effect i{animation:none}.space-ult-effect{opacity:.9}.space-ult-effect i{opacity:.55}}
 @media(max-width:540px){#space-conquest .sw-header{padding:25px 18px 20px}#space-conquest section{margin:18px 16px}.sw-planets{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-earth>span{font-size:34px}.sw-earth>strong{font-size:24px}.sw-section-heading{display:block}.sw-section-heading>small{display:block;margin:-5px 0 10px}.sw-opponents{padding:14px 5px;gap:5px}.sw-opponents figcaption{font-size:12px}.sw-opponents figcaption small{font-size:9px}.sw-team{gap:6px}.sw-team label{padding:10px 5px}.sw-team select{font-size:11px}.sw-team canvas{width:52px;height:52px}#space-conquest footer{padding:13px 16px}}
 `;document.head.append(style);
 window.sppSpaceConquest={open:openSpace,profiles:PLANETS,rules:RULES,get run(){return run;},active};
