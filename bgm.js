@@ -16,7 +16,9 @@ function tone(type,f,t,dur,peak){const o=ctx.createOscillator();o.type=type;o.fr
 function kick(t){const o=ctx.createOscillator();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);env(t,.22,.9,o);o.start(t);o.stop(t+.3);}
 function hat(t,peak,open){const s=ctx.createBufferSource();s.buffer=noise;const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=open?6000:8000;s.connect(hp);env(t,open?.12:.04,peak,hp);s.start(t);s.stop(t+.2);}
 function clap(t){const s=ctx.createBufferSource();s.buffer=noise;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1700;bp.Q.value=.8;s.connect(bp);env(t,.14,.45,bp);s.start(t);s.stop(t+.2);}
-function play(i,t){const bar=Math.floor(i/16)%4,s=i%16,c=CH[bar];
+function play(i,t){
+ const space=window.sppSpaceConquest;if(space?.active()){const ix=space.profiles.findIndex(p=>p.id===space.run.planet),scales=[[0,3,7,10],[0,2,7,9],[0,4,7,11],[0,5,7,10],[0,1,7,8],[0,4,9,12],[0,3,6,11]],n=45+ix+scales[ix][Math.floor(i/2)%4];if(i%2===0)tone(ix%2?'sine':'triangle',hz(n+12),t,STEP*3,.10);if(i%8===0){tone('sine',hz(n-12),t,STEP*7,.16);if(ix===0||ix===6)kick(t);}return;}
+ const bar=Math.floor(i/16)%4,s=i%16,c=CH[bar];
  if(s===0||s===8||s===10&&bar===3)kick(t);
  if(s===4||s===12)clap(t);
  if(s%2===1)hat(t,s%4===3?.22:.12,s===14);

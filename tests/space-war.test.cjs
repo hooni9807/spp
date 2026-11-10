@@ -18,11 +18,15 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   assert(await p.locator('.sw-launch').isDisabled());
   await p.evaluate(team=>{const s=document.querySelectorAll('[data-space-slot]');s.forEach((el,i)=>el.value=team[i]);s[0].dispatchEvent(new Event('change'));},layout.team);
   await p.click('.sw-launch');
+  await p.click('.space-depart button');
+  await p.waitForFunction(()=>aiTier==='unight'&&playing);
   assert.equal(await p.evaluate(()=>aiTier),'unight');
   assert.equal(await p.locator('#mode-label').textContent(),'우주전쟁 · ???');
   assert.equal(await p.evaluate(()=>P.returnRoll({type:'drive',owner:'you',defMiss:.3},'unight',.2)),.97);
   assert.equal(await p.evaluate(()=>P.returnRoll({type:'smash',owner:'you',ult:'phoenix',ultTier:4},'unight',.2)),.9);
-  assert.deepEqual(await p.evaluate(()=>[Math.min(...sppSpaceConquest.profiles.map(p=>p.return)),Math.max(...sppSpaceConquest.profiles.map(p=>p.return)),sppSpaceConquest.profiles.every(p=>p.ults.every(id=>!!ULT_BY[id]))]),[.97,.99,true]);
+  assert.deepEqual(await p.evaluate(()=>[P.judge('spin','drive',false,false),P.judge('spin','drive',false,false,false,true)]),['over','ok']);
+  assert.deepEqual(await p.evaluate(()=>[Math.min(...sppSpaceConquest.profiles.map(p=>p.return)),Math.max(...sppSpaceConquest.profiles.map(p=>p.return)),Math.min(...sppSpaceConquest.profiles.map(p=>p.power)),Math.max(...sppSpaceConquest.profiles.map(p=>p.power)),new Set(sppSpaceConquest.profiles.map(p=>p.gimmick)).size,sppSpaceConquest.profiles.every(p=>p.ults.every(id=>!!ULT_BY[id]))]),[.97,.99,1,1.15,6,true]);
+  assert.deepEqual(await p.evaluate(()=>[sppSpaceConquest.traceLengthOk(126,700),sppSpaceConquest.traceLengthOk(70,700),sppSpaceConquest.traceLengthOk(170,700)]),[true,false,false]);
   const themed=await p.evaluate(()=>{const u=aiUltForTier(ULT_BY.meteor);fireUlt(u,innerWidth/2,innerHeight/2,true);return {name:u.name,fx:u.fx,visible:document.querySelector('.space-ult-effect')?.className};});assert.deepEqual(themed,{name:'붉은 유성 드라이브',fx:'meteor',visible:'space-ult-effect mars'});await p.evaluate(()=>document.querySelector('.space-ult-effect')?.remove());
   for(let i=0;i<2;i++){
    const entry=await p.evaluate(()=>({char:charType,foe:aiChar,round:sppSpaceConquest.run.round}));assert.equal(entry.char,layout.team[i]);assert.equal(entry.foe,'space_mars_'+i);assert.equal(entry.round,i);
@@ -30,9 +34,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
    assert.equal(await p.evaluate(()=>sppSpaceConquest.run.my),i+1);
    if(i===0){await p.click('#result .sw-save-exit');await p.evaluate(()=>sppSpaceConquest.open());assert.equal(await p.evaluate(()=>sppSpaceConquest.run.round),1);await p.click('.sw-launch');}
   }
-  const done=await p.evaluate(()=>({live:sppSpaceConquest.run.live,my:sppSpaceConquest.run.my,round:sppSpaceConquest.run.round,cleared:tS().spaceWar_mars,rank:localBoard('boss').find(r=>r.level===BOSS_LABEL.space)}));assert.equal(done.live,false);assert.equal(done.my,2);assert.equal(done.round,2);assert.equal(done.cleared,1);assert.match(done.rank.detail,/^2:0 · 화성/);assert.equal(done.rank.value,200);
+  const done=await p.evaluate(()=>({live:sppSpaceConquest.run.live,my:sppSpaceConquest.run.my,round:sppSpaceConquest.run.round,cleared:tS().spaceWar_mars,sweep:tS().spaceWarSweep,achievements:Object.fromEntries(['spaceFirst','spaceThree','spaceSweep','spaceAll','spaceVeteran'].map(id=>[id,allTitles().find(t=>t[0]===id)[3]()])),rank:localBoard('boss').find(r=>r.level===BOSS_LABEL.space)}));assert.equal(done.live,false);assert.equal(done.my,2);assert.equal(done.round,2);assert.equal(done.cleared,1);assert.equal(done.sweep,1);assert.deepEqual(done.achievements,{spaceFirst:true,spaceThree:false,spaceSweep:true,spaceAll:false,spaceVeteran:false});assert.match(done.rank.detail,/^2:0 · 화성/);assert.equal(done.rank.value,200);
   await p.evaluate(async()=>{document.querySelector('[data-boss-board="space"]').click();await showBoard('boss');});assert.equal(await p.locator('#rank-list li').count(),1);assert.ok((await p.locator('#rank-list li .sub').textContent()).includes(done.rank.character));
-  await p.click('#result [data-rs="retry"]');await p.click('[data-planet="jupiter"]');await p.evaluate(team=>{document.querySelectorAll('[data-space-slot]').forEach((s,i)=>s.value=team[i]);document.querySelector('[data-space-slot]').dispatchEvent(new Event('change'));},layout.team);await p.click('.sw-launch');
+  await p.click('#result [data-rs="retry"]');await p.click('[data-planet="jupiter"]');await p.evaluate(team=>{document.querySelectorAll('[data-space-slot]').forEach((s,i)=>s.value=team[i]);document.querySelector('[data-space-slot]').dispatchEvent(new Event('change'));},layout.team);await p.click('.sw-launch');await p.click('.space-depart button');await p.waitForFunction(()=>aiChar==='space_jupiter_0'&&playing);
   // A 1–1 tie must play the third unique member and end at 2–1.
   for(let i=0;i<3;i++){
    const entry=await p.evaluate(()=>({char:charType,foe:aiChar}));assert.equal(entry.char,layout.team[i]);assert.equal(entry.foe,'space_jupiter_'+i);
