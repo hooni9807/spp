@@ -134,16 +134,17 @@ const normalRecord=rankRecord;rankRecord=function(...args){const record=normalRe
 const normalReturn=P.returnRoll;P.returnRoll=function(b,t,c,bonus=0){const rate=normalReturn(b,t,c,bonus);if(!active())return rate;return b?.ult?RULES.ultimateReturn:planet(run.planet).return;};
 const normalSpaceUlt=aiUltForTier;aiUltForTier=function(u){const out=normalSpaceUlt(u);if(!active()||!out)return out;const p=planet(run.planet),rgb=p.color.match(/[\da-f]{2}/gi).map(v=>parseInt(v,16)).join(',');return {...out,name:p.skills[run.round],rgb,glow:p.color,fx:p.fx,ci:p.ci};};
 function spaceUltEffect(p,name){document.querySelector('.space-ult-effect')?.remove();const e=document.createElement('div');e.className='space-ult-effect '+p.id;e.style.setProperty('--space-ult',p.color);e.setAttribute('role','status');e.innerHTML='<i></i><b>'+name+'</b><small>'+p.name+' 대표 필살기</small>';document.body.append(e);setTimeout(()=>e.remove(),1700);}
-let fakeTimer=0;
-function clearGimmicks(){clearInterval(fakeTimer);fakeTimer=0;document.querySelector('.space-gimmicks')?.remove();}
+let fakeTimer=0,gimmickTimer=0;
+function clearGimmicks(){clearInterval(fakeTimer);clearTimeout(gimmickTimer);fakeTimer=gimmickTimer=0;document.querySelector('.space-gimmicks')?.remove();}
 const traceLengthOk=(length,width)=>{const target=P.clamp(width*.18,90,150);return length>=target*.82&&length<=target*1.18;};
 function spaceGimmick(kind,p,level=1){
+ clearInterval(fakeTimer);clearTimeout(gimmickTimer);fakeTimer=gimmickTimer=0;
  let root=document.querySelector('.space-gimmicks');if(!root){root=document.createElement('div');root.className='space-gimmicks';root.setAttribute('aria-live','polite');document.querySelector('.court-wrap')?.append(root);}
  root.style.setProperty('--gimmick',p.color);root.className='space-gimmicks '+kind+' level-'+level;
  const names={fake:'잔상 분열 · 진짜 공을 찾아라',snare:'성운 덩굴 · 타이밍 범위 감소',growth:'성운목 성장 · 시야 압박',orbit:'중력 고리 · 궤도 교란',flare:'태양풍 섬광 · 시야 교란',chaos:'항성 폭주 · 복합 패턴',trace:'궤적 봉인 · 화살표 길이만큼 스윙'};
  root.innerHTML='<span class="gimmick-alert">'+names[kind]+'</span>'+(kind==='trace'?'<svg viewBox="0 0 300 180" aria-hidden="true"><defs><marker id="trace-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="currentColor"/></marker></defs><path d="M82 142 Q142 92 220 47"/><circle cx="82" cy="142" r="8"/><circle cx="220" cy="47" r="5"/></svg>':'<i></i><i></i><i></i>');
  if(kind==='fake'){clearInterval(fakeTimer);root.querySelectorAll('i').forEach(e=>{e.style.animation='none';e.style.translate='-50% -50%';e.style.opacity='.62';});fakeTimer=setInterval(()=>{if(!active()||!ball||ball.owner!=='ai')return;const q=project(ball.x,ball.y,ball.z),offsets=[[-62,-18],[54,20],[0,-44]];root.querySelectorAll('i').forEach((e,i)=>{e.style.left=q.x+offsets[i][0]+'px';e.style.top=q.y+offsets[i][1]+'px';});},32);}
- if(kind!=='growth')setTimeout(()=>{if(root.classList.contains(kind)){clearInterval(fakeTimer);fakeTimer=0;root.remove();}},kind==='trace'?2100:kind==='fake'?2400:1300);
+ if(kind!=='growth')gimmickTimer=setTimeout(clearGimmicks,kind==='trace'?2100:kind==='fake'?2400:1300);
 }
 const normalSpaceFireUlt=fireUlt;fireUlt=function(u,x,y,ai=false,...rest){if(ai&&active())spaceUltEffect(planet(run.planet),u.name);return normalSpaceFireUlt(u,x,y,ai,...rest);};
 onAiShot('pre',45,a=>{
@@ -161,7 +162,7 @@ onAiShot('pre',45,a=>{
  const pressure=Math.min(1.18,1+rally*.012),power=RULES.power*p.power*pressure;
  a.speed=Math.min(a.speed*power,6.4);a.spin=P.clamp(a.spin*power,-3.8,3.8);a.aim=P.clamp(a.aim,-.55,.55);aiCharge=Math.min(100,aiCharge+p.charge);
 });
-onAiShot('post',45,(a,shot)=>({...shot,spaceTrace:!!a.spaceTrace,spaceFake:!!a.spaceFake,spaceDefMiss:a.spaceDefMiss||0}));
+onAiShot('post',45,(a,shot)=>({...shot,spaceTrace:!!a.spaceTrace,traceChecked:false,spaceFake:!!a.spaceFake,spaceDefMiss:a.spaceDefMiss||0}));
 const normalSpaceHit=hit;hit=function(...args){
  if(active()&&ball?.spaceDefMiss)ball.defMiss=Math.max(ball.defMiss||0,ball.spaceDefMiss);
  if(active()&&ball?.spaceTrace&&!ball.traceChecked&&args[0]&&!swingMemory&&!['wait','none'].includes(P.timing(ball))){toast('궤적 봉인 · 터치가 아닌 화살표 길이의 스윙이 필요합니다.',1.2);return;}

@@ -4798,7 +4798,7 @@ try{const db=await pvpRemote();if(db){const ref=rankFs.doc(db,'players',rankUid)
 await rankFs.setDoc(ref,{name,...myTtl(),rating:next.rating,wins:next.wins,losses:next.losses,streak:next.streak,at:rankFs.serverTimestamp()});where='전체 랭킹';}}catch(e){where='내 기기 (전체 반영 실패)';}
 store.set('pvp',JSON.stringify({rating:next.rating,wins:next.wins,losses:next.losses,streak:next.streak,...myTtl()}));updatePvpMe();
 const line=`랭킹전 ${won?'승리':'패배'} · 레이팅 ${before.rating} → ${next.rating} (${next.delta>0?'+':''}${next.delta}${streakText(next.streak)}) · ${where}`;
-if(rematchDialog.open&&c?.id===ceremonyId)$('rematch-rating').textContent=line;
+if(rematchDialog.open&&victoryCeremony?.id===ceremonyId)$('rematch-rating').textContent=line;
 const c=victoryCeremony;if(ceremonyId&&c?.id===ceremonyId)c.ratingLine=line;if(!ceremonyId||c?.id===ceremonyId&&c.phase==='finished'){const p=document.querySelector('.start-card p');p.textContent=p.textContent+' · '+line;toast(line,3);}if(board==='pvp')showBoard('pvp');}
 $('net-nick').value=store.get('nick')||'';updatePvpMe();
 $('google-login').onclick=$('auth-google-login').onclick=googleLogin;$('naver-login').onclick=naverLogin;$('google-logout').onclick=googleLogout;if(FIREBASE_CONFIG)naverReturn().then(ok=>{if(!ok)showLogin();});else{$('login-box').hidden=true;syncGoogleLoginButtons();loginStatus('메인 화면에서 코트와 캐릭터를 둘러보세요.');}
