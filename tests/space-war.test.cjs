@@ -6,7 +6,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   const p=await browser.newPage({viewport:{width:390,height:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.goto('http://localhost:'+server.address().port);await p.waitForFunction(()=>!!window.sppSpaceConquest);
   await p.evaluate(()=>{loginGate=()=>true;prog.unlocked.push(...Object.keys(LOOKS));sound=false;document.querySelectorAll('dialog[open]').forEach(d=>d.close());});
-  await p.click('#arena-open');await p.click('#arena-pick [data-go="space"]');
+  await p.click('#arena-open');await p.evaluate(()=>document.querySelector('#arena-pick [data-go="space"]').click());
+  assert.equal(await p.locator('#space-conquest').evaluate(e=>e.open),false);assert.match(await p.locator('#arena-pick [data-go="space"] small').textContent(),/중국 클리어/);
+  await p.evaluate(()=>{tS().chinaCup2=1;saveProg();document.querySelector('#arena-pick [data-go="space"]').click();});
   await p.waitForFunction(()=>document.getElementById('space-conquest').open);
   assert.equal(await p.locator('#space-conquest').count(),1);
   assert.equal(await p.locator('[data-planet]').count(),7);assert.equal(await p.locator('.sw-opponents figure').count(),3);
@@ -27,6 +29,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   assert.deepEqual(await p.evaluate(()=>[P.judge('spin','drive',false,false),P.judge('spin','drive',false,false,false,true)]),['over','ok']);
   assert.deepEqual(await p.evaluate(()=>[Math.min(...sppSpaceConquest.profiles.map(p=>p.return)),Math.max(...sppSpaceConquest.profiles.map(p=>p.return)),Math.min(...sppSpaceConquest.profiles.map(p=>p.power)),Math.max(...sppSpaceConquest.profiles.map(p=>p.power)),new Set(sppSpaceConquest.profiles.map(p=>p.gimmick)).size,sppSpaceConquest.profiles.every(p=>p.ults.every(id=>!!ULT_BY[id]))]),[.97,.99,1,1.15,6,true]);
   assert.deepEqual(await p.evaluate(()=>[sppSpaceConquest.traceLengthOk(126,700),sppSpaceConquest.traceLengthOk(70,700),sppSpaceConquest.traceLengthOk(170,700)]),[true,false,false]);
+  const gimmicks=await p.evaluate(()=>{const profile=sppSpaceConquest.profiles[0],old=profile.gimmick;profile.gimmick='fake';rally=3;const fake=P.aiReturn('drive',0,2.2,.2,2.5,0,1),ghosts=document.querySelectorAll('.space-gimmicks.fake i').length;rally=5;const trace=P.aiReturn('drive',0,2.2,.2,2.5,0,1);profile.gimmick=old;return {fake:fake.spaceFake,trace:trace.spaceTrace,ghosts};});assert.deepEqual(gimmicks,{fake:true,trace:true,ghosts:3});
+  const forcedSwing=await p.evaluate(()=>{const liveBall=ball,before=lastHit;ball={owner:'ai',spaceTrace:true,bounces:1,x:0,y:-.3,z:.25,vy:-2,spin:0};const timing=P.timing(ball);swingMemory=null;hit('short');const blocked=lastHit===before&&!ball.traceChecked&&document.querySelector('#toast').textContent.includes('궤적 봉인');ball=liveBall;return {timing,blocked};});assert.notEqual(forcedSwing.timing,'wait');assert.equal(forcedSwing.blocked,true);
   assert.deepEqual(await p.evaluate(()=>['spaceFirst','spaceThree','spaceSweep','spaceAll','spaceVeteran'].map(id=>achievementCoinReward(id))),[0,0,0,0,0]);
   assert.deepEqual(await p.evaluate(()=>['spaceFirst','spaceThree','spaceSweep','spaceAll','spaceVeteran'].map(id=>titleFxText(id))),['상대 회전 때문에 생기는 실수 -15%','상대 필살기 받기 성공률 +7%','내 타구 성공률 +5%','상대 리턴 확률 -5% · 상대 필살기 받기 성공률 +5%','PERFECT 판정 범위 +5%']);
   const themed=await p.evaluate(()=>{const u=aiUltForTier(ULT_BY.meteor);fireUlt(u,innerWidth/2,innerHeight/2,true);return {name:u.name,fx:u.fx,visible:document.querySelector('.space-ult-effect')?.className};});assert.deepEqual(themed,{name:'붉은 유성 드라이브',fx:'meteor',visible:'space-ult-effect mars'});await p.evaluate(()=>document.querySelector('.space-ult-effect')?.remove());

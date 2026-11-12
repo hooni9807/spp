@@ -10,7 +10,8 @@ const aiDone=()=>{const s=S();return !!(s.ultra||s.uhard||s.uext||s.unightN);};
 const conquered=()=>{try{return conquestCount()>0;}catch{return false;}};
 const tourOpen=()=>aiDone()||tourDone()>0||conquered();
 const worldOpen=()=>tourDone()>=tourNeed()||conquered();
-window.contentGate={tourOpen,worldOpen};
+const spaceOpen=()=>!!S().chinaCup2;
+window.contentGate={tourOpen,worldOpen,spaceOpen};
 
 const LOCK='<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M5 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
 const css=document.createElement('style');css.textContent=`
@@ -98,8 +99,8 @@ html body #boss-pick [data-boss="boss"]{position:relative}
 html body #boss-pick [data-boss="boss"]::after{content:'REMAKE';position:absolute;top:-6px;right:-4px;padding:2px 4px;border-radius:5px;background:#ffd166;color:#351600;font:900 8px/1 var(--num,sans-serif);letter-spacing:.06em;pointer-events:none}
 #boss-events button.cleared{border-color:#6fe6b0;background:linear-gradient(135deg,#193d3b,#29224c)}`;document.head.append(css);
 const dlg=document.createElement('dialog');dlg.id='arena-pick';dlg.setAttribute('aria-labelledby','arena-title');document.body.append(dlg);
-const openArena=()=>{const t=tourOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="opt arena-space" data-go="space"><b>우주전쟁 <span>NEW</span></b><small>지구 대표 3명 · 행성 대표단과 3전 2선승</small></button><button type="button" class="x">닫기</button>`;
- dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{dlg.close();if(b.dataset.go==='boss')openBoss();else if(b.dataset.go==='space')window.sppSpaceConquest?.open();else $('tournament-open')?.click();});
+const openArena=()=>{const t=tourOpen(),s=spaceOpen();dlg.innerHTML=`<h3 id="arena-title">도전 무대</h3><p>강한 상대와 겨루는 무대를 고르세요.</p><button type="button" class="opt" data-go="boss"><b>보스전</b><small>개성 강한 보스를 쓰러뜨리고 보상 받기</small></button><button type="button" class="opt${t?'':' locked'}" data-go="tour"><b>${t?'':'🔒 '}대회 출전</b><small>${t?'지역 대회에 출전해 트로피 모으기':'AI 대전 울트라 1승 시 열림'}</small></button><button type="button" class="opt arena-space${s?'':' locked'}" data-go="space"><b>${s?'우주전쟁':'잠김 · 우주전쟁'} <span>NEW</span></b><small>${s?'지구 대표 3명 · 행성 대표단과 3전 2선승':'세계제패 중국 클리어 시 열림'}</small></button><button type="button" class="x">닫기</button>`;
+ dlg.querySelector('.x').onclick=()=>dlg.close();dlg.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.dataset.go==='space'&&!spaceOpen()){toast('세계제패에서 중국을 먼저 제패해야 합니다.',2.4);return;}dlg.close();if(b.dataset.go==='boss')openBoss();else if(b.dataset.go==='space')window.sppSpaceConquest?.open();else $('tournament-open')?.click();});
  dlg.showModal();dlg.querySelector('.opt').focus();};
 // 보스전도 대회처럼 팝업 명단에서 고르고 바로 시작한다. 명단은 기존 보스 선택(#boss-pick) 버튼을 그대로 읽는다.
 const REMAKE_BOSSES=['boss'];   // 리메이크된 보스: 명단에 REMAKE 딱지

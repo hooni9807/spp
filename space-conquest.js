@@ -69,9 +69,11 @@ function valid(r){return r&&planet(r.planet)&&Array.isArray(r.team)&&r.team.leng
 function save(){if(valid(run))store.set(key(),JSON.stringify(run));}
 function load(){try{const r=JSON.parse(store.get(key())||'null');if(valid(r))return r;}catch{}return null;}
 const cleared=p=>!!tS()['spaceWar_'+p.id];
+const unlocked=()=>!!tS().chinaCup2;
 const dialog=document.createElement('dialog');dialog.id='space-conquest';dialog.setAttribute('aria-labelledby','space-title');document.body.append(dialog);
 function openSpace(){
  if(net){toast('온라인 경기를 종료한 뒤 도전해 주세요.',2);return;}
+ if(!unlocked()){toast('세계제패에서 중국을 먼저 제패해야 우주전쟁이 열립니다.',2.4);return;}
  if(!run)run=load();
  if(run?.live)selected=run.planet;
  render();if(!dialog.open)dialog.showModal();
@@ -132,14 +134,16 @@ const normalRecord=rankRecord;rankRecord=function(...args){const record=normalRe
 const normalReturn=P.returnRoll;P.returnRoll=function(b,t,c,bonus=0){const rate=normalReturn(b,t,c,bonus);if(!active())return rate;return b?.ult?RULES.ultimateReturn:planet(run.planet).return;};
 const normalSpaceUlt=aiUltForTier;aiUltForTier=function(u){const out=normalSpaceUlt(u);if(!active()||!out)return out;const p=planet(run.planet),rgb=p.color.match(/[\da-f]{2}/gi).map(v=>parseInt(v,16)).join(',');return {...out,name:p.skills[run.round],rgb,glow:p.color,fx:p.fx,ci:p.ci};};
 function spaceUltEffect(p,name){document.querySelector('.space-ult-effect')?.remove();const e=document.createElement('div');e.className='space-ult-effect '+p.id;e.style.setProperty('--space-ult',p.color);e.setAttribute('role','status');e.innerHTML='<i></i><b>'+name+'</b><small>'+p.name+' 대표 필살기</small>';document.body.append(e);setTimeout(()=>e.remove(),1700);}
-function clearGimmicks(){document.querySelector('.space-gimmicks')?.remove();}
+let fakeTimer=0;
+function clearGimmicks(){clearInterval(fakeTimer);fakeTimer=0;document.querySelector('.space-gimmicks')?.remove();}
 const traceLengthOk=(length,width)=>{const target=P.clamp(width*.18,90,150);return length>=target*.82&&length<=target*1.18;};
 function spaceGimmick(kind,p,level=1){
  let root=document.querySelector('.space-gimmicks');if(!root){root=document.createElement('div');root.className='space-gimmicks';root.setAttribute('aria-live','polite');document.querySelector('.court-wrap')?.append(root);}
  root.style.setProperty('--gimmick',p.color);root.className='space-gimmicks '+kind+' level-'+level;
  const names={fake:'잔상 분열 · 진짜 공을 찾아라',snare:'성운 덩굴 · 타이밍 범위 감소',growth:'성운목 성장 · 시야 압박',orbit:'중력 고리 · 궤도 교란',flare:'태양풍 섬광 · 시야 교란',chaos:'항성 폭주 · 복합 패턴',trace:'궤적 봉인 · 화살표 길이만큼 스윙'};
  root.innerHTML='<span class="gimmick-alert">'+names[kind]+'</span>'+(kind==='trace'?'<svg viewBox="0 0 300 180" aria-hidden="true"><defs><marker id="trace-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="currentColor"/></marker></defs><path d="M82 142 Q142 92 220 47"/><circle cx="82" cy="142" r="8"/><circle cx="220" cy="47" r="5"/></svg>':'<i></i><i></i><i></i>');
- if(kind!=='growth')setTimeout(()=>{if(root.classList.contains(kind))root.remove();},kind==='trace'?2100:1300);
+ if(kind==='fake'){clearInterval(fakeTimer);root.querySelectorAll('i').forEach(e=>{e.style.animation='none';e.style.translate='-50% -50%';e.style.opacity='.62';});fakeTimer=setInterval(()=>{if(!active()||!ball||ball.owner!=='ai')return;const q=project(ball.x,ball.y,ball.z),offsets=[[-62,-18],[54,20],[0,-44]];root.querySelectorAll('i').forEach((e,i)=>{e.style.left=q.x+offsets[i][0]+'px';e.style.top=q.y+offsets[i][1]+'px';});},32);}
+ if(kind!=='growth')setTimeout(()=>{if(root.classList.contains(kind)){clearInterval(fakeTimer);fakeTimer=0;root.remove();}},kind==='trace'?2100:kind==='fake'?2400:1300);
 }
 const normalSpaceFireUlt=fireUlt;fireUlt=function(u,x,y,ai=false,...rest){if(ai&&active())spaceUltEffect(planet(run.planet),u.name);return normalSpaceFireUlt(u,x,y,ai,...rest);};
 onAiShot('pre',45,a=>{
@@ -151,13 +155,16 @@ onAiShot('pre',45,a=>{
  if(style==='drive'){a.kind='drive';a.speed*=1.12;}
  let gimmick=p.gimmick;if(gimmick==='chaos')gimmick=['fake','snare','orbit','growth'][rally%4];
  if(gimmick==='growth'&&rally>=5)spaceGimmick('growth',p,Math.min(3,1+Math.floor((rally-5)/4)));
- else if(rally>=3&&rally%3===0)spaceGimmick(gimmick,p);
+ else if(rally>=3&&rally%3===0){spaceGimmick(gimmick,p);if(gimmick==='fake')a.spaceFake=true;}
  if(rally>=5&&rally%5===0){a.spaceTrace=true;spaceGimmick('trace',p);}
- if(rally>=3&&rally%3===0&&(gimmick==='snare'||gimmick==='orbit'))a.defMiss=(a.defMiss||0)+(gimmick==='snare'?.06:.04);
+ if(rally>=3&&rally%3===0&&(gimmick==='snare'||gimmick==='orbit'))a.spaceDefMiss=(a.spaceDefMiss||0)+(gimmick==='snare'?.06:.04);
  const pressure=Math.min(1.18,1+rally*.012),power=RULES.power*p.power*pressure;
  a.speed=Math.min(a.speed*power,6.4);a.spin=P.clamp(a.spin*power,-3.8,3.8);a.aim=P.clamp(a.aim,-.55,.55);aiCharge=Math.min(100,aiCharge+p.charge);
 });
+onAiShot('post',45,(a,shot)=>({...shot,spaceTrace:!!a.spaceTrace,spaceFake:!!a.spaceFake,spaceDefMiss:a.spaceDefMiss||0}));
 const normalSpaceHit=hit;hit=function(...args){
+ if(active()&&ball?.spaceDefMiss)ball.defMiss=Math.max(ball.defMiss||0,ball.spaceDefMiss);
+ if(active()&&ball?.spaceTrace&&!ball.traceChecked&&args[0]&&!swingMemory&&!['wait','none'].includes(P.timing(ball))){toast('궤적 봉인 · 터치가 아닌 화살표 길이의 스윙이 필요합니다.',1.2);return;}
  if(active()&&ball?.spaceTrace&&!ball.traceChecked&&swingMemory&&!['wait','none'].includes(P.timing(ball))){ball.traceChecked=true;const length=gesture?.distance||Math.hypot(swingMemory.dx||0,swingMemory.rise||swingMemory.drop||0);if(!traceLengthOk(length,W)){ball.defMiss=Math.min(.35,(ball.defMiss||0)+.12);toast('궤적 길이 불일치 · 판정 범위 감소',1.1);}else toast('궤적 봉인 해제 · 정확한 스윙',.9);}
  return normalSpaceHit.apply(this,args);
 };
@@ -218,5 +225,5 @@ const style=document.createElement('style');style.textContent=String.raw`
 .space-gimmicks.trace svg{position:absolute;inset:17% 9% 8%;width:82%;height:75%;color:var(--gimmick);filter:drop-shadow(0 0 8px var(--gimmick))}.space-gimmicks.trace svg>path{fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;stroke-dasharray:12 8;marker-end:url(#trace-arrow);animation:spaceTrace 1.1s linear infinite}.space-gimmicks.trace svg circle{fill:#071023;stroke:#fff;stroke-width:4}.space-gimmicks.trace svg circle:last-child{fill:var(--gimmick)}@keyframes spaceTrace{to{stroke-dashoffset:-40}}
 @media(max-width:540px){#space-conquest .sw-header{padding:25px 18px 20px}#space-conquest section{margin:18px 16px}.sw-planets{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-earth>span{font-size:34px}.sw-earth>strong{font-size:24px}.sw-section-heading{display:block}.sw-section-heading>small{display:block;margin:-5px 0 10px}.sw-opponents{padding:14px 5px;gap:5px}.sw-opponents figcaption{font-size:12px}.sw-opponents figcaption small{font-size:9px}.sw-team{gap:6px}.sw-team label{padding:10px 5px}.sw-team select{font-size:11px}.sw-team canvas{width:52px;height:52px}#space-conquest footer{padding:13px 16px}}
 `;document.head.append(style);
-window.sppSpaceConquest={open:openSpace,profiles:PLANETS,rules:RULES,traceLengthOk,get run(){return run;},active};
+window.sppSpaceConquest={open:openSpace,profiles:PLANETS,rules:RULES,traceLengthOk,unlocked,get run(){return run;},active};
 })();
