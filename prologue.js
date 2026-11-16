@@ -4,7 +4,7 @@
   const publicNav = document.createElement('nav');
   publicNav.setAttribute('aria-label', '로그인 없이 읽는 게임 안내');
   publicNav.style.cssText='position:relative;z-index:10;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding:12px;font-size:14px';
-  publicNav.innerHTML='<a href="about.html">SPP 소개·문의</a><a href="guide.html">조작·캐릭터 가이드</a><a href="strategy.html">리시브 공략</a><a href="privacy.html">개인정보처리방침</a>';
+  publicNav.innerHTML='<a href="learn.html">플레이북·공략 모음</a><a href="about.html">SPP 소개·문의</a><a href="guide.html">조작·캐릭터 가이드</a><a href="privacy.html">개인정보처리방침</a>';
   publicNav.querySelectorAll('a').forEach(a=>a.style.color='#a9efff');
   dialog.append(publicNav);
   const opener = document.getElementById('prologue-open');
