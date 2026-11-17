@@ -17,7 +17,23 @@ const { chromium } = require('playwright');
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(`http://127.0.0.1:${server.address().port}`);
     await page.waitForFunction(() => document.getElementById('prologue-loading').hidden);
-    const original = await page.evaluate(() => { openUlts('jersey'); return JSON.stringify({ charge, ball, character: charType, slots: ultSet('jersey') }); });
+    const original = await page.evaluate(() => {
+      const legacy = ALL_ULTS.find(u => u.tier < 4);
+      const active = ULTS[0];
+      (prog.q._u ??= {}).jersey = [legacy.id, active.id];
+      openUlts('jersey');
+      ultPut(legacy.id, 0);
+      selectUlt(legacy.id);
+      return {
+        state: JSON.stringify({ charge, ball, character: charType, slots: ultSet('jersey') }),
+        slots: ultSet('jersey'),
+        active: active.id,
+        opensLegacyPreview: $('ult-preview').open
+      };
+    });
+    assert.deepEqual(original.slots, [null, original.active]);
+    assert.equal(original.opensLegacyPreview, false);
+    assert.match(await page.locator('#ult-slots [data-slot="0"]').textContent(), /빈 칸/);
     await page.locator('#ult-list .ms-cell:not(.lock) small').first().click();
     await page.waitForTimeout(180);
     assert.equal(await page.locator('#ult-preview').isVisible(), true);
@@ -25,7 +41,7 @@ const { chromium } = require('playwright');
     await page.waitForTimeout(250);
     const second = await page.locator('#ult-preview-canvas').evaluate(c => c.toDataURL());
     assert.notEqual(first, second);
-    assert.equal(await page.evaluate(() => JSON.stringify({ charge, ball, character: charType, slots: ultSet('jersey') })), original);
+    assert.equal(await page.evaluate(() => JSON.stringify({ charge, ball, character: charType, slots: ultSet('jersey') })), original.state);
     assert.deepEqual(errors, []);
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.getElementById('ult-preview').open && ultPreviewFrame === 0);

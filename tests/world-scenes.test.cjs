@@ -26,13 +26,29 @@ const path = require('node:path');
    const singapore=document.querySelector('[data-region="singapore"]');
    singapore.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'touch'}));
    const singaporePlayable=/싱가포르 제패/.test(document.getElementById('world-detail').textContent)&&!!document.getElementById('euro-depart');
-   return {total:WORLD_COUNTRY_TOTAL, scenes, cleared:!document.querySelector('.world-skill-scene'),singaporePlayable,singaporeTarget:singapore.getAttribute('d'),
+   const state=tS();
+   state.world_japan=state.world_space=1;
+   state['spaceWar_'+SPACE_WAR_IDS[0]]=1;
+   euroColors();
+   const {countries,count}=worldConquestRow();
+   const oldRank=cleanWorldConquestRow({countries:['china','japan','space'],count:3,at:{seconds:1}});
+   const currentRank=cleanWorldConquestRow({countries:['china','japan','space'],count:3,at:{seconds:Math.ceil(CHINA_RESET_AT/1000)}});
+   return {total:worldCountryTotal(),scenes,cleared:!document.querySelector('.world-skill-scene'),singaporePlayable,singaporeTarget:singapore.getAttribute('d'),
+    countries,count,oldRank,currentRank,progress:$('world-progress').textContent,spaceClears:spaceWarClears(),
     squads:distantSquads.map(([id]) => ({id, faces:Object.keys(FACES).filter(k=>k.startsWith('china_'+id+'_')).length,
-     map:!!document.querySelector('[data-region="'+id+'"]'), active:WORLD_ACTIVE_COUNTRIES.includes(id)})),
+     map:!!document.querySelector('[data-region="'+id+'"]'), active:Object.hasOwn(WORLD_COUNTRY_NAMES,id)})),
     shapes:new Set(distantSquads.map(([id])=>WORLD_EXPANSION[id].shape)).size};
   });
   assert.equal(result.total,22);
   assert.equal(result.scenes.length,22);
+  assert.deepEqual(result.countries,['japan']);
+  assert.equal(result.count,1);
+  assert.deepEqual(result.oldRank.countries,['japan']);
+  assert.equal(result.oldRank.count,1);
+  assert.deepEqual(result.currentRank.countries,['china','japan']);
+  assert.equal(result.currentRank.count,2);
+  assert.equal(result.progress,'정복 완료 1 / 22');
+  assert.equal(result.spaceClears,1);
   assert.equal(result.shapes,6);
   assert(result.cleared);
   assert(result.singaporePlayable);

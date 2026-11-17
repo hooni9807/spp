@@ -26,7 +26,7 @@ assert(html.includes("const TOUR_REWARDS=[{id:'daejeon'"));
 assert(html.includes("{id:'daejeon',name:'대전시대회',trophy:'🥖'"));
 assert(html.includes("{id:'busan',name:'부산시대회',trophy:'🦈'"));
 assert(html.includes("REGION_QUESTS=TOUR_REWARDS.map(r=>['tour_'+r.id,r.name+' 우승'])"));
-assert(html.includes("r.rarity} · ${trophyLabel(r)}"));
+assert(html.includes('<b>${trophyLabel(r)}</b>'));
 assert(html.includes('function showTrophy(r)'));
 assert(html.includes('id="trophy-display"'));
 assert(html.includes("{id:'seoul',name:'서울시대회'"));

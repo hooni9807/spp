@@ -4,7 +4,7 @@ const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 assert.match(html,/tournament:100/);
 assert.doesNotMatch(html,/tournament:\{atkDrive/);
 assert.match(html,/villainEventButton\.dataset\.tour='villain'/);
-assert.match(html,/코늴리리아 이벤트 매치/);
+assert.match(html,/const VILLAIN_EVENT_NAME='대전 3인 단체전'/);
 assert.match(html,/코늴리리아 유니폼/);
 assert.doesNotMatch(html,/👕 코늴리리아/);
 assert.doesNotMatch(html,/#boss-pick \[data-villain\]/);

@@ -10,9 +10,11 @@ const path=require('node:path');
  try{
   const page=await browser.newPage({viewport:{width:1100,height:850}});
   await page.goto('http://localhost:'+server.address().port);
-  await page.waitForFunction(()=>typeof WORLD_COUNTRY_TOTAL!=='undefined'&&document.querySelectorAll('#world-map .world-map-tag').length===WORLD_COUNTRY_TOTAL);
+  await page.waitForFunction(()=>typeof WORLD_EXPANSION!=='undefined');
   const badges=await page.locator('#world-map .world-map-tag').count();
   assert.equal(badges,22);
+  assert.equal(badges,await page.evaluate(()=>worldCountryTotal()));
+  assert.equal(await page.locator('#world-progress').textContent(),'정복 완료 0 / 22');
   assert.equal(await page.locator('#world-map [data-region="europe"]').count(),0);
   assert.equal(await page.locator('#world-map .world-korea-pin').count(),1);
   assert.equal(await page.locator('#world-map .world-map-tag[data-tier="HELL+++"]').count(),1);
