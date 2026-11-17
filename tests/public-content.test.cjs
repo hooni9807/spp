@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const newPages=['rally-challenge.html','serve-and-placement.html','progress-and-records.html'];
 const pages=['learn.html','guide.html','strategy.html','about.html','privacy.html','beginner.html','campaign-guide.html','help.html','stroke-lab.html','character-guide.html','updates.html','visual-guide.html','timing-study.html','decision-training.html','play-goals.html','table-tennis-and-spp.html',...newPages];
 const sitemap=fs.readFileSync('sitemap.xml','utf8');
@@ -14,7 +14,10 @@ for(const page of pages){
       assert(html.includes('id="'+target.slice(1)+'"'),page+' → '+target);
       continue;
     }
-    assert(fs.existsSync(path.resolve(path.dirname(page),target.split(/[?#]/)[0])),page+' → '+target);
+    const [file,fragment]=target.split('#');
+    const destination=path.resolve(path.dirname(page),file.split('?')[0]);
+    assert(fs.existsSync(destination),page+' → '+target);
+    if(fragment)assert(fs.readFileSync(destination,'utf8').includes('id="'+fragment+'"'),page+' → '+target);
   }
 }
 const playbook=fs.readFileSync('learn.html','utf8');
@@ -28,3 +31,13 @@ for(const row of study.rows){assert(studyHtml.includes(row.nominalMilliseconds.t
 assert(study.rows[1].perfectSpan<study.rows[0].perfectSpan);
 for(const asset of ['timing.png','dual.png','chance.png','incoming-demo.webm'])assert(fs.statSync('assets/playbook/'+asset).size>1000);
 console.log('PASS published measurements and rendered guide assets');
+const rankCode=index.match(/const AI_RATING_BASE=[^\n]+\nconst rankWinScore=[^\n]+/)[0];
+const winScore=vm.runInNewContext(rankCode+'\nrankWinScore');
+const recordGuide=fs.readFileSync('progress-and-records.html','utf8');
+for(const [gap,dual,shutout,streak] of [[4,2,false,3],[11,5,true,3]]){
+  const score=winScore('ultra',gap,dual,shutout,streak);
+  assert(recordGuide.includes(score+'점입니다'),'published AI score example: '+score);
+}
+assert.equal(winScore('unight',100,100,true,100),500);
+assert(recordGuide.includes('500점'),'published AI score cap');
+console.log('PASS published score examples match current game calculation');

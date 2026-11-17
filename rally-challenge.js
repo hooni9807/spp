@@ -10,6 +10,10 @@
   const count = document.querySelector('#rally-count');
   const successes = document.querySelector('#rally-success');
   const best = document.querySelector('#rally-best');
+  const review = document.querySelector('#rally-review');
+  const summary = document.querySelector('#rally-summary');
+  const recommendation = document.querySelector('#rally-next');
+  const results = document.querySelector('#rally-results');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const shotCount = 8;
   const presets = {
@@ -30,6 +34,56 @@
     count.textContent = `${attempts} / ${shotCount}구`;
     successes.textContent = `${success}회`;
     best.textContent = `${longest}회`;
+  }
+
+  function showReview() {
+    const inputs = session.results.filter(result => result.delta !== null);
+    const early = inputs.filter(result => !result.success && result.delta < 0).length;
+    const late = inputs.filter(result => !result.success && result.delta >= 0).length;
+    const missed = shotCount - inputs.length;
+    const average = inputs.length
+      ? Math.round(inputs.reduce((total, result) => total + Math.abs(result.delta), 0) / inputs.length)
+      : null;
+    summary.textContent = `빠른 실패 ${early}회 · 늦은 실패 ${late}회 · 놓친 공 ${missed}구.` +
+      (average === null ? '' : ` 입력한 ${inputs.length}구의 중심과 차이는 평균 ${average}ms입니다.`);
+
+    let next = '같은 속도로 한 세트를 더 해보세요. 공별 결과에서 실패한 구간을 보고 다음 입력 박자를 맞춰 보세요.';
+    if (missed >= 2) {
+      next = '놓친 공이 두 개 이상입니다. 일정한 공을 고르고 버튼에 손을 준비한 채, 공이 노란 구간에 도착할 때 한 번 누르는 연습부터 해보세요.';
+    } else if (early > late) {
+      next = '구간에 도착하기 전에 누른 실패가 더 많습니다. 같은 속도로 한 세트를 더 하면서 노란 구간에 들어올 때까지 기다려 보세요.';
+    } else if (late > early) {
+      next = '구간을 지난 뒤 누른 실패가 더 많습니다. 같은 속도에서 버튼에 손을 미리 준비하고 공이 구간에 들어오는 순간 눌러 보세요.';
+    } else if (session.success >= 6) {
+      next = {
+        steady: '여섯 공 이상 성공했습니다. 다음에는 빠른 공을 골라 줄어든 타격 구간에서도 같은 성공 횟수를 이어가 보세요.',
+        quick: '빠른 공도 여섯 개 이상 성공했습니다. 박자가 바뀌는 공을 골라 이전 공의 리듬보다 새 공의 속도를 읽어 보세요.',
+        varied: '박자가 바뀌어도 여섯 공 이상 성공했습니다. 아래 경기 화면 공략에서 타이밍 원을 확인하고 스윙 방향까지 함께 연습해 보세요.'
+      }[session.pace];
+    }
+    recommendation.textContent = next;
+    results.replaceChildren(...session.results.map((result, index) => {
+      const row = document.createElement('tr');
+      const number = document.createElement('th');
+      number.scope = 'row';
+      number.textContent = `${index + 1}구`;
+      row.append(number);
+      let status = '놓침';
+      let timing = '입력 없음';
+      if (result.delta !== null) {
+        status = result.success ? '성공' : '실패';
+        const difference = Math.round(Math.abs(result.delta));
+        const direction = result.delta < 0 ? '빠름' : '늦음';
+        timing = difference === 0 ? '중심에 입력' : `${difference}ms ${direction}`;
+      }
+      for (const value of [status, timing]) {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+      }
+      return row;
+    }));
+    review.hidden = false;
   }
 
   function end(message, focusStart) {
@@ -79,6 +133,7 @@
     session.attempts += 1;
     session.arrival = null;
     const success = delta !== null && Math.abs(delta) <= session.window;
+    session.results.push({ delta, success });
     if (success) {
       session.success += 1;
       session.streak += 1;
@@ -98,6 +153,7 @@
       detail = `${success ? '성공' : '실패'} · ${offset}`;
     }
     if (session.attempts === shotCount) {
+      showReview();
       end(`${detail} / 세트 완료, ${session.success}구 성공. 최고 연속 ${session.longest}회.`, true);
       return;
     }
@@ -110,7 +166,9 @@
   pace.disabled = false;
   start.disabled = false;
   start.addEventListener('click', () => {
-    session = { preset: presets[pace.value], attempts: 0, success: 0, streak: 0, longest: 0 };
+    session = { pace: pace.value, preset: presets[pace.value], attempts: 0, success: 0, streak: 0, longest: 0, results: [] };
+    review.hidden = true;
+    results.replaceChildren();
     pace.disabled = true;
     start.disabled = true;
     stop.disabled = false;

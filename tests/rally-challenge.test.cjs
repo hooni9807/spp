@@ -11,12 +11,13 @@ async function main() {
     '/library.css': 'text/css'
   };
   const server = http.createServer((request, response) => {
-    if (!Object.hasOwn(files, request.url)) {
+    const pathname = new URL(request.url, 'http://local').pathname;
+    if (!Object.hasOwn(files, pathname)) {
       response.writeHead(404).end();
       return;
     }
-    response.writeHead(200, { 'Content-Type': files[request.url] });
-    fs.createReadStream(path.join(__dirname, '..', request.url)).pipe(response);
+    response.writeHead(200, { 'Content-Type': files[pathname] });
+    fs.createReadStream(path.join(__dirname, '..', pathname)).pipe(response);
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const executablePath = process.env.CHROME_PATH ||
@@ -41,18 +42,51 @@ async function main() {
     }
     assert.equal(await page.locator('#rally-count').textContent(), '8 / 8구');
     assert.match(await feedback.textContent(), /세트 완료, 7구 성공. 최고 연속 7회/);
+    assert.equal(await page.locator('#rally-review').isVisible(), true);
+    assert.equal(await page.locator('#rally-results tr').count(), 8);
+    assert.match(await page.locator('#rally-results tr').first().textContent(), /1구실패.*빠름/);
+    assert.match(await page.locator('#rally-summary').textContent(), /빠른 실패 1회.*입력한 8구/);
+    assert.match(await page.locator('#rally-next').textContent(), /구간에 도착하기 전에/);
     assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 
     await page.getByLabel('연습 속도').selectOption('quick');
     await start.tap();
+    assert.equal(await page.locator('#rally-review').isVisible(), false);
     await page.clock.runFor(1220 + 130 + 32);
     assert.match(await feedback.textContent(), /놓쳤어요/);
     await page.getByRole('button', { name: '중단' }).tap();
     await page.clock.runFor(3000);
     assert.match(await feedback.textContent(), /연습을 중단/);
+    assert.equal(await page.locator('#rally-review').isVisible(), false);
+    await start.tap();
+    await page.clock.runFor(8 * (1220 + 130 + 32 + 800));
+    assert.equal(await page.locator('#rally-results tr').count(), 8);
+    assert.match(await page.locator('#rally-summary').textContent(), /놓친 공 8구/);
+    assert.doesNotMatch(await page.locator('#rally-summary').textContent(), /평균/);
+    assert.match(await page.locator('#rally-next').textContent(), /일정한 공을 고르고/);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+
+    await page.getByLabel('연습 속도').selectOption('varied');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await start.tap();
+    const durations = [1600, 1020, 1450, 1200, 1700, 1110, 1550, 1050];
+    for (const [index, duration] of durations.entries()) {
+      await page.clock.runFor(duration + (index ? 800 : 0));
+      await page.keyboard.press('Space');
+    }
+    assert.match(await feedback.textContent(), /세트 완료, 8구 성공/);
+    assert.match(await page.locator('#rally-next').textContent(), /스윙 방향까지/);
+    assert.equal(await page.locator('#rally-table').getAttribute('data-rally-still'), 'true');
+    assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
     assert.deepEqual(errors, []);
-    console.log('PASS rally timing, touch and keyboard, streak, missed ball, cancellation and no storage');
+    const staticContext = await browser.newContext({ javaScriptEnabled: false });
+    const staticPage = await staticContext.newPage();
+    await staticPage.goto(`http://127.0.0.1:${server.address().port}/rally-challenge.html`);
+    assert.equal(await staticPage.getByRole('button', { name: '8구 시작' }).isDisabled(), true);
+    assert.equal(await staticPage.getByRole('heading', { name: '같은 속도에서 기준 잡기' }).isVisible(), true);
+    await staticContext.close();
+    console.log('PASS rally timing, completed-set review, tailored next drill, missed ball, restart, cancellation, reduced motion, no-JS and no storage');
   } finally {
     await browser?.close();
     server.close();
