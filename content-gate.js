@@ -47,7 +47,7 @@ const openPath=focus=>{const a=aiDone(),t=tourOpen(),done=tourDone(),need=tourNe
  d.innerHTML=`<h3 id="gate-title">${focus==='world'?'세계제패는 아직 잠겨 있어요':'대회는 아직 잠겨 있어요'}</h3><p>한 단계씩 깨면 다음 무대가 열려요.</p><ol>
  ${step(a||t?'done':'now',1,'AI 대전 울트라 승리',a||t?'완료':'AI 대전에서 울트라 이상 난이도로 1승')}
  ${step(w?'done':t?'now':'locked',2,'대회 절반 클리어',w?'완료':`${Math.min(done,need)} / ${need} 대회 우승`,t&&!w?Math.min(1,done/need):null)}
- ${step(w?'now':'locked',3,'세계제패','중국부터 세계 21개국 정복')}</ol><button type="button">확인</button>`;
+ ${step(w?'now':'locked',3,'세계제패',`총 ${worldCountryTotal()}개국 · 열린 국가부터 도전`)}</ol><button type="button">확인</button>`;
  d.querySelector('button').onclick=()=>d.close();if(!d.open)d.showModal();d.querySelector('button').focus();};
 window.openContentPath=openPath;
 

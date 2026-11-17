@@ -41,3 +41,28 @@ for(const [gap,dual,shutout,streak] of [[4,2,false,3],[11,5,true,3]]){
 assert.equal(winScore('unight',100,100,true,100),500);
 assert(recordGuide.includes('500점'),'published AI score cap');
 console.log('PASS published score examples match current game calculation');
+{
+  const gate=fs.readFileSync('content-gate.js','utf8'),state={},won=new Set();let countries=0;
+  const context={window:{},document:{getElementById:()=>null,querySelectorAll:()=>['daejeon','sejong','busan','okcheon','pyeongtaek','villain','seoul'].map(tour=>({dataset:{tour}}))},tS:()=>state,trophyIds:()=>[...won],conquestCount:()=>countries};
+  vm.runInNewContext(gate.slice(gate.indexOf('const $='),gate.indexOf('const LOCK=')),context);
+  const access=context.window.contentGate;
+  assert.equal(access.tourOpen(),false);assert.equal(access.worldOpen(),false);
+  state.ultra=1;assert.equal(access.tourOpen(),true);assert.equal(access.worldOpen(),false);
+  for(const id of ['daejeon','sejong','okcheon'])won.add(id);
+  assert.equal(access.worldOpen(),false,'three of seven tournaments is below half');
+  state.villain=1;assert.equal(access.worldOpen(),true,'the team event counts as a distinct fourth clear');
+  delete state.ultra;assert.equal(access.tourOpen(),true,'old tournament progress keeps tournaments open');
+  won.clear();delete state.villain;countries=1;
+  assert.equal(access.tourOpen(),true);assert.equal(access.worldOpen(),true,'old conquest progress keeps both modes open');
+  const campaign=fs.readFileSync('campaign-guide.html','utf8');
+  assert(campaign.includes('7개 대회 중 4개'),'published tournament progression');
+  assert(campaign.includes('울트라 이상 난이도로 1승'),'published first tournament gate');
+  const dialog={open:false,innerHTML:'',querySelector:()=>({focus(){}}),showModal(){this.open=true;}};
+  vm.runInNewContext(gate.slice(gate.indexOf('const openPath=focus=>'),gate.indexOf('window.openContentPath=openPath;'))+'\nopenPath("world");',{d:dialog,aiDone:()=>false,tourOpen:()=>false,tourDone:()=>0,tourNeed:()=>4,worldOpen:()=>false,worldCountryTotal:()=>29});
+  assert(dialog.innerHTML.includes('총 29개국'),'progress dialog follows the country registry');
+  assert(!dialog.innerHTML.includes('중국부터'),'locked China is not the recommended first country');
+}
+console.log('PASS published mode gates match live progression and preserve returning players');
+
+for(const page of ['about.html','privacy.html','help.html'])assert(fs.readFileSync(page,'utf8').includes('href="mailto:dchkimppi@naver.com"'),page+' private contact');
+console.log('PASS private account and privacy contact is discoverable');
