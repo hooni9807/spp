@@ -4,8 +4,9 @@ const descriptions={tap:'터치 · 손을 거의 움직이지 않았습니다. �
 let start=null,points=[];
 const point=e=>{const r=pad.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
 pad.addEventListener('pointerdown',e=>{if(start||e.button>0)return;start={...point(e),id:e.pointerId};points=[start];line.setAttribute('d','');pad.setPointerCapture(e.pointerId);});
-pad.addEventListener('pointermove',e=>{if(!start||e.pointerId!==start.id)return;points.push(point(e));line.setAttribute('d',points.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' '));});
+pad.addEventListener('pointermove',e=>{if(!start||e.pointerId!==start.id)return;points.push(point(e));if(points.length>400)points.splice(1,1);line.setAttribute('d',points.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' '));});
 pad.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id)return;const end=point(e),dx=end.x-start.x,dy=end.y-start.y,key=Math.hypot(dx,dy)<18?'tap':Math.abs(dx)>Math.abs(dy)?'side':dy<0?'up':'down';answer.textContent=descriptions[key];start=null;});
 pad.addEventListener('pointercancel',()=>{start=null;answer.textContent='입력이 취소됐습니다. 다시 그려 보세요.';});
+pad.addEventListener('lostpointercapture',()=>{start=null;});
 document.querySelectorAll('[data-stroke]').forEach(b=>b.onclick=()=>{answer.textContent=descriptions[b.dataset.stroke];});
 })();
