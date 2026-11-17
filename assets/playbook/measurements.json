@@ -1,0 +1,54 @@
+{
+  "checked": "2026-11-17",
+  "method": "P.perfectSpan / abs(vy); EQUIP=1; no net, deep, sway, easy or hiddenPerfectBoost. This is a formula-derived nominal interval, not wall-clock touch latency or win rate.",
+  "rows": [
+    {
+      "character": "jersey",
+      "speed": 3,
+      "spin": 1,
+      "perfectSpan": 0.50336,
+      "nominalMilliseconds": 167.79,
+      "spinFactor": 0.968
+    },
+    {
+      "character": "jersey",
+      "speed": 6,
+      "spin": 1,
+      "perfectSpan": 0.25168,
+      "nominalMilliseconds": 41.95,
+      "spinFactor": 0.968
+    },
+    {
+      "character": "jersey",
+      "speed": 3,
+      "spin": 3.8,
+      "perfectSpan": 0.39,
+      "nominalMilliseconds": 130,
+      "spinFactor": 0.75
+    },
+    {
+      "character": "percival",
+      "speed": 3,
+      "spin": 1,
+      "perfectSpan": 0.18121,
+      "nominalMilliseconds": 60.4,
+      "spinFactor": 0.968
+    },
+    {
+      "character": "percival",
+      "speed": 6,
+      "spin": 1,
+      "perfectSpan": 0.0906,
+      "nominalMilliseconds": 15.1,
+      "spinFactor": 0.968
+    },
+    {
+      "character": "percival",
+      "speed": 3,
+      "spin": 3.8,
+      "perfectSpan": 0.1404,
+      "nominalMilliseconds": 46.8,
+      "spinFactor": 0.75
+    }
+  ]
+}
