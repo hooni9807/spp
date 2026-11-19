@@ -16,9 +16,10 @@ service cloud.firestore {
     function valid(maxValue) {
       let d = request.resource.data;
       return request.auth != null && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
-        && d.keys().hasOnly(['name', 'ttl', 'value', 'level', 'character', 'racket', 'detail', 'streak', 'at'])
+        && d.keys().hasOnly(['name', 'uid', 'ttl', 'value', 'level', 'character', 'racket', 'detail', 'streak', 'at'])
         && (!('ttl' in d) || d.ttl is string && d.ttl.size() <= 12)
-        && d.keys().hasAll(['name', 'value', 'level', 'character', 'racket', 'detail', 'at'])
+        && d.keys().hasAll(['name', 'uid', 'value', 'level', 'character', 'racket', 'detail', 'at'])
+        && d.uid == request.auth.uid
         && d.name is string && d.name.size() >= 1 && d.name.size() <= 12
         && d.value is int && d.value >= 1 && d.value <= maxValue
         && d.level is string && d.level.size() <= 10
@@ -102,7 +103,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasAll(['name', 'value', 'character', 'detail', 'at'])
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.value is int && request.resource.data.value >= resource.data.value && request.resource.data.value <= 10000
+        && request.resource.data.value is int && request.resource.data.value >= resource.data.value && request.resource.data.value <= 10000 && grows('value', 20, 5)
         && request.resource.data.character is string && request.resource.data.character.size() >= 1 && request.resource.data.character.size() <= 24
         && request.resource.data.detail is string && request.resource.data.detail.size() <= 20
         && request.resource.data.at == request.time;
@@ -142,6 +143,8 @@ service cloud.firestore {
         && d.keys().hasAll(['name', 'rating', 'wins', 'losses', 'streak', 'at'])
         && d.name is string && d.name.size() >= 1 && d.name.size() <= 12
         && d.rating is int && d.wins is int && d.losses is int && d.streak is int
+        // 연승·연패 보너스는 ±30에서 멈춘다(index.html nextRating과 같게). 한 판 변화량은 최대 39.
+        && d.rating >= -10000 && d.rating <= 10000 && d.streak >= -30 && d.streak <= 30
         && d.at == request.time;
     }
     // Game setup per Google account (racket, blade, rubber, difficulty, character): only the owner reads or writes it.
@@ -278,7 +281,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['name', 'days', 'character', 'at'])
         && request.resource.data.keys().hasAll(['name', 'days', 'character', 'at'])
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
-        && request.resource.data.days is int && request.resource.data.days >= 1 && request.resource.data.days <= 36500
+        && request.resource.data.days is int && request.resource.data.days >= 1 && request.resource.data.days <= 36500 && grows('days', 1, 0.001)
         && request.resource.data.character is string && request.resource.data.character.size() >= 1 && request.resource.data.character.size() <= 24
         && request.resource.data.at == request.time;
     }
@@ -290,7 +293,9 @@ service cloud.firestore {
         && request.auth.token.firebase.sign_in_provider in ['google.com', 'custom']
         && request.resource.data.keys().hasOnly(['stats', 'at'])
         && request.resource.data.keys().hasAll(['stats', 'at'])
-        && request.resource.data.stats is map && request.resource.data.stats.size() <= 80   // 캐릭터 수 + _match. 큰 쓰레기 맵으로 공개 문서를 부풀리지 못하게
+        && request.resource.data.stats is map && request.resource.data.stats.size() <= 80
+        && (!('_match' in request.resource.data.stats) || request.resource.data.stats._match is map)
+        && (!('_progress' in request.resource.data.stats) || request.resource.data.stats._progress is map)   // 캐릭터 수 + _match. 큰 쓰레기 맵으로 공개 문서를 부풀리지 못하게
         && request.resource.data.at == request.time;
     }
     match /tournament_progress/{uid} {
@@ -302,7 +307,7 @@ service cloud.firestore {
         && (!('ttl' in request.resource.data) || request.resource.data.ttl is string && request.resource.data.ttl.size() <= 12)
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.cleared is int && request.resource.data.cleared >= 0 && request.resource.data.cleared <= 10
-        && request.resource.data.wins is int && request.resource.data.wins >= 0 && request.resource.data.wins <= 100000
+        && request.resource.data.wins is int && request.resource.data.wins >= 0 && request.resource.data.wins <= 100000 && grows('wins', 5, 2)
         && request.resource.data.best is int && request.resource.data.best >= 0 && request.resource.data.best <= 6
         && request.resource.data.at == request.time;
     }
@@ -318,7 +323,7 @@ service cloud.firestore {
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 12
         && request.resource.data.countries is list && request.resource.data.countries.size() >= 1 && request.resource.data.countries.size() <= 23
         && request.resource.data.countries.hasOnly(['china', 'space', 'japan', 'hongkong', 'germany', 'sweden', 'france', 'romania', 'portugal', 'austria', 'russia', 'taiwan', 'india', 'brazil', 'usa', 'singapore', 'nigeria', 'canada', 'argentina', 'australia', 'southafrica', 'mexico', 'greenland'])
-        && request.resource.data.count is int && request.resource.data.count == request.resource.data.countries.size()
+        && request.resource.data.count is int && request.resource.data.count == request.resource.data.countries.size() && grows('count', 3, 1)
         && request.resource.data.at == request.time;
     }
     // 레벨 랭킹: each signed-in player writes only its own row; anyone may read the board.
@@ -388,11 +393,11 @@ service cloud.firestore {
         && request.time > resource.data.at + duration.value(90, 's')
         && ((request.resource.data.wins == resource.data.wins + 1
              && request.resource.data.losses == resource.data.losses
-             && request.resource.data.streak == (resource.data.streak > 0 ? resource.data.streak + 1 : 1)
+             && request.resource.data.streak == (resource.data.streak > 0 ? math.min(resource.data.streak + 1, 30) : 1)
              && request.resource.data.rating == resource.data.rating + 9 + request.resource.data.streak)
          || (request.resource.data.losses == resource.data.losses + 1
              && request.resource.data.wins == resource.data.wins
-             && request.resource.data.streak == (resource.data.streak < 0 ? resource.data.streak - 1 : -1)
+             && request.resource.data.streak == (resource.data.streak < 0 ? math.max(resource.data.streak - 1, -30) : -1)
              && request.resource.data.rating == resource.data.rating - 9 + request.resource.data.streak));
     }
   }
